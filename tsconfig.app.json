@@ -21,10 +21,14 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "baseUrl": ".",
 
     /* Path alias configuration. */
     "paths": {
-      "~/*": ["./src/*"]
+      "@Pages": ["./src/pages"],
+      "@Panda/*": ["./styled-system/*"],
+      "@Components/*": ["./src/components/*"],
+      "@ParkComponents/*": ["./src/library/components/park/*"]
     }
   },
   "include": ["src", "styled-system"]
