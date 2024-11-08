@@ -41,7 +41,8 @@ Před spuštěním a prácí s projektem je potřeba mít lokálně nainstalovan
 
 - Package manager, bundler - [Bun](https://bun.sh/docs)
 
-V případě, že používáš Windows, ideálně si nakonfiguruj WSL2. Případně piš projekťákovi. :) 
+V případě, že používáš Windows, ideálně si nakonfiguruj WSL2, nicméně by ti Bun měl fungovat případně i čistě na Windows. 
+Případně piš projekťákovi. :) 
 
 
 <a name="project-configuration"></a>
