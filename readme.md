@@ -27,7 +27,11 @@ cz.eventmate.fe
 │    ├─📂 utils # helper function and utilities used accross the application
 │    ├─📃 index.css # layered base styles which are provided by PandaCSS
 │    └─📃 main.tsx # entrypoint for the application
-└─📃 docker-compose.yml # Docker configuration for this project
+├─📃 eslint.config.js # Configuration for eslint
+├─📃 index.html # HTML with entrypoint/root for the react app
+├─📃 panda.config.ts # Config of the PandaCSS styling system.
+├─📃 park-ui.json # Config for installation of the parkUI components.
+└─📃 vite.config.ts # Configuration of the Vite dev server, bundling, etc.
 ````
 
 <a name="preparation"></a>
