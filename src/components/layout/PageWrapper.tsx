@@ -1,10 +1,18 @@
+import { Navbar } from "@Components/ui";
 import * as React from "react";
-import {Outlet} from "react-router-dom";
+import {Outlet, useLocation} from "react-router-dom";
+import { PageLayout } from "./PageLayout";
 
 /* Renders components present on any page and the contents of current route. */
 export const PageWrapper: React.FC = () => {
+    const { pathname } = useLocation();
+    const canRenderNavbar = pathname !== "/auth"
     return (<>
-        <h1>Navbar</h1> {/* Add real navbar here */}
-        <Outlet/>
+        {/* Navbar */}
+        {canRenderNavbar ? <Navbar/> : null}
+        {/* Page layout for every page */}
+        <PageLayout>
+            <Outlet/>
+        </PageLayout>
     </>);
 }
