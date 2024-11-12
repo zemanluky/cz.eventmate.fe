@@ -2,6 +2,7 @@ import * as React from "react";
 import {createHashRouter, RouteObject, RouterProvider} from "react-router-dom";
 import {PageWrapper} from "@Components/layout";
 import {Homepage} from "@Pages";
+import {AuthPage} from "@Pages";
 
 const routes: RouteObject[] = [
     {
@@ -12,8 +13,13 @@ const routes: RouteObject[] = [
                 path: '',
                 element: <Homepage/>
             },
+            {
+                path: 'auth',
+                element: <AuthPage/> /* 👈 Renders at /#/auth/ */
+            },
             // add more routes here...
         ]
+
     },
     // add different page layout...
 ];
