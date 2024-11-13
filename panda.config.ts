@@ -11,6 +11,11 @@ export default defineConfig({
       accentColor: "grass",
       grayColor: "olive",
       borderRadius: 'md'
+    }),
+    createPreset({
+      accentColor: "lime",
+      grayColor: "olive",
+      borderRadius: 'md'
     })
   ],
   // Custom themes for coloring
