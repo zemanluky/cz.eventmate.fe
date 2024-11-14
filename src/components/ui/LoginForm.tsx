@@ -10,7 +10,7 @@ import * as React from "react";
 
 export const LoginForm: React.FC = () => {
   return (
-    <VStack w="28.1rem" mt={{base: "15px", sm:"15px"}}>
+    <VStack w= {{base: "350px", sm:"450px"}} mt={{base: "15px", sm:"15px"}}>
       <Text size="6xl" mb="10px">
         EventM8
       </Text>
