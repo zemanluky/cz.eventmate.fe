@@ -5,8 +5,8 @@ import { Input } from "@ParkComponents/input";
 import { Text } from "@ParkComponents/text";
 import { Avatar } from "@ParkComponents/avatar";
 import { Box, Divider, Stack, VStack } from "@Panda/jsx";
-import { Dialog } from "@ParkComponents/dialog";
 import { FriendRequestList } from "./FriendRequestList";
+import { Popover } from "@ParkComponents/popover";
 
 export const Navbar: React.FC = () => {
   const mockUserList = [
@@ -69,7 +69,11 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <Dialog.Root>
+      <Popover.Root
+        positioning={{
+          placement: "bottom-start",
+        }}
+      >
         <Box className={navBarStyles}>
           <Text fontSize={"xl"}>EventMate</Text>
           <Input
@@ -80,7 +84,7 @@ export const Navbar: React.FC = () => {
           />
 
           <Box className={flexStyles}>
-            <Dialog.Trigger asChild>
+            <Popover.Trigger asChild>
               <Button
                 bg="bg.buttonSmall"
                 color="fg.buttonSmall"
@@ -88,7 +92,7 @@ export const Navbar: React.FC = () => {
               >
                 F
               </Button>
-            </Dialog.Trigger>
+            </Popover.Trigger>
 
             <Button variant="ghost" bg="none" borderRadius={"full"} p="0">
               <Avatar name="John Doe" />
@@ -97,10 +101,10 @@ export const Navbar: React.FC = () => {
         </Box>
 
         {/*Friend request modal */}
-        <Dialog.Positioner>
-          <Dialog.Content p="30px" w="550px" h="650">
+        <Popover.Positioner>
+          <Popover.Content p="30px" w="550px" maxH="650">
             <Stack>
-              <Dialog.Title>Friend requests</Dialog.Title>
+              <Popover.Title>Friend requests</Popover.Title>
               <VStack>
                 <Divider
                   orientation="horizontal"
@@ -112,9 +116,9 @@ export const Navbar: React.FC = () => {
                 <FriendRequestList userList={mockUserList} />
               </VStack>
             </Stack>
-          </Dialog.Content>
-        </Dialog.Positioner>
-      </Dialog.Root>
+          </Popover.Content>
+        </Popover.Positioner>
+      </Popover.Root>
     </>
   );
 };
