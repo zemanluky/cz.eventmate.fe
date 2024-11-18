@@ -102,7 +102,7 @@ export const Navbar: React.FC = () => {
 
         {/*Friend request modal */}
         <Popover.Positioner>
-          <Popover.Content p="30px" w="550px" maxH="650">
+          <Popover.Content p="30px" w="550px" maxH="650px">
             <Stack>
               <Popover.Title>Friend requests</Popover.Title>
               <VStack>
