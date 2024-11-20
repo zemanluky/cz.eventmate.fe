@@ -24,6 +24,7 @@ export default defineConfig({
       semanticTokens: {
         colors: {
           fg: {
+            subtle: { value: "{colors.olive.9}" }, // subtle text color
             cancel: { value: "{colors.olive.12}" }, // cancel button color
             buttonLarge: { value: "{#FFFFFF}" }, // large button color
             buttonSmall: { value: "{colors.olive.12}" }, // small button color
