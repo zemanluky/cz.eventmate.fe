@@ -2,7 +2,7 @@ import { Grid, GridItem, HStack, Stack } from "@Panda/jsx";
 import { Card } from "@ParkComponents/card";
 import { Icon } from "@ParkComponents/icon";
 import { Text } from "@ParkComponents/text";
-import { Calendar, LocateIcon } from "lucide-react";
+import { Calendar, MapPin } from "lucide-react";
 import * as React from "react";
 import { AvatarGroup } from "./AvatarGroup";
 
@@ -49,7 +49,7 @@ export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
                 </HStack>
                 <HStack>
                   <Icon>
-                    <LocateIcon />
+                    <MapPin />
                   </Icon>
                   <Text>{event.place}</Text>
                 </HStack>

@@ -2,7 +2,7 @@ import { Grid, GridItem, HStack } from "@Panda/jsx";
 import { Card } from "@ParkComponents/card";
 import { Icon } from "@ParkComponents/icon";
 import { Text } from "@ParkComponents/text";
-import { LocateIcon } from "lucide-react";
+import { MapPin } from "lucide-react";
 import * as React from "react";
 import { AvatarGroup } from "./AvatarGroup";
 
@@ -69,7 +69,7 @@ export const EventCardMobile: React.FC<EventCardMobileProps> = ({ event }) => {
             >
               <HStack>
                 <Icon>
-                  <LocateIcon />
+                  <MapPin />
                 </Icon>
                 <Text size="sm">{event.place}</Text>
               </HStack>
