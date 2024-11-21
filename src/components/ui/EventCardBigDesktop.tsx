@@ -30,8 +30,8 @@ export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
 }) => {
   return (
     <>
-      <Card.Root w="350px" h="430px">
-        <Card.Header w="100%" h="250px" bg="bg.emphasized">
+      <Card.Root w="350px" h="430px" bg="bg.card" color="fg.card">
+        <Card.Header w="100%" h="250px" bg="bg.emphasized" >
           {event.image}
         </Card.Header>
         <Card.Body p="25px" w="100%">

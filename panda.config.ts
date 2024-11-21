@@ -28,7 +28,7 @@ export default defineConfig({
             cancel: { value: "{colors.olive.12}" }, // cancel button color
             buttonLarge: { value: "#ffffff" }, // large button color
             buttonSmall: { value: "{colors.olive.12}" }, // small button color
-            card: { value: "{colors.olive.11}" }, // event cards text color (date,location)
+            card: { value: "{colors.olive.12}" }, // event cards text color (date,location)
             cardHeading: { value: "{#000000}" }, // event cards text color (heading)
           },
           bg: {
