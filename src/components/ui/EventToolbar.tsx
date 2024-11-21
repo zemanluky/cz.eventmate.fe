@@ -9,7 +9,7 @@ export const EventToolbar: React.FC = () => {
     return(
         <Flex justifyContent={"space-between"} alignItems={"center"}>
             <Text fontSize="5xl" fontWeight="500">Events</Text>
-            <Flex gap="16px" alignItems={"center"}>
+            <Flex gap="40px" alignItems={"center"}>
                 <Flex gap="8px">
                     <Switch size="lg"/><Text fontSize="xl" lineHeight="auto" textAlign={"center"}>Private</Text>
                 </Flex>
