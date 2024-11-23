@@ -10,6 +10,7 @@ import { ArrowRight } from "lucide-react";
 import { Icon } from "@ParkComponents/icon";
 import { Eye, EyeOff } from "lucide-react";
 import { IconButton } from "@ParkComponents/icon-button";
+import axios from "axios";
 
 
 export const RegisterForm: React.FC = () => {
@@ -18,6 +19,8 @@ export const RegisterForm: React.FC = () => {
 		confirmPassword: "",
 	})
 
+	const [showPassword, setShowPassword] = useState(false);
+	
 	const [inputs, setInputs] = useState({
 		firstname: "",
 		surname:"",
@@ -57,7 +60,7 @@ export const RegisterForm: React.FC = () => {
 	};
 
 
-	const handleSubmit = () => {
+	const handleSubmit = async() => {
 		// Validate before submission
 		validatePasswords();
 
@@ -72,10 +75,29 @@ export const RegisterForm: React.FC = () => {
 			alert("Please fill all fields correctly.");
 			return;
 		}
-	}
 
-	const [showPassword, setShowPassword] = useState(false);
-	console.log(inputs)
+		  // Prepare data for the API call
+		  const formData = {
+			...inputs,
+			password: passwordInputs.password,
+		  };
+
+		  try {
+			const response = await axios.post(`${import.meta.env.VITE_API_KEY}/auth/register`, formData);
+			console.log("Registration successful:", response.data);
+		
+			alert("Registration successful!");
+		  } catch (error) {
+			// Check for server errors or network issues
+			if (axios.isAxiosError(error)) {
+				console.error("Error:", error.response?.data || error.message);
+				alert(`Registration failed: ${error.response?.data?.message || error.message}`);
+			  } else {
+				console.error("Unexpected error:", error);
+				alert("An unexpected error occurred. Please try again later.");
+			  }
+		  }
+	}
 
 	const formStyles = css({
 		flexDirection: "column",
