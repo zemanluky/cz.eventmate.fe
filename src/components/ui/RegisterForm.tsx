@@ -8,9 +8,75 @@ import { Input } from "@ParkComponents/input";
 import { FormLabel } from "@ParkComponents/form-label";
 import { ArrowRight } from "lucide-react";
 import { Icon } from "@ParkComponents/icon";
+import { Eye, EyeOff } from "lucide-react";
+import { IconButton } from "@ParkComponents/icon-button";
 
 
 export const RegisterForm: React.FC = () => {
+	const [passwordInputs, setPasswordInputs] = useState({
+		password: "",
+		confirmPassword: "",
+	})
+
+	const [inputs, setInputs] = useState({
+		firstname: "",
+		surname:"",
+		username: "",
+		email: "",
+		password: passwordInputs.password === passwordInputs.confirmPassword ? passwordInputs.password : "",
+	});
+
+	const [errors, setErrors] = useState({
+		passwordMismatch: false,
+		passwordInvalid: false,
+	});
+
+	const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[-+#@$!%*?&])[A-Za-z\d-+#@$!%*?&]{9,}$/;
+
+	const validatePasswords = () => {
+		const { password, confirmPassword } = passwordInputs;
+
+		// Check if passwords match
+		const isMatch = password === confirmPassword;
+
+		// Check if password is valid
+		const isValid = passwordRegex.test(password);
+
+		// Update errors
+		setErrors({
+			passwordMismatch: !isMatch,
+			passwordInvalid: !isValid,
+		});
+
+		// Update inputs only if valid
+		if (isMatch && isValid) {
+			setInputs((prev) => ({ ...prev, password }));
+		} else {
+			setInputs((prev) => ({ ...prev, password: "" }));
+		}
+	};
+
+
+	const handleSubmit = () => {
+		// Validate before submission
+		validatePasswords();
+
+		// Ensure all fields are filled
+		if (
+			!inputs.firstname ||
+			!inputs.surname ||
+			!inputs.username ||
+			!inputs.email ||
+			!inputs.password
+		) {
+			alert("Please fill all fields correctly.");
+			return;
+		}
+	}
+
+	const [showPassword, setShowPassword] = useState(false);
+	console.log(inputs)
+
 	const formStyles = css({
 		flexDirection: "column",
 		alignItems: "center",
@@ -19,47 +85,143 @@ export const RegisterForm: React.FC = () => {
 		mt:{base: "15px", sm:"15px"},
 	});
 	return (
+
 		<Flex className={formStyles}>
-			<Text size="6xl">EventM8</Text>
-			<Stack gap="10px" width="2xs" w="100%">
+			<Text size="5xl">EventM8</Text>
+			<Stack gap="8px" width="2xs" w="100%">
 				<FormLabel fontWeight="bold" htmlFor="firstname">
 					First Name
 				</FormLabel>
-				<Input size="md" w="100%" id="firstname" placeholder="First Name" />
+				<Input
+					value={inputs.firstname}
+					size="md"
+					w="100%"
+					id="firstname"
+					placeholder="First Name"
+					onChange={(e) => setInputs({ ...inputs, firstname: e.target.value })}
+				/>
 
 				<FormLabel fontWeight="bold" htmlFor="lastname">
 					Last Name
 				</FormLabel>
-				<Input size="md" w="100%" id="lastname" placeholder="Last Name" />
+				<Input
+					value={inputs.surname}
+					size="md"
+					w="100%"
+					id="lastname"
+					placeholder="Last Name"
+					onChange={(e) => setInputs({ ...inputs, surname: e.target.value })}
+				/>
+
+				<FormLabel fontWeight="bold" htmlFor="username">
+					Username
+				</FormLabel>
+				<Input
+					value={inputs.username}
+					size="md"
+					w="100%"
+					id="username"
+					placeholder="Username"
+					onChange={(e) => setInputs({ ...inputs, username: e.target.value })}
+				/>
 
 				<FormLabel fontWeight="bold" htmlFor="email">
 					E-mail
 				</FormLabel>
-				<Input size="md" w="100%" id="email" placeholder="E-mail" />
+				<Input
+					value={inputs.email}
+					size="md"
+					w="100%"
+					id="email"
+					placeholder="E-mail"
+					onChange={(e) => setInputs({ ...inputs, email: e.target.value })}
+				/>
 
 				<FormLabel fontWeight="bold" htmlFor="password">
 					Password
 				</FormLabel>
-				<Input size="md" w="100%" id="password" placeholder="Password" />
+				<Flex alignItems={"center"} gap="8px">
+					<Input
+						value={passwordInputs.password}
+						size="md"
+						w="100%"
+						type={showPassword ? "text" : "password"}
+						id="password"
+						placeholder="Password"
+						onChange={(e) =>
+							setPasswordInputs({ ...passwordInputs, password: e.target.value })
+						}
+						onBlur={validatePasswords}
+						border={errors.passwordInvalid ? "1px solid red" : ""}
+					/>
+					<IconButton
+						onClick={() => setShowPassword(!showPassword)}
+						variant={"outline"}
+					>
+						{showPassword ? <Eye /> : <EyeOff />}
+					</IconButton>
+				</Flex>
+				{errors.passwordInvalid && (
+					<Text color="red.500" fontSize="sm">
+						Password must be at least 9 characters long, include a number, and a
+						special character.
+					</Text>
+				)}
 
-				<FormLabel fontWeight="bold" htmlFor="confirmpassword">
+				<FormLabel fontWeight="bold" htmlFor="confirm-password">
 					Confirm Password
 				</FormLabel>
-				<Input
-					size="md"
-					w="100%"
-					id="confirmpassword"
-					placeholder="Confirm Password"
-				/>
+				<Flex alignItems={"center"} gap="8px">
+					<Input
+						value={passwordInputs.confirmPassword}
+						size="md"
+						w="100%"
+						type={showPassword ? "text" : "password"}
+						id="confirm-password"
+						placeholder="Confirm Password"
+						onChange={(e) =>
+							setPasswordInputs({
+								...passwordInputs,
+								confirmPassword: e.target.value,
+							})
+						}
+						onBlur={validatePasswords}
+						border={errors.passwordInvalid ? "1px solid red" : ""}
+					/>
+					<IconButton
+						onClick={() => setShowPassword(!showPassword)}
+						variant={"outline"}
+					>
+						{showPassword ? <Eye /> : <EyeOff />}
+					</IconButton>
+				</Flex>
+				{errors.passwordMismatch && (
+					<Text color="red.500" fontSize="sm">
+						Passwords do not match.
+					</Text>
+				)}
 
-				<Button mt="20px" color="white" bg="bg.buttonLarge">
+				<Button
+					mt="8px"
+					color="white"
+					bg="bg.buttonLarge"
+					disabled={
+						!inputs.firstname ||
+						!inputs.surname ||
+						!inputs.username ||
+						!inputs.email ||
+						!inputs.password ||
+						errors.passwordMismatch ||
+						errors.passwordInvalid
+					}
+					onClick={handleSubmit}
+				>
 					Sign Up
 					<Icon>
 						<ArrowRight />
 					</Icon>
 				</Button>
-				
 			</Stack>
 		</Flex>
 	);
-};
+}
