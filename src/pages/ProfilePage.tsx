@@ -1,11 +1,51 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { Button } from "@ParkComponents/button.tsx";
 import { Box, Flex } from "@Panda/jsx";
 import { Text } from "@ParkComponents/text";
 import { RatingGroup } from "@ParkComponents/rating-group";
+import axios from "axios";
 
 export const ProfilePage: React.FC = () => {
+
+	const getProfileDetails = async () => {
+		try {
+			// Retrieve the token from localStorage
+			const token = localStorage.getItem("authToken");
+	
+			if (!token) {
+				alert("User is not authenticated. Please log in.");
+				return;
+			}
+	
+			// Include the token in the Authorization header
+			const response = await axios.get(
+				`${import.meta.env.VITE_API_KEY}/user/profile`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`, // Add "Bearer" prefix here
+					},
+				}
+			);
+	
+			console.log("Profile data acquired successfully!", response.data);
+		} catch (error) {
+			// Handle errors
+			if (axios.isAxiosError(error)) {
+				console.error("Error:", error.response?.data || error.message);
+				alert(`Fetching data failed: ${error.response?.data?.message || error.message}`);
+			} else {
+				console.error("Unexpected error:", error);
+				alert("An unexpected error occurred. Please try again later.");
+			}
+		}
+	};
+	
+
+	React.useEffect(() =>{
+		getProfileDetails()
+	})
+
 	return (
 		<>
 			<Flex w="100%" py="24px" gap="50px" borderBottom={"2px solid gray"}>
