@@ -22,7 +22,7 @@ export const RegisterForm: React.FC = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	
 	const [inputs, setInputs] = useState({
-		firstname: "",
+		name: "",
 		surname:"",
 		username: "",
 		email: "",
@@ -66,7 +66,7 @@ export const RegisterForm: React.FC = () => {
 
 		// Ensure all fields are filled
 		if (
-			!inputs.firstname ||
+			!inputs.name ||
 			!inputs.surname ||
 			!inputs.username ||
 			!inputs.email ||
@@ -83,7 +83,7 @@ export const RegisterForm: React.FC = () => {
 		  };
 
 		  try {
-			const response = await axios.post(`${import.meta.env.VITE_API_KEY}/auth/register`, formData);
+			const response = await axios.post(`${import.meta.env.VITE_API_KEY}/user/registration`, formData);
 			console.log("Registration successful:", response.data);
 		
 			alert("Registration successful!");
@@ -111,16 +111,16 @@ export const RegisterForm: React.FC = () => {
 		<Flex className={formStyles}>
 			<Text size="5xl">EventM8</Text>
 			<Stack gap="8px" width="2xs" w="100%">
-				<FormLabel fontWeight="bold" htmlFor="firstname">
+				<FormLabel fontWeight="bold" htmlFor="name">
 					First Name
 				</FormLabel>
 				<Input
-					value={inputs.firstname}
+					value={inputs.name}
 					size="md"
 					w="100%"
-					id="firstname"
+					id="name"
 					placeholder="First Name"
-					onChange={(e) => setInputs({ ...inputs, firstname: e.target.value })}
+					onChange={(e) => setInputs({ ...inputs, name: e.target.value })}
 				/>
 
 				<FormLabel fontWeight="bold" htmlFor="lastname">
@@ -228,7 +228,7 @@ export const RegisterForm: React.FC = () => {
 					color="white"
 					bg="bg.buttonLarge"
 					disabled={
-						!inputs.firstname ||
+						!inputs.name ||
 						!inputs.surname ||
 						!inputs.username ||
 						!inputs.email ||
