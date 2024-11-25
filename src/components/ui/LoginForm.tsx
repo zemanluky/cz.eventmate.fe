@@ -32,6 +32,12 @@ export const LoginForm: React.FC = () => {
 
     try {
 			const response = await axios.post(`${import.meta.env.VITE_API_KEY}/auth/login`, formData);
+
+      // Save the token to localStorage
+      const token = response.data.data.access_token
+      console.log(token)
+      localStorage.setItem("authToken", token);
+
 			console.log("Login successful:", response.data);
 		
 			alert("Login successful!");
