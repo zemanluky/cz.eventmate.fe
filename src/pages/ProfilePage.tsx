@@ -5,16 +5,17 @@ import { Box, Flex } from "@Panda/jsx";
 import { Text } from "@ParkComponents/text";
 import { RatingGroup } from "@ParkComponents/rating-group";
 import axios from "axios";
+import { useShowToast } from "src/hooks";
 
 export const ProfilePage: React.FC = () => {
-
+	const showToast = useShowToast()
 	const getProfileDetails = async () => {
 		try {
 			// Retrieve the token from localStorage
 			const token = localStorage.getItem("authToken");
 	
 			if (!token) {
-				alert("User is not authenticated. Please log in.");
+				showToast("Auth Error", "User is not authenticated. Please log in.", "error");
 				return;
 			}
 	
@@ -32,16 +33,13 @@ export const ProfilePage: React.FC = () => {
 		} catch (error) {
 			// Handle errors
 			if (axios.isAxiosError(error)) {
-				console.error("Error:", error.response?.data || error.message);
-				alert(`Fetching data failed: ${error.response?.data?.message || error.message}`);
+				showToast("Error", `Fetching data failed: ${error.response?.data?.message || error.message}`, "error");
 			} else {
-				console.error("Unexpected error:", error);
-				alert("An unexpected error occurred. Please try again later.");
+				showToast("Unexpected Error", "Please try again later", "error");
 			}
 		}
 	};
 	
-
 	React.useEffect(() =>{
 		getProfileDetails()
 	})
