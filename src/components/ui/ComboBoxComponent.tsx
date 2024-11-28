@@ -14,25 +14,24 @@ export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
   inputCollection,
   onChange,
 }) => {
-  const initialCollection = createListCollection({ items: inputCollection });
-  const [collection, setCollection] = useState(initialCollection);
+  const [collection, setCollection] = useState(inputCollection);
+  const comboboxCollection = React.useMemo(
+    createListCollection({ items: collection }),
+    [collection]
+  );
 
   const handleInputChange = ({
     inputValue,
   }: Combobox.InputValueChangeDetails) => {
-    const filtered = initialCollection.items.filter((item) =>
+    const filtered = inputCollection.filter((item) =>
       item.label.toLowerCase().includes(inputValue.toLowerCase())
     );
 
-    setCollection(
-      filtered.length > 0
-        ? createListCollection({ items: filtered })
-        : initialCollection
-    );
+    setCollection(filtered);
   };
 
   const handleOpenChange = () => {
-    setCollection(initialCollection);
+    setCollection(inputCollection);
   };
 
   const handleItemSelect = (event: React.SyntheticEvent<HTMLDivElement>) => {
@@ -46,7 +45,7 @@ export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
   return (
     <Combobox.Root
       w="100%"
-      collection={collection}
+      collection={comboboxCollection}
       onSelect={handleItemSelect}
       onInputValueChange={handleInputChange}
       onOpenChange={handleOpenChange}
@@ -64,17 +63,14 @@ export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
       </Combobox.Control>
       <Combobox.Positioner>
         <Combobox.Content>
-          <Combobox.ItemGroup>
-            <Combobox.ItemGroupLabel>Frameworks</Combobox.ItemGroupLabel>
-            {collection.items.map((item) => (
-              <Combobox.Item key={item.value} item={item}>
-                <Combobox.ItemText>{item.label}</Combobox.ItemText>
-                <Combobox.ItemIndicator>
-                  <CheckIcon />
-                </Combobox.ItemIndicator>
-              </Combobox.Item>
-            ))}
-          </Combobox.ItemGroup>
+          {collection.map((item) => (
+            <Combobox.Item key={item.value} item={item}>
+              <Combobox.ItemText>{item.label}</Combobox.ItemText>
+              <Combobox.ItemIndicator>
+                <CheckIcon />
+              </Combobox.ItemIndicator>
+            </Combobox.Item>
+          ))}
         </Combobox.Content>
       </Combobox.Positioner>
     </Combobox.Root>
