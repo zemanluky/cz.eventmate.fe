@@ -39,6 +39,9 @@ export default defineConfig({
             card: { value: "{colors.olive.2}" }, // event cards background color
             navbar: { value: "{colors.olive.2}" }, // nav background color
           },
+          error: { value: '{colors.red}'},
+          success: { value: '{colors.grass.7}',},
+          alert: { value: '{colors.orange.7}' },
         },
       },
     },
