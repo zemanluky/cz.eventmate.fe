@@ -9,8 +9,12 @@ import { Icon } from "@ParkComponents/icon";
 import * as React from "react";
 import { IconButton } from "@ParkComponents/icon-button";
 import axios from "axios";
+import { useShowToast } from "src/hooks";
+import { useNavigate } from "react-router-dom";
 
 export const LoginForm: React.FC = () => {
+  const navigate = useNavigate()
+  const showToast = useShowToast()
 
   const [inputs, setInputs] = React.useState({
     email:"",
@@ -18,40 +22,58 @@ export const LoginForm: React.FC = () => {
   })
   const [showPassword, setShowPassword] = React.useState(false);
 
-  const handleSubmit = async() =>{
+  const handleSubmit = async () => {
     // Ensure all fields are filled
-		if (
-			!inputs.email ||
-			!inputs.password
-		) {
-			alert("Please fill all fields correctly.");
-			return;
-		}
-
-    const formData = {...inputs}
-
+    if (!inputs.email || !inputs.password) {
+      showToast("Warning", "Fill in the inputs correctly", "alert");
+      return;
+    }
+  
+    // Prepare the form data
+    const formData = { ...inputs };
+  
     try {
-			const response = await axios.post(`${import.meta.env.VITE_API_KEY}/auth/login`, formData);
-
-      // Save the token to localStorage
-      const token = response.data.data.access_token
+      // Send the login request
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_KEY}/auth/login`,
+        formData,
+        {
+          withCredentials: true, // Ensure cookies are sent with the request
+        }
+      );
+  
+      // Extract the access token from the response
+      const token = response.data.data.access_token;
       console.log(token)
+  
+      // Store the token in localStorage
       localStorage.setItem("authToken", token);
+  
+      // Provide user feedback on successful login
+      showToast("Success", "Login successful", "success");
 
-			console.log("Login successful:", response.data);
-		
-			alert("Login successful!");
-		  } catch (error) {
-			// Check for server errors or network issues
-			if (axios.isAxiosError(error)) {
-				console.error("Error:", error.response?.data || error.message);
-				alert(`Login failed: ${error.response?.data?.message || error.message}`);
-			  } else {
-				console.error("Unexpected error:", error);
-				alert("An unexpected error occurred. Please try again later.");
-			  }
-		  }
-  }
+      setTimeout(() => {
+        navigate("/")
+      }, 1000);
+
+    } catch (error) {
+      // Check for server errors or network issues
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          showToast("Error", "Invalid credentials. Please try again.", "error");
+        } else {
+          showToast(
+            "Error",
+            error.response?.data?.message || error.message,
+            "error"
+          );
+        }
+      } else {
+        showToast("Unexpected Error", "Please try again later", "error");
+      }
+    }
+  };
+  
 
   return (
     <VStack w= {{base: "350px", sm:"450px"}} mt={{base: "15px", sm:"15px"}}>
