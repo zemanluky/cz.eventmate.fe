@@ -11,4 +11,5 @@ export * from "./CreateEventForm.tsx";
 export * from "./EditEventForm.tsx";
 export * from "./DatePickerComponent.tsx";
 export * from "./ComboBoxComponent.tsx";
-export * from "./EventToolbar.tsx"
+export * from "./EventToolbar.tsx";
+export * from "./Profile.tsx";
