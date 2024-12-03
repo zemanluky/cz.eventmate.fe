@@ -5,7 +5,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { PageWrapper } from "@Components/layout";
-import { Homepage, ProfilePage } from "@Pages";
+import { EventDetail, Homepage, MyProfilePage, ProfilePage } from "@Pages";
 import { AuthPage } from "@Pages";
 import { CreateEventFormPage } from "src/pages/CreateEventFormPage";
 import { MyEvents } from "src/pages/MyEvents";
@@ -25,23 +25,31 @@ const routes: RouteObject[] = [
         element: <AuthPage /> /* 👈 Renders at /#/auth/ */,
       },
       {
-        path: "profile",
-        element: <ProfilePage /> /* 👈 Renders at /#/profile/ */,
+        path: "my-profile",
+        element: <MyProfilePage /> /* 👈 Renders at /#/my-profile */,
       },
       {
-        path: "createEvent",
+        path: "create-event",
         element: <CreateEventFormPage /> /* 👈 Renders at /#/createEvent/ */,
       },
       {
-        path: "myEvents",
+        path: "my-events",
         element: <MyEvents /> /* 👈 Renders at /#/myEvents/ */,
       },
 
       {
-        path: "editEvent/:eventId",
+        path: "edit-event/:eventId",
         element: (
           <EditEventFormPage />
-        ) /* 👈 Renders at /#/editEvent/:eventId/ */,
+        ) /* 👈 Renders at /#/edit-event/:eventId/ */,
+      },
+      {
+        path: "event-detail/:eventId",
+        element: <EventDetail /> /* 👈 Renders at /#/event-detail/:eventId/ */,
+      },
+      {
+        path: "profile/:userId",
+        element: <ProfilePage /> /* 👈 Renders at /#/profile/:userId */,
       },
 
       // add more routes here...

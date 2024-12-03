@@ -134,7 +134,7 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
                       w="95px"
                       h="95px"
                       key={event.id}
-                      onClick={() => navigate(`/editEvent/${event.id}`)}
+                      onClick={() => navigate(`/edit-event/${event.id}`)}
                       aria-label="Edit Event"
                     >
                       {/* size nefunguje */}

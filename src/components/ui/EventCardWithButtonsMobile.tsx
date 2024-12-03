@@ -98,7 +98,7 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
                 <HStack mt="10px">
                   <Button
                     key={event.id}
-                    onClick={() => navigate(`/editEvent/${event.id}`)}
+                    onClick={() => navigate(`/edit-event/${event.id}`)}
                   >
                     {/* size nefunguje */}
                     <PencilLineIcon strokeWidth={2} size={40} />

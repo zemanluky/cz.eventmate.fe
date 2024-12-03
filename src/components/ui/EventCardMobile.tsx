@@ -5,6 +5,7 @@ import { Text } from "@ParkComponents/text";
 import { MapPin } from "lucide-react";
 import * as React from "react";
 import { AvatarGroup } from "./AvatarGroup";
+import { Link } from "react-router-dom";
 
 interface EventCardMobileProps {
   event: {
@@ -28,65 +29,67 @@ interface Member {
 export const EventCardMobile: React.FC<EventCardMobileProps> = ({ event }) => {
   return (
     <>
-      <Card.Root w="350px" h="270px">
-        <Card.Header w="100%" h="170px" bg="bg.emphasized">
-          {event.image}
-        </Card.Header>
-        <Card.Body p="20px" w="100%">
-          <Grid
-            gridTemplateColumns="repeat(5, 1fr)"
-            gridTemplateRows="repeat(2, 1fr)"
-            gap={0}
-            h="100px"
-            w="100%"
-          >
-            <GridItem
-              colSpan={3}
-              rowSpan={1}
-              display="flex"
-              alignItems="center"
+      <Link to={`/eventDetail/${event.id}`}>
+        <Card.Root w="350px" h="270px">
+          <Card.Header w="100%" h="170px" bg="bg.emphasized">
+            {event.image}
+          </Card.Header>
+          <Card.Body p="20px" w="100%">
+            <Grid
+              gridTemplateColumns="repeat(5, 1fr)"
+              gridTemplateRows="repeat(2, 1fr)"
+              gap={0}
+              h="100px"
+              w="100%"
             >
-              <Text size="lg" fontWeight="semibold">
-                {event.name}
-              </Text>
-            </GridItem>
+              <GridItem
+                colSpan={3}
+                rowSpan={1}
+                display="flex"
+                alignItems="center"
+              >
+                <Text size="lg" fontWeight="semibold">
+                  {event.name}
+                </Text>
+              </GridItem>
 
-            <GridItem
-              colSpan={2}
-              rowSpan={1}
-              display="flex"
-              alignItems="center"
-              justifyContent="end"
-            >
-              <Text size="sm">{event.date}</Text>
-            </GridItem>
+              <GridItem
+                colSpan={2}
+                rowSpan={1}
+                display="flex"
+                alignItems="center"
+                justifyContent="end"
+              >
+                <Text size="sm">{event.date}</Text>
+              </GridItem>
 
-            <GridItem
-              colSpan={3}
-              rowSpan={1}
-              display="flex"
-              alignItems="center"
-            >
-              <HStack>
-                <Icon>
-                  <MapPin />
-                </Icon>
-                <Text size="sm">{event.place}</Text>
-              </HStack>
-            </GridItem>
+              <GridItem
+                colSpan={3}
+                rowSpan={1}
+                display="flex"
+                alignItems="center"
+              >
+                <HStack>
+                  <Icon>
+                    <MapPin />
+                  </Icon>
+                  <Text size="sm">{event.place}</Text>
+                </HStack>
+              </GridItem>
 
-            <GridItem
-              colSpan={2}
-              rowSpan={1}
-              display="flex"
-              alignItems="center"
-              justifyContent="end"
-            >
-              <AvatarGroup members={event.memberList} />
-            </GridItem>
-          </Grid>
-        </Card.Body>
-      </Card.Root>
+              <GridItem
+                colSpan={2}
+                rowSpan={1}
+                display="flex"
+                alignItems="center"
+                justifyContent="end"
+              >
+                <AvatarGroup members={event.memberList} />
+              </GridItem>
+            </Grid>
+          </Card.Body>
+        </Card.Root>
+      </Link>
     </>
   );
 };

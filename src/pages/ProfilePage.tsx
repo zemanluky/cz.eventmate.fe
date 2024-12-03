@@ -7,8 +7,13 @@ import { Profile } from "@Components/ui";
 import { Box, Divider, Flex } from "@Panda/jsx";
 import { Text } from "@ParkComponents/text";
 import { Button } from "@ParkComponents/button";
+//import { useParams } from "react-router-dom";
 
 export const ProfilePage: React.FC = () => {
+  //const params = useParams();
+  //const userId = params.userId as string;
+  //const user = handleGetUser(userId) */
+
   const [showEvents, setShowEvents] = React.useState(true);
   const showToast = useShowToast();
 
