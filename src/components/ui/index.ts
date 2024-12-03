@@ -16,3 +16,6 @@ export * from "./Profile.tsx";
 export * from "./EventToolbarMyEvents.tsx";
 export * from "./EventCardLongDesktop.tsx";
 export * from "./EventCardWithButtonsMobile.tsx";
+export * from "./EventToolbarEventDetail.tsx";
+export * from "./MyProfile.tsx";
+export * from "./RatingCard.tsx";
