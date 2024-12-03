@@ -1,4 +1,4 @@
-import { Flex } from "@Panda/jsx";
+import { Box, Flex } from "@Panda/jsx";
 import { Button } from "@ParkComponents/button";
 import { FormLabel } from "@ParkComponents/form-label";
 import { Icon } from "@ParkComponents/icon";
@@ -7,8 +7,10 @@ import { Menu } from "@ParkComponents/menu";
 import { Switch } from "@ParkComponents/switch";
 import { Text } from "@ParkComponents/text";
 import { SlidersHorizontal } from "lucide-react";
+import { useState } from "react";
 
 export const EventToolbar: React.FC = () => {
+  const [showEvents, setShowEvents] = useState(true);
   return (
     <>
       <Menu.Root
@@ -17,16 +19,32 @@ export const EventToolbar: React.FC = () => {
         }}
       >
         <Flex justifyContent={"space-between"} alignItems={"center"}>
-          <Text fontSize="5xl" fontWeight="500">
+          <Text fontSize={{sm:"5xl", base:"4xl"}} fontWeight="500">
             Events
           </Text>
-          <Flex gap="40px" alignItems={"center"}>
-            <Flex gap="8px">
-              <Switch size="lg" />
-              <Text fontSize="xl" lineHeight="auto" textAlign={"center"}>
-                Private
-              </Text>
+          <Flex gap={{sm:"40px", base:"16px"}} alignItems={"center"}>
+          <Box w="150px" p="5px" h="36px" rounded="full" bg="bg.muted">
+            <Flex justifyItems="center">
+              <Button
+                w="70px"
+                h="26px"
+                rounded="full"
+                bg={showEvents ? "bg.buttonSmall" : "transparent"}
+                onClick={() => setShowEvents(true)}
+              >
+                <Text>Public</Text>
+              </Button>
+              <Button
+                w="70px"
+                h="26px"
+                rounded="full"
+                bg={showEvents ? "transparent" : "bg.buttonSmall"}
+                onClick={() => setShowEvents(false)}
+              >
+                <Text>Private</Text>
+              </Button>
             </Flex>
+          </Box>
 
             <Menu.Trigger asChild>
               <Button p={"0px"}>
