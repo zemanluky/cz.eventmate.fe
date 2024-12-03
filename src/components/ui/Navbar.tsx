@@ -8,100 +8,101 @@ import { Box, Divider, HStack, Stack, VStack } from "@Panda/jsx";
 import { FriendRequestList } from "./FriendRequestList";
 import { Popover } from "@ParkComponents/popover";
 import { Menu } from "@ParkComponents/menu";
-import { LogOutIcon, UserIcon, UserRoundPlus } from "lucide-react";
+import { LogOutIcon, PartyPopper, UserIcon, UserRoundPlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useShowToast } from "src/hooks";
 import axios from "axios";
 import axiosClient from "axiosClient";
 
 export const Navbar: React.FC = () => {
-  const mockUserList = [
-    {
-      user: {
-        id: "1",
-        name: "John",
-        surname: "Doe",
-        imageUrl: "https://via.placeholder.com/40",
-      },
-    },
-    {
-      user: {
-        id: "2",
-        name: "Jane",
-        surname: "Smith",
-        imageUrl: "https://via.placeholder.com/40",
-      },
-    },
-    {
-      user: {
-        id: "3",
-        name: "Alice",
-        surname: "Johnson",
-        imageUrl: "https://via.placeholder.com/40",
-      },
-    },
-    {
-      user: {
-        id: "4",
-        name: "Bob",
-        surname: "Brown",
-        imageUrl: "https://via.placeholder.com/40",
-      },
-    },
-  ];
+	const mockUserList = [
+		{
+			user: {
+				id: "1",
+				name: "John",
+				surname: "Doe",
+				imageUrl: "https://via.placeholder.com/40",
+			},
+		},
+		{
+			user: {
+				id: "2",
+				name: "Jane",
+				surname: "Smith",
+				imageUrl: "https://via.placeholder.com/40",
+			},
+		},
+		{
+			user: {
+				id: "3",
+				name: "Alice",
+				surname: "Johnson",
+				imageUrl: "https://via.placeholder.com/40",
+			},
+		},
+		{
+			user: {
+				id: "4",
+				name: "Bob",
+				surname: "Brown",
+				imageUrl: "https://via.placeholder.com/40",
+			},
+		},
+	];
 
-  const navBarStyles = css({
-    w: "100%",
-    h: "100px",
-    paddingX: { base: "16px", sm: "48px" },
-    display: "flex",
-    gap: "60px",
-    alignItems: "center",
-    bg: "bg.navbar",
-    boxShadow: "0px 4px 1px 0px var(--colors-neutrals-olive-3, #EFF1EF)",
-  });
+	const navBarStyles = css({
+		w: "100%",
+		h: "100px",
+		paddingX: { base: "16px", sm: "48px" },
+		display: "flex",
+		gap: "60px",
+		alignItems: "center",
+		bg: "bg.navbar",
+		boxShadow: "0px 4px 1px 0px var(--colors-neutrals-olive-3, #EFF1EF)",
+	});
 
-  const inputStyles = css({
-    width: "100%",
-    border: "1px solid #EFF1EF",
-    color: "card",
-  });
+	const inputStyles = css({
+		width: "100%",
+		border: "1px solid #EFF1EF",
+		color: "card",
+	});
 
-  const flexStyles = css({
-    display: "flex",
-    alignItems: "center",
-    gap: "20px",
-  });
+	const flexStyles = css({
+		display: "flex",
+		alignItems: "center",
+		gap: "20px",
+	});
 
-	const showToast = useShowToast()
+	const showToast = useShowToast();
 
 	// logout
-	const handleLogout = async() => {
+	const handleLogout = async () => {
 		try {
 			// Send the logout request
-			const response = await axiosClient.delete(`${import.meta.env.VITE_API_KEY}/auth/logout`);
-		
+			const response = await axiosClient.delete(
+				`${import.meta.env.VITE_API_KEY}/auth/logout`
+			);
+
 			// Remove the token in localStorage
 			localStorage.removeItem("authToken");
-		
+
 			// Provide user feedback on successful logout
 			showToast("Success", "Logout successful", "success");
 
 			// update user context so content dissapears !!!
-	  
-		  } catch (error) {
+		} catch (error) {
 			// Check for server errors or network issues
 			if (axios.isAxiosError(error)) {
 				showToast(
-				  "Error",
-				  error.response?.data?.message || error.message,
-				  "error"
+					"Error",
+					error.response?.data?.message || error.message,
+					"error"
 				);
 			} else {
-			  showToast("Unexpected Error", "Please try again later", "error");
+				showToast("Unexpected Error", "Please try again later", "error");
 			}
-		  }
-		};
+		}
+	};
 
 	return (
 		<>
@@ -112,7 +113,9 @@ export const Navbar: React.FC = () => {
 					}}
 				>
 					<Box className={navBarStyles}>
-						<Text fontSize={"xl"}>EventMate</Text>
+						<Link to="/">
+							<Text fontSize={"xl"}>EventMate</Text>
+						</Link>
 						<Input
 							size="sm"
 							id="name"
@@ -132,13 +135,13 @@ export const Navbar: React.FC = () => {
 								</Button>
 							</Popover.Trigger>
 
-              <Menu.Trigger asChild>
-                <Button variant="ghost" bg="none" borderRadius={"full"} p="0">
-                  <Avatar name="John Doe" />
-                </Button>
-              </Menu.Trigger>
-            </Box>
-          </Box>
+							<Menu.Trigger asChild>
+								<Button variant="ghost" bg="none" borderRadius={"full"} p="0">
+									<Avatar name="John Doe" />
+								</Button>
+							</Menu.Trigger>
+						</Box>
+					</Box>
 
 					{/*Friend request modal */}
 					<Popover.Positioner>
@@ -165,14 +168,25 @@ export const Navbar: React.FC = () => {
 						<Menu.ItemGroup>
 							<Menu.ItemGroupLabel>My Account</Menu.ItemGroupLabel>
 							<Menu.Separator />
-							<Menu.Item value="profile">
-                			<Link to="/profile">
-								<HStack gap="2">
-                    				<UserIcon />
-									Profile
-                    			</HStack>
-                			</Link>
-							</Menu.Item>
+
+							<Link to="/profile">
+								<Menu.Item value="profile">
+									<HStack gap="2">
+										<UserIcon />
+										Profile
+									</HStack>
+								</Menu.Item>
+							</Link>
+
+							<Link to="/my-events">
+								<Menu.Item value="myEvents">
+									<HStack gap="2">
+										<PartyPopper />
+										My Events
+									</HStack>
+								</Menu.Item>
+							</Link>
+
 							<Menu.Separator />
 							<Menu.Item value="logout" onClick={handleLogout}>
 								<HStack gap="2">
