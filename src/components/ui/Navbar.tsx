@@ -8,7 +8,7 @@ import { Box, Divider, HStack, Stack, VStack } from "@Panda/jsx";
 import { FriendRequestList } from "./FriendRequestList";
 import { Popover } from "@ParkComponents/popover";
 import { Menu } from "@ParkComponents/menu";
-import { LogOutIcon, UserIcon } from "lucide-react";
+import { LogOutIcon, UserIcon, UserRoundPlus } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const Navbar: React.FC = () => {
@@ -93,8 +93,9 @@ export const Navbar: React.FC = () => {
 									bg="bg.buttonSmall"
 									color="fg.buttonSmall"
 									borderRadius={"full"}
+									p="0"
 								>
-									F
+									<UserRoundPlus />
 								</Button>
 							</Popover.Trigger>
 
