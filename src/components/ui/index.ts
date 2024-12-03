@@ -13,3 +13,6 @@ export * from "./DatePickerComponent.tsx";
 export * from "./ComboBoxComponent.tsx";
 export * from "./EventToolbar.tsx";
 export * from "./Profile.tsx";
+export * from "./EventToolbarMyEvents.tsx";
+export * from "./EventCardLongDesktop.tsx";
+export * from "./EventCardWithButtonsMobile.tsx";
