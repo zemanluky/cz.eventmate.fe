@@ -10,6 +10,9 @@ import { Popover } from "@ParkComponents/popover";
 import { Menu } from "@ParkComponents/menu";
 import { LogOutIcon, UserIcon, UserRoundPlus } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useShowToast } from "src/hooks";
+import axios from "axios";
+import axiosClient from "axiosClient";
 
 export const Navbar: React.FC = () => {
 	const mockUserList = [
@@ -69,6 +72,36 @@ export const Navbar: React.FC = () => {
 		alignItems: "center",
 		gap: "20px",
 	});
+
+	const showToast = useShowToast()
+
+	// logout
+	const handleLogout = async() => {
+		try {
+			// Send the logout request
+			const response = await axiosClient.delete(`${import.meta.env.VITE_API_KEY}/auth/logout`);
+		
+			// Remove the token in localStorage
+			localStorage.removeItem("authToken");
+		
+			// Provide user feedback on successful logout
+			showToast("Success", "Logout successful", "success");
+
+			// update user context so content dissapears !!!
+	  
+		  } catch (error) {
+			// Check for server errors or network issues
+			if (axios.isAxiosError(error)) {
+				showToast(
+				  "Error",
+				  error.response?.data?.message || error.message,
+				  "error"
+				);
+			} else {
+			  showToast("Unexpected Error", "Please try again later", "error");
+			}
+		  }
+		};
 
 	return (
 		<>
@@ -133,16 +166,15 @@ export const Navbar: React.FC = () => {
 							<Menu.ItemGroupLabel>My Account</Menu.ItemGroupLabel>
 							<Menu.Separator />
 							<Menu.Item value="profile">
-                <Link to="/profile">
-									<HStack gap="2">
-
-                    <UserIcon />
-										Profile
-                    </HStack>
-                </Link>
+                			<Link to="/profile">
+								<HStack gap="2">
+                    				<UserIcon />
+									Profile
+                    			</HStack>
+                			</Link>
 							</Menu.Item>
 							<Menu.Separator />
-							<Menu.Item value="logout">
+							<Menu.Item value="logout" onClick={handleLogout}>
 								<HStack gap="2">
 									<LogOutIcon />
 									Logout
