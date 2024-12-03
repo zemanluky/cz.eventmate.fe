@@ -11,9 +11,11 @@ import { Icon } from "@ParkComponents/icon";
 import { Eye, EyeOff } from "lucide-react";
 import { IconButton } from "@ParkComponents/icon-button";
 import axios from "axios";
+import { useShowToast } from "src/hooks";
 
 
 export const RegisterForm: React.FC = () => {
+	const showToast = useShowToast()
 	const [passwordInputs, setPasswordInputs] = useState({
 		password: "",
 		confirmPassword: "",
@@ -59,10 +61,53 @@ export const RegisterForm: React.FC = () => {
 		}
 	};
 
+	const usernameRegex = /^[a-zA-Z0-9_-]{5,}$/;
+
+	const validateUserName = () =>{
+		const isValid = usernameRegex.test(inputs.username)
+		if(!isValid){
+			showToast("Warning", "Username must be at least 5 characters long", "alert")
+			return false
+		}
+		return true
+	}
+
+	const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
+	const validateEmail = () =>{
+		const isValid = emailRegex.test(inputs.email)
+		if(!isValid){
+			showToast("Warning", "Email must be in format example@domain.com", "alert")
+			return false
+		}
+		return true
+	}
+
+	const nameRegex = /^[A-Z][a-zA-Z]*$/;
+	const validateName = (name :string) => {
+		return nameRegex.test(name);
+	};
+
 
 	const handleSubmit = async() => {
 		// Validate before submission
 		validatePasswords();
+
+		const validUserName = validateUserName();
+		const validEmail = validateEmail()
+		
+		if(!validateName(inputs.name)){
+			showToast("Warning", "Name needs to have a capital letter and no numbers", "alert")
+			return
+		}
+
+		if(!validateName(inputs.surname)){
+			showToast("Warning", "Surname needs to have a capital letter and no numbers", "alert")
+			return
+		}
+
+		
+		if(!validUserName || !validEmail) return;
 
 		// Ensure all fields are filled
 		if (
@@ -72,7 +117,7 @@ export const RegisterForm: React.FC = () => {
 			!inputs.email ||
 			!inputs.password
 		) {
-			alert("Please fill all fields correctly.");
+			showToast("Warning", "Please fill all fields correctly.", "alert")
 			return;
 		}
 
@@ -86,15 +131,15 @@ export const RegisterForm: React.FC = () => {
 			const response = await axios.post(`${import.meta.env.VITE_API_KEY}/user/registration`, formData);
 			console.log("Registration successful:", response.data);
 		
-			alert("Registration successful!");
+			showToast("Success","Registration successful!", "success");
 		  } catch (error) {
 			// Check for server errors or network issues
 			if (axios.isAxiosError(error)) {
 				console.error("Error:", error.response?.data || error.message);
-				alert(`Registration failed: ${error.response?.data?.message || error.message}`);
+				showToast("Error", `Registration failed: ${error.response?.data?.message || error.message}`,"error");
 			  } else {
 				console.error("Unexpected error:", error);
-				alert("An unexpected error occurred. Please try again later.");
+				showToast("Error", "An unexpected error occurred. Please try again later.","error");
 			  }
 		  }
 	}

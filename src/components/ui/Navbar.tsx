@@ -8,8 +8,11 @@ import { Box, Divider, HStack, Stack, VStack } from "@Panda/jsx";
 import { FriendRequestList } from "./FriendRequestList";
 import { Popover } from "@ParkComponents/popover";
 import { Menu } from "@ParkComponents/menu";
-import { LogOutIcon, UserIcon } from "lucide-react";
+import { LogOutIcon, UserIcon, UserRoundPlus } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useShowToast } from "src/hooks";
+import axios from "axios";
+import axiosClient from "axiosClient";
 
 export const Navbar: React.FC = () => {
   const mockUserList = [
@@ -70,36 +73,64 @@ export const Navbar: React.FC = () => {
     gap: "20px",
   });
 
-  return (
-    <>
-      <Menu.Root>
-        <Popover.Root
-          positioning={{
-            placement: "bottom-start",
-          }}
-        >
-          <Box className={navBarStyles}>
-            <Link to="/">
-              <Text fontSize={"xl"}>EventMate</Text>
-            </Link>
+	const showToast = useShowToast()
 
-            <Input
-              size="sm"
-              id="name"
-              placeholder="Search"
-              className={inputStyles}
-            />
+	// logout
+	const handleLogout = async() => {
+		try {
+			// Send the logout request
+			const response = await axiosClient.delete(`${import.meta.env.VITE_API_KEY}/auth/logout`);
+		
+			// Remove the token in localStorage
+			localStorage.removeItem("authToken");
+		
+			// Provide user feedback on successful logout
+			showToast("Success", "Logout successful", "success");
 
-            <Box className={flexStyles}>
-              <Popover.Trigger asChild>
-                <Button
-                  bg="bg.buttonSmall"
-                  color="fg.buttonSmall"
-                  borderRadius={"full"}
-                >
-                  F
-                </Button>
-              </Popover.Trigger>
+			// update user context so content dissapears !!!
+	  
+		  } catch (error) {
+			// Check for server errors or network issues
+			if (axios.isAxiosError(error)) {
+				showToast(
+				  "Error",
+				  error.response?.data?.message || error.message,
+				  "error"
+				);
+			} else {
+			  showToast("Unexpected Error", "Please try again later", "error");
+			}
+		  }
+		};
+
+	return (
+		<>
+			<Menu.Root>
+				<Popover.Root
+					positioning={{
+						placement: "bottom-start",
+					}}
+				>
+					<Box className={navBarStyles}>
+						<Text fontSize={"xl"}>EventMate</Text>
+						<Input
+							size="sm"
+							id="name"
+							placeholder="Search"
+							className={inputStyles}
+						/>
+
+						<Box className={flexStyles}>
+							<Popover.Trigger asChild>
+								<Button
+									bg="bg.buttonSmall"
+									color="fg.buttonSmall"
+									borderRadius={"full"}
+									p="0"
+								>
+									<UserRoundPlus />
+								</Button>
+							</Popover.Trigger>
 
               <Menu.Trigger asChild>
                 <Button variant="ghost" bg="none" borderRadius={"full"} p="0">
@@ -109,50 +140,50 @@ export const Navbar: React.FC = () => {
             </Box>
           </Box>
 
-          {/*Friend request modal */}
-          <Popover.Positioner>
-            <Popover.Content p="30px" w="550px" maxH="650px">
-              <Stack>
-                <Popover.Title>Friend requests</Popover.Title>
-                <VStack>
-                  <Divider
-                    orientation="horizontal"
-                    thickness="3px"
-                    w="100%"
-                    color="grey.200"
-                    borderRadius={2}
-                  />
-                  <FriendRequestList userList={mockUserList} />
-                </VStack>
-              </Stack>
-            </Popover.Content>
-          </Popover.Positioner>
-        </Popover.Root>
-        {/* Profile menu */}
-        <Menu.Positioner>
-          <Menu.Content>
-            <Menu.ItemGroup>
-              <Menu.ItemGroupLabel>My Account</Menu.ItemGroupLabel>
-              <Menu.Separator />
-              <Menu.Item value="profile">
-                <Link to="/profile">
-                  <HStack gap="2">
-                    <UserIcon />
-                    Profile
-                  </HStack>
-                </Link>
-              </Menu.Item>
-              <Menu.Separator />
-              <Menu.Item value="logout">
-                <HStack gap="2">
-                  <LogOutIcon />
-                  Logout
-                </HStack>
-              </Menu.Item>
-            </Menu.ItemGroup>
-          </Menu.Content>
-        </Menu.Positioner>
-      </Menu.Root>
-    </>
-  );
+					{/*Friend request modal */}
+					<Popover.Positioner>
+						<Popover.Content p="30px" w="550px" maxH="650px">
+							<Stack>
+								<Popover.Title>Friend requests</Popover.Title>
+								<VStack>
+									<Divider
+										orientation="horizontal"
+										thickness="3px"
+										w="100%"
+										color="grey.200"
+										borderRadius={2}
+									/>
+									<FriendRequestList userList={mockUserList} />
+								</VStack>
+							</Stack>
+						</Popover.Content>
+					</Popover.Positioner>
+				</Popover.Root>
+				{/* Profile menu */}
+				<Menu.Positioner>
+					<Menu.Content>
+						<Menu.ItemGroup>
+							<Menu.ItemGroupLabel>My Account</Menu.ItemGroupLabel>
+							<Menu.Separator />
+							<Menu.Item value="profile">
+                			<Link to="/profile">
+								<HStack gap="2">
+                    				<UserIcon />
+									Profile
+                    			</HStack>
+                			</Link>
+							</Menu.Item>
+							<Menu.Separator />
+							<Menu.Item value="logout" onClick={handleLogout}>
+								<HStack gap="2">
+									<LogOutIcon />
+									Logout
+								</HStack>
+							</Menu.Item>
+						</Menu.ItemGroup>
+					</Menu.Content>
+				</Menu.Positioner>
+			</Menu.Root>
+		</>
+	);
 };
