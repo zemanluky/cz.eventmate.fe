@@ -10,11 +10,11 @@ export const EventToolbarMyEvents: React.FC = () => {
   return (
     <>
       <HStack mb="10px">
-        <Text fontSize={{ base: "2xl", md: "5xl" }} fontWeight="500">
+        <Text fontSize={{ base: "2xl", md: "3xl", xl: "4xl" }} fontWeight="500">
           My events
         </Text>
         <Spacer />
-        <Button onClick={() => navigate("/createEvent")}>
+        <Button onClick={() => navigate("/create-event")}>
           <CirclePlus />
           <Text>Create event</Text>
         </Button>

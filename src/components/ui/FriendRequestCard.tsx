@@ -3,6 +3,7 @@ import { Avatar } from "@ParkComponents/avatar";
 import { Button } from "@ParkComponents/button";
 import { Text } from "@ParkComponents/text";
 import * as React from "react";
+import { Link } from "react-router-dom";
 
 interface User {
   user: { id: string; name: string; surname: string; imageUrl: string };
@@ -19,12 +20,14 @@ export const FriendRequestCard: React.FC<User> = ({ user }) => {
       justifyContent="space-between"
       alignItems="center"
     >
-      <HStack>
-        <Avatar src={user.imageUrl} name={`${user.name} ${user.surname}`} />
-        <Text>
-          {user.name} {user.surname}
-        </Text>
-      </HStack>
+      <Link to={`/profile/${user.id}`}>
+        <HStack>
+          <Avatar src={user.imageUrl} name={`${user.name} ${user.surname}`} />
+          <Text>
+            {user.name} {user.surname}
+          </Text>
+        </HStack>
+      </Link>
 
       <HStack h="100%">
         <Button
