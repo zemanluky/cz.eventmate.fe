@@ -5,22 +5,16 @@ import { IconButton } from "@ParkComponents/icon-button";
 import { Input } from "@ParkComponents/input";
 import { Text } from "@ParkComponents/text";
 import * as React from "react";
-import { Form } from "react-router-dom";
 import { FileUpload } from "@ParkComponents/file-upload";
 import { DatePickerComponent } from "./DatePickerComponent";
 import { Trash2Icon } from "lucide-react";
 import { ComboBoxComponent } from "./ComboBoxComponent";
 
-interface EventFormValues {
-  name: string;
-  place: string;
-  address: string;
-  description: string;
-  category: string;
-  type: string;
-  date: Date | null;
-}
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
+import { z } from "zod";
 
+//const eventCategories = handleGetCategories()
 const eventCategories = [
   { label: "Workshops", value: "workshops" },
   { label: "Conferences", value: "conferences" },
@@ -39,47 +33,55 @@ const eventTypes = [
   { label: "Private", value: "private" },
 ];
 
+const eventFormSchema = z.object({
+  name: z.string().nonempty("Name is required"),
+  place: z.string().nonempty("Place is required"),
+  address: z.string().nonempty("Address is required"),
+  description: z.string().nonempty("Description is required"),
+  category: z.string().nonempty("Category is required"),
+  type: z.string().nonempty("Type is required"),
+  date: z.object({}),
+});
+type EventFormValues = z.infer<typeof eventFormSchema>;
+
 export const CreateEventForm: React.FC = () => {
-  const [formValues, setFormValues] = React.useState<EventFormValues>({
-    name: "",
-    place: "",
-    address: "",
-    description: "",
-    category: "",
-    type: "",
-    date: null,
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    setError,
+    formState: { errors, isSubmitting },
+    control,
+  } = useForm<EventFormValues>({
+    defaultValues: {
+      /*name: "",
+      place: "",
+      address: "",
+      description: "",
+      category: "",
+      type: "",*/
+    },
+    resolver: zodResolver(eventFormSchema),
   });
+
+  const onSubmit: SubmitHandler<EventFormValues> = async (data, files) => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log(data, files);
+    } catch (error) {
+      setError("root", {
+        message: "This email is already taken",
+      });
+    }
+  };
+
   const [files, setFiles] = React.useState<File[]>([]);
-
-  const isFormValid =
-    formValues.name.trim() &&
-    formValues.place.trim() &&
-    formValues.address.trim() &&
-    formValues.description.trim() &&
-    formValues.category &&
-    formValues.type &&
-    formValues.date;
-
-  const handleChange = <T extends keyof EventFormValues>(
-    field: T,
-    value: EventFormValues[T]
-  ) => {
-    setFormValues((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    console.log("Submitted Data:", {
-      ...formValues,
-      files,
-    });
-  };
 
   return (
     <>
       <Text>Create Event</Text>
 
-      <Form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Flex
           direction={{ base: "column", md: "row" }}
           h={{ base: "auto", md: "80vh" }}
@@ -94,49 +96,61 @@ export const CreateEventForm: React.FC = () => {
           >
             <Stack w="100%" gap="1.5">
               <FormLabel htmlFor="name">Name</FormLabel>
-              <Input
-                id="name"
-                placeholder="Event name"
-                value={formValues.name}
-                onChange={(e) => handleChange("name", e.target.value)}
-              />
+              <Input {...register("name")} id="name" placeholder="Event name" />
+              {errors.name && <Text color="red">{errors.name.message}</Text>}
             </Stack>
 
             <Stack w="100%" gap="1.5">
               <FormLabel htmlFor="place">Place</FormLabel>
               <Input
+                {...register("place")}
                 id="place"
                 placeholder="Place of event"
-                value={formValues.place}
-                onChange={(e) => handleChange("place", e.target.value)}
               />
+              {errors.place && <Text color="red">{errors.place.message}</Text>}
             </Stack>
 
             <Stack w="100%" gap="1.5">
               <FormLabel htmlFor="address">Address</FormLabel>
               <Input
+                {...register("address")}
                 id="address"
                 placeholder="Address of event"
-                value={formValues.address}
-                onChange={(e) => handleChange("address", e.target.value)}
               />
+              {errors.address && (
+                <Text color="red">{errors.address.message}</Text>
+              )}
             </Stack>
 
-            <DatePickerComponent
-              onChange={(date: Date) => handleChange("date", date)}
+            <Controller
+              name="date"
+              control={control}
+              render={({ field }) => (
+                <DatePickerComponent
+                  {...field}
+                  onChange={(date: Date) => setValue("date", date)}
+                />
+              )}
             />
+            {errors.date && <Text color="red">{errors.date.message}</Text>}
 
             <ComboBoxComponent
               key="category"
+              label="Category:"
+              placeholder="Event categories"
               inputCollection={eventCategories}
-              onChange={(value: string) => handleChange("category", value)}
+              onChange={(value: string) => setValue("category", value)}
             />
+            {errors.type && <Text color="red">{errors.type.message}</Text>}
 
             <ComboBoxComponent
               key="type"
+              label="Type:"
+              placeholder="Event types"
               inputCollection={eventTypes}
-              onChange={(value: string) => handleChange("type", value)}
+              onChange={(value: string) => setValue("type", value)}
             />
+            {errors.type && <Text color="red">{errors.type.message}</Text>}
           </Flex>
 
           <Stack
@@ -147,12 +161,14 @@ export const CreateEventForm: React.FC = () => {
             <Stack h="20%" w="100%" gap="1.5">
               <FormLabel htmlFor="description">Description</FormLabel>
               <Input
+                {...register("description")}
                 h="80%"
                 id="description"
                 placeholder="About event"
-                value={formValues.description}
-                onChange={(e) => handleChange("description", e.target.value)}
               />
+              {errors.description && (
+                <Text color="red">{errors.description.message}</Text>
+              )}
             </Stack>
             <Stack>
               <FormLabel htmlFor="eventPhotos">Event photos</FormLabel>
@@ -196,13 +212,13 @@ export const CreateEventForm: React.FC = () => {
               <Button size="xl" bg="bg.cancel" type="button">
                 <Text>Cancel</Text>
               </Button>
-              <Button type="submit" size="xl" /*disabled={!isFormValid}*/>
-                <Text>Create</Text>
+              <Button type="submit" size="xl">
+                <Text>{isSubmitting ? "Loading..." : "Create"}</Text>
               </Button>
             </HStack>
           </Stack>
         </Flex>
-      </Form>
+      </form>
     </>
   );
 };
