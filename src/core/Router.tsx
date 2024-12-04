@@ -27,36 +27,40 @@ const routes: RouteObject[] = [
       },
       {
         path: "my-profile",
+        /* 👈 Renders at /#/my-profile */
         element: (
-        <RouteGuard>
-          <MyProfilePage /> /* 👈 Renders at /#/my-profile */,
-        </RouteGuard>
-        )
+          <RouteGuard>
+            <MyProfilePage />
+          </RouteGuard>
+        ),
       },
       {
         path: "create-event",
+        /* 👈 Renders at /#/create-event/ */
         element: (
           <RouteGuard>
-            <CreateEventFormPage /> /* 👈 Renders at /#/create-event/ */,
+            <CreateEventFormPage />
           </RouteGuard>
-          )
+        ),
       },
       {
         path: "my-events",
+        /* 👈 Renders at /#/my-events/ */
         element: (
           <RouteGuard>
-            <MyEvents /> /* 👈 Renders at /#/my-events/ */,
+            <MyEvents />
           </RouteGuard>
-          )
+        ),
       },
 
       {
         path: "edit-event/:eventId",
+        /* 👈 Renders at /#/edit-event/:eventId/ */
         element: (
           <RouteGuard>
-            <EditEventFormPage /> /* 👈 Renders at /#/edit-event/:eventId/ */,
+            <EditEventFormPage />
           </RouteGuard>
-        ) 
+        ),
       },
       {
         path: "event-detail/:eventId",
