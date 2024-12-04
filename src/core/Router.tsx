@@ -10,6 +10,7 @@ import { AuthPage } from "@Pages";
 import { CreateEventFormPage } from "src/pages/CreateEventFormPage";
 import { MyEvents } from "src/pages/MyEvents";
 import { EditEventFormPage } from "src/pages/EditEventFormPage";
+import RouteGuard from "./RouteGuard";
 
 const routes: RouteObject[] = [
   {
@@ -26,22 +27,36 @@ const routes: RouteObject[] = [
       },
       {
         path: "my-profile",
-        element: <MyProfilePage /> /* 👈 Renders at /#/my-profile */,
+        element: (
+        <RouteGuard>
+          <MyProfilePage /> /* 👈 Renders at /#/my-profile */,
+        </RouteGuard>
+        )
       },
       {
         path: "create-event",
-        element: <CreateEventFormPage /> /* 👈 Renders at /#/createEvent/ */,
+        element: (
+          <RouteGuard>
+            <CreateEventFormPage /> /* 👈 Renders at /#/create-event/ */,
+          </RouteGuard>
+          )
       },
       {
         path: "my-events",
-        element: <MyEvents /> /* 👈 Renders at /#/myEvents/ */,
+        element: (
+          <RouteGuard>
+            <MyEvents /> /* 👈 Renders at /#/my-events/ */,
+          </RouteGuard>
+          )
       },
 
       {
         path: "edit-event/:eventId",
         element: (
-          <EditEventFormPage />
-        ) /* 👈 Renders at /#/edit-event/:eventId/ */,
+          <RouteGuard>
+            <EditEventFormPage /> /* 👈 Renders at /#/edit-event/:eventId/ */,
+          </RouteGuard>
+        ) 
       },
       {
         path: "event-detail/:eventId",
