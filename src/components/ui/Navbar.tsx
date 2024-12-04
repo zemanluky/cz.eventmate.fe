@@ -4,7 +4,7 @@ import { css } from "@Panda/css";
 import { Input } from "@ParkComponents/input";
 import { Text } from "@ParkComponents/text";
 import { Avatar } from "@ParkComponents/avatar";
-import { Box, Divider, HStack, Stack, VStack } from "@Panda/jsx";
+import { Box, Divider, Flex, HStack, Stack, VStack } from "@Panda/jsx";
 import { FriendRequestList } from "./FriendRequestList";
 import { Popover } from "@ParkComponents/popover";
 import { Menu } from "@ParkComponents/menu";
@@ -13,8 +13,10 @@ import { Link } from "react-router-dom";
 import { useShowToast } from "src/hooks";
 import axios from "axios";
 import axiosClient from "axiosClient";
+import useAuthState from "src/hooks/useAuthState";
 
 export const Navbar: React.FC = () => {
+  const { user, loading, error } = useAuthState()
   const mockUserList = [
     {
       user: {
@@ -123,7 +125,9 @@ export const Navbar: React.FC = () => {
               className={inputStyles}
             />
 
-            <Box className={flexStyles}>
+            <Box className={flexStyles} 
+            display={user ? "flex" : "none"} // comment out to see userMenu and friend requests icons
+            >
               <Popover.Trigger asChild>
                 <Button
                   bg="bg.buttonSmall"
@@ -141,7 +145,16 @@ export const Navbar: React.FC = () => {
                 </Button>
               </Menu.Trigger>
             </Box>
+            {/* Sign in & sign up buttons */}
+            <Flex gap="16px" alignItems={"center"} 
+              display={!user ? "flex" : "none"} // comment out to see userMenu and friend requests icons
+              >
+              <Button variant="ghost">Sign up</Button>
+              <Button >Sign in</Button>
+            </Flex>
           </Box>
+
+
 
           {/*Friend request modal */}
           <Popover.Positioner>
