@@ -9,7 +9,6 @@ import { FileUpload } from "@ParkComponents/file-upload";
 import { DatePickerComponent } from "./DatePickerComponent";
 import { Trash2Icon } from "lucide-react";
 import { ComboBoxComponent } from "./ComboBoxComponent";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { z } from "zod";
@@ -33,6 +32,7 @@ const eventTypes = [
   { label: "Private", value: "private" },
 ];
 
+// Validation schema using zod
 const eventFormSchema = z.object({
   name: z.string().nonempty("Name is required"),
   place: z.string().nonempty("Place is required"),
@@ -54,6 +54,7 @@ export const CreateEventForm: React.FC = () => {
     control,
   } = useForm<EventFormValues>({
     defaultValues: {
+      //default form values (later for implementing into edit form)
       /*name: "",
       place: "",
       address: "",
@@ -64,29 +65,32 @@ export const CreateEventForm: React.FC = () => {
     resolver: zodResolver(eventFormSchema),
   });
 
-  const onSubmit: SubmitHandler<EventFormValues> = async (data, files) => {
+  const [files, setFiles] = React.useState<File[]>([]); //file upload images
+
+  const onSubmit: SubmitHandler<EventFormValues> = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000)); //simulated call for isSubmitting state
       console.log(data, files);
     } catch (error) {
       setError("root", {
-        message: "This email is already taken",
+        message: "This email is already taken", //set up for backend errors
       });
     }
   };
 
-  const [files, setFiles] = React.useState<File[]>([]);
-
   return (
     <>
+      {/* Tittle */}
       <Text>Create Event</Text>
 
+      {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)}>
         <Flex
           direction={{ base: "column", md: "row" }}
           h={{ base: "auto", md: "80vh" }}
           pb={{ base: "none", md: "30px" }}
         >
+          {/* Left part of form */}
           <Flex
             direction="column"
             justifyContent="space-between"
@@ -94,12 +98,14 @@ export const CreateEventForm: React.FC = () => {
             w={{ base: "100%", md: "48%" }}
             mr={{ base: "none", md: "2%" }}
           >
+            {/* Name input */}
             <Stack w="100%" gap="1.5">
               <FormLabel htmlFor="name">Name</FormLabel>
               <Input {...register("name")} id="name" placeholder="Event name" />
               {errors.name && <Text color="red">{errors.name.message}</Text>}
             </Stack>
 
+            {/* Place input */}
             <Stack w="100%" gap="1.5">
               <FormLabel htmlFor="place">Place</FormLabel>
               <Input
@@ -110,6 +116,7 @@ export const CreateEventForm: React.FC = () => {
               {errors.place && <Text color="red">{errors.place.message}</Text>}
             </Stack>
 
+            {/* Address input */}
             <Stack w="100%" gap="1.5">
               <FormLabel htmlFor="address">Address</FormLabel>
               <Input
@@ -122,6 +129,7 @@ export const CreateEventForm: React.FC = () => {
               )}
             </Stack>
 
+            {/* Date input */}
             <Controller
               name="date"
               control={control}
@@ -134,6 +142,7 @@ export const CreateEventForm: React.FC = () => {
             />
             {errors.date && <Text color="red">{errors.date.message}</Text>}
 
+            {/* Category input */}
             <ComboBoxComponent
               key="category"
               label="Category:"
@@ -143,6 +152,7 @@ export const CreateEventForm: React.FC = () => {
             />
             {errors.type && <Text color="red">{errors.type.message}</Text>}
 
+            {/* Type input */}
             <ComboBoxComponent
               key="type"
               label="Type:"
@@ -153,11 +163,13 @@ export const CreateEventForm: React.FC = () => {
             {errors.type && <Text color="red">{errors.type.message}</Text>}
           </Flex>
 
+          {/* Right part of form */}
           <Stack
             h={{ base: "1000px", md: "80vh" }}
             w={{ base: "100%", md: "48%" }}
             ml={{ base: "none", md: "2%" }}
           >
+            {/* Description input */}
             <Stack h="20%" w="100%" gap="1.5">
               <FormLabel htmlFor="description">Description</FormLabel>
               <Input
@@ -170,7 +182,10 @@ export const CreateEventForm: React.FC = () => {
                 <Text color="red">{errors.description.message}</Text>
               )}
             </Stack>
+
+            {/* Image input */}
             <Stack>
+              {/* Label */}
               <FormLabel htmlFor="eventPhotos">Event photos</FormLabel>
               <FileUpload.Root
                 maxFiles={3}
@@ -179,12 +194,14 @@ export const CreateEventForm: React.FC = () => {
                   setFiles(acceptedFiles);
                 }}
               >
+                {/* Image dropzone */}
                 <FileUpload.Dropzone>
                   <FileUpload.Label>Drop your files here</FileUpload.Label>
                   <FileUpload.Trigger asChild>
                     <Button size="sm">Open Dialog</Button>
                   </FileUpload.Trigger>
                 </FileUpload.Dropzone>
+                {/* Submitted images */}
                 <FileUpload.ItemGroup>
                   <FileUpload.Context>
                     {({ acceptedFiles }: { acceptedFiles: File[] }) =>
@@ -208,6 +225,8 @@ export const CreateEventForm: React.FC = () => {
                 <FileUpload.HiddenInput />
               </FileUpload.Root>
             </Stack>
+
+            {/* Buttons */}
             <HStack h="10%" pl="40%" justifyContent="space-between">
               <Button size="xl" bg="bg.cancel" type="button">
                 <Text>Cancel</Text>
