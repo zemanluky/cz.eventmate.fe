@@ -8,15 +8,20 @@ import * as React from "react";
 interface ComboBoxComponentProps {
   inputCollection: { label: string; value: string }[];
   onChange?: (value: string) => void;
+  label: string;
+  placeholder: string;
 }
 
 export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
   inputCollection,
+  label,
+  placeholder,
   onChange,
 }) => {
   const [collection, setCollection] = useState(inputCollection);
+
   const comboboxCollection = React.useMemo(
-    createListCollection({ items: collection }),
+    () => createListCollection({ items: collection }),
     [collection]
   );
 
@@ -26,7 +31,6 @@ export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
     const filtered = inputCollection.filter((item) =>
       item.label.toLowerCase().includes(inputValue.toLowerCase())
     );
-
     setCollection(filtered);
   };
 
@@ -50,9 +54,9 @@ export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
       onInputValueChange={handleInputChange}
       onOpenChange={handleOpenChange}
     >
-      <Combobox.Label>Framework</Combobox.Label>
+      <Combobox.Label>{label}</Combobox.Label>
       <Combobox.Control>
-        <Combobox.Input placeholder="Select a Framework" asChild>
+        <Combobox.Input placeholder={placeholder} asChild>
           <Input />
         </Combobox.Input>
         <Combobox.Trigger asChild>
@@ -64,7 +68,11 @@ export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
       <Combobox.Positioner>
         <Combobox.Content>
           {collection.map((item) => (
-            <Combobox.Item key={item.value} item={item}>
+            <Combobox.Item
+              key={item.value}
+              item={item}
+              onClick={() => onChange?.(item.value)}
+            >
               <Combobox.ItemText>{item.label}</Combobox.ItemText>
               <Combobox.ItemIndicator>
                 <CheckIcon />
