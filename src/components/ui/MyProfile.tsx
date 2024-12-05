@@ -12,7 +12,7 @@ interface User {
     name: string;
     surname: string;
     imageUrl: string;
-    rating: number;
+    ratings: [];
   };
 }
 
@@ -43,13 +43,15 @@ export const MyProfile: React.FC<User> = ({ user }) => {
           </Text>
 
           {/* Rating + Hosted events */}
-          <HStack mb="10px">
-            <RatingGroup count={5} defaultValue={user.rating} disabled />
-            <Box w="5px" h="5px" borderRadius="full" bg="fg.subtle" />
-            <Text fontSize="xs" color="fg.subtle" fontWeight="500">
-              {12} events hosted
-            </Text>
-          </HStack>
+          {user.rating?.length > 0 && (
+            <HStack mb="10px">
+              <RatingGroup count={5} defaultValue={user.rating.length} disabled />
+              <Box w="5px" h="5px" borderRadius="full" bg="fg.subtle" />
+              <Text fontSize="xs" color="fg.subtle" fontWeight="500">
+                {12} events hosted
+              </Text>
+            </HStack>
+          )}
 
           {/* Following/Followers */}
           <HStack mb="10px">
@@ -61,10 +63,25 @@ export const MyProfile: React.FC<User> = ({ user }) => {
         <Stack>
           {/* Rating */}
           <HStack>
-            <Text fontSize={60} fontWeight={650}>
-              {user.rating}
-            </Text>
-            <Star size={60} />
+          {user.ratings?.length > 0 ? (
+            <>
+              <Text fontSize={60} fontWeight={650}>
+                {user.ratings.length}
+              </Text>
+              <Star size={60} />
+            </>
+          ) : (
+            <>
+              <Text fontSize={24}
+                fontWeight={600} 
+                width="190px" 
+                textAlign={"end"} 
+                color={"fg.subtle"}
+                >
+                No ratings yet
+              </Text>
+            </>
+          )}
           </HStack>
 
           {/* Button */}
