@@ -38,14 +38,8 @@ const useAuthState = (): UseAuthStateReturn => {
         }
 
         // Make an authenticated request to fetch the user profile
-        const response = await axiosClient.get<User>( // Explicitly typing response as User
+        const response = await axiosClient.get( // Explicitly typing response as User
           `${import.meta.env.VITE_API_KEY}/user/profile`,
-          {
-            withCredentials: true,
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
         );
 
         // If successful, update the user state
