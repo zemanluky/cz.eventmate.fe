@@ -7,52 +7,22 @@ import { useShowToast } from "src/hooks";
 import { Box, Divider, VStack } from "@Panda/jsx";
 import { Text } from "@ParkComponents/text";
 import { MyProfile, RatingCard } from "@Components/ui";
+import useAuthState from "src/hooks/useAuthState";
 
 export const MyProfilePage: React.FC = () => {
   const [showEvents, setShowEvents] = React.useState(true);
   const showToast = useShowToast();
+  const { user, loading } = useAuthState()
+  let userData = null
+  if(loading){
+    return
+  }else{
+    userData = user?.data
+    console.log(userData)
+  }
 
-  const getProfileDetails = async () => {
-    try {
-      const token = localStorage.getItem("authToken");
+    
 
-      if (!token) {
-        showToast(
-          "Auth Error",
-          "User is not authenticated. Please log in.",
-          "error"
-        );
-        return;
-      }
-
-      // Make the profile request
-      const response = await axiosClient.get(
-        `${import.meta.env.VITE_API_KEY}/user/profile`,
-        {
-          withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      console.log("Profile data acquired successfully!", response.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        showToast(
-          "Error",
-          `Fetching data failed: ${error.response?.data?.message || error.message}`,
-          "error"
-        );
-      } else {
-        showToast("Unexpected Error", "Please try again later", "error");
-      }
-    }
-  };
-
-  useEffect(() => {
-    getProfileDetails(); // Attempt to get profile data on component mount
-  }, []);
 
   const mockUser = {
     id: "4",
@@ -117,7 +87,7 @@ export const MyProfilePage: React.FC = () => {
   return (
     <Box>
       {/* User profile */}
-      <MyProfile user={mockUser} />
+      <MyProfile user={userData} />
 
       {/* Divider */}
       <Divider orientation="horizontal" thickness="2px" mt="10px" mb="10px" />
