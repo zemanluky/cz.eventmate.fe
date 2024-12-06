@@ -9,13 +9,14 @@ import { FriendRequestList } from "./FriendRequestList";
 import { Popover } from "@ParkComponents/popover";
 import { Menu } from "@ParkComponents/menu";
 import { LogOutIcon, PartyPopper, UserIcon, UserRoundPlus } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useShowToast } from "src/hooks";
 import axios from "axios";
 import axiosClient from "axiosClient";
 import useAuthState from "src/hooks/useAuthState";
 
 export const Navbar: React.FC = () => {
+  const navigate = useNavigate()
   const { user, loading, error } = useAuthState()
   const mockUserList = [
     {
@@ -57,7 +58,7 @@ export const Navbar: React.FC = () => {
     h: "100px",
     paddingX: { base: "16px", sm: "48px" },
     display: "flex",
-    gap: "60px",
+    gap: { base:"32px" , sm:"60px"},
     alignItems: "center",
     bg: "bg.navbar",
     boxShadow: "0px 4px 1px 0px var(--colors-neutrals-olive-3, #EFF1EF)",
@@ -149,8 +150,8 @@ export const Navbar: React.FC = () => {
             <Flex gap="16px" alignItems={"center"} 
               display={!user ? "flex" : "none"} // comment out to see userMenu and friend requests icons
               >
-              <Button variant="ghost">Sign up</Button>
-              <Button >Sign in</Button>
+              <Button variant="ghost" onClick={()=>{navigate("/auth")}}>Sign up</Button>
+              <Button onClick={()=>{navigate("/auth")}}>Sign in</Button>
             </Flex>
           </Box>
 
