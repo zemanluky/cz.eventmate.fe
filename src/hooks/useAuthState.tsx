@@ -8,13 +8,14 @@ interface User {
   name: string;
   surname: string;
   email: string;
-  username:string;
-  bio:string;
-  ratings:string[];
+  username: string;
+  bio: string;
+  ratings: string[];
   // Add other user properties as needed
 }
 
 interface UseAuthStateReturn {
+  fetchUserProfile: () => Promise<void>; // Async function that returns a Promise
   user: User | null;
   loading: boolean;
   error: string | null;
@@ -25,40 +26,39 @@ const useAuthState = (): UseAuthStateReturn => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const token = localStorage.getItem("authToken");
-
-        if (!token) {
-          // If no token exists, set user to null and stop loading
-          setUser(null);
-          setLoading(false);
-          return;
-        }
-
-        // Make an authenticated request to fetch the user profile
-        const response = await axiosClient.get( // Explicitly typing response as User
-          `${import.meta.env.VITE_API_KEY}/user/profile`,
-        );
-
-        // If successful, update the user state
-        setUser(response.data);
-      } catch (err) {
-        const axiosError = err as AxiosError; // Type the error as AxiosError
-        setError(
-          axiosError.response?.data?.message || axiosError.message || "Unknown error"
-        );
-        setUser(null); // Ensure user is logged out if there's an error
-      } finally {
-        setLoading(false); // Mark loading as complete
+  const fetchUserProfile = async (): Promise<User | null> => {
+    try {
+      const token = localStorage.getItem("authToken");
+  
+      if (!token) {
+        setUser(null);
+        setLoading(false);
+        return null;
       }
-    };
+  
+      const response = await axiosClient.get<User>(
+        `${import.meta.env.VITE_API_KEY}/user/profile`
+      );
+  
+      setUser(response.data);
+      return response.data; // Return the fetched user data
+    } catch (err) {
+      const axiosError = err as AxiosError;
+      setError(
+        axiosError.response?.data?.message || axiosError.message || "Unknown error"
+      );
+      setUser(null);
+      return null; // Return null if there's an error
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchUserProfile();
   }, []); // Runs once on component mount
 
-  return { user, loading, error };
+  return { fetchUserProfile, user, loading, error };
 };
 
 export default useAuthState;
