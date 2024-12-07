@@ -14,10 +14,13 @@ import { useShowToast } from "src/hooks";
 import axios from "axios";
 import axiosClient from "axiosClient";
 import useAuthState from "src/hooks/useAuthState";
+import useAuthStore from "src/store/authStore";
 
 export const Navbar: React.FC = () => {
   const navigate = useNavigate()
-  const { user, loading, error } = useAuthState()
+  const authUser = useAuthStore((state) => state.user)
+  const logoutUser = useAuthStore((state) => state.logout)
+
   const mockUserList = [
     {
       user: {
@@ -89,10 +92,17 @@ export const Navbar: React.FC = () => {
       // Remove the token in localStorage
       localStorage.removeItem("authToken");
 
+      // Remove the user information in localStorage
+      localStorage.removeItem("user-info");
+
+      // Logout user is state
+      logoutUser()
+
       // Provide user feedback on successful logout
       showToast("Success", "Logout successful", "success");
 
       // update user context so content dissapears !!!
+
     } catch (error) {
       // Check for server errors or network issues
       if (axios.isAxiosError(error)) {
@@ -127,7 +137,7 @@ export const Navbar: React.FC = () => {
             />
 
             <Box className={flexStyles} 
-            display={user ? "flex" : "none"} // comment out to see userMenu and friend requests icons
+            display={authUser ? "flex" : "none"} // comment out to see userMenu and friend requests icons
             >
               <Popover.Trigger asChild>
                 <Button
@@ -148,7 +158,7 @@ export const Navbar: React.FC = () => {
             </Box>
             {/* Sign in & sign up buttons */}
             <Flex gap="16px" alignItems={"center"} 
-              display={!user ? "flex" : "none"} // comment out to see userMenu and friend requests icons
+              display={!authUser ? "flex" : "none"} // comment out to see userMenu and friend requests icons
               >
               <Button variant="ghost" onClick={()=>{navigate("/auth")}}>Sign up</Button>
               <Button onClick={()=>{navigate("/auth")}}>Sign in</Button>
