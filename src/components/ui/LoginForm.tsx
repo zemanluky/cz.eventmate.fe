@@ -11,10 +11,15 @@ import { IconButton } from "@ParkComponents/icon-button";
 import axios from "axios";
 import { useShowToast } from "src/hooks";
 import { useNavigate } from "react-router-dom";
+import useAuthStore from "src/store/authStore";
+import useAuthState from "src/hooks/useAuthState";
 
 export const LoginForm: React.FC = () => {
+  const { fetchUserProfile, user } = useAuthState()
   const navigate = useNavigate()
   const showToast = useShowToast()
+
+  const loginUser = useAuthStore((state) => state.login)
 
   const [inputs, setInputs] = React.useState({
     email:"",
@@ -23,41 +28,37 @@ export const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handleSubmit = async () => {
-    // Ensure all fields are filled
     if (!inputs.email || !inputs.password) {
       showToast("Warning", "Fill in the inputs correctly", "alert");
       return;
     }
   
-    // Prepare the form data
     const formData = { ...inputs };
   
     try {
-      // Send the login request
       const response = await axios.post(
         `${import.meta.env.VITE_API_KEY}/auth/login`,
         formData,
-        {
-          withCredentials: true, // Ensure cookies are sent with the request
-        }
+        { withCredentials: true }
       );
   
-      // Extract the access token from the response
       const token = response.data.data.access_token;
-      console.log(token)
-  
-      // Store the token in localStorage
       localStorage.setItem("authToken", token);
   
-      // Provide user feedback on successful login
+      // Fetch the user profile and store it directly
+      const userData = await fetchUserProfile();
+      if (userData) {
+        localStorage.setItem("user-info", JSON.stringify(userData?.data));
+        // updating global state
+        loginUser(userData?.data)
+      }
+  
       showToast("Success", "Login successful", "success");
-
+  
       setTimeout(() => {
-        navigate("/")
+        navigate("/");
       }, 1000);
-
     } catch (error) {
-      // Check for server errors or network issues
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
           showToast("Error", "Invalid credentials. Please try again.", "error");
