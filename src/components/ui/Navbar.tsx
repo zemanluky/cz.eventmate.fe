@@ -160,8 +160,8 @@ export const Navbar: React.FC = () => {
             <Flex gap="16px" alignItems={"center"} 
               display={!authUser ? "flex" : "none"} // comment out to see userMenu and friend requests icons
               >
-              <Button variant="ghost" onClick={()=>{navigate("/auth")}}>Sign up</Button>
-              <Button onClick={()=>{navigate("/auth")}}>Sign in</Button>
+              <Button variant="ghost" onClick={()=>{navigate("/auth#register")}}>Sign up</Button>
+              <Button onClick={()=>{navigate("/auth#login")}}>Sign in</Button>
             </Flex>
           </Box>
 
