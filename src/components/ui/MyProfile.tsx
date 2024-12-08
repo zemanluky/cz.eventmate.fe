@@ -1,10 +1,19 @@
-import { Box, Divider, Flex, HStack, Stack } from "@Panda/jsx";
+import { Box, Divider, Flex, HStack, Stack, VStack } from "@Panda/jsx";
 import { Avatar } from "@ParkComponents/avatar";
 import { Button } from "@ParkComponents/button";
+import { Dialog } from "@ParkComponents/dialog";
+import { FormLabel } from "@ParkComponents/form-label";
+import { IconButton } from "@ParkComponents/icon-button";
+import { Input } from "@ParkComponents/input";
 import { RatingGroup } from "@ParkComponents/rating-group";
 import { Text } from "@ParkComponents/text";
-import { Settings, Star } from "lucide-react";
+import axios from "axios";
+import axiosClient from "axiosClient";
+import { Settings, Star, XIcon } from "lucide-react";
 import * as React from "react";
+import { useShowToast } from "src/hooks";
+import useAuthStore from "src/store/authStore";
+import useUserProfileStore from "src/store/userProfileStore";
 
 interface User {
   user: {
@@ -17,6 +26,82 @@ interface User {
 }
 
 export const MyProfile: React.FC<User> = ({ user }) => {
+
+  const setAuthUser = useAuthStore((state) => state.setUser);
+	const setUserProfile = useUserProfileStore((state) => state.setUserProfile);
+
+  const showToast = useShowToast()
+
+  const [isOpen, setIsOpen] = React.useState(false)
+
+
+  const [inputs, setInputs] = React.useState({
+    name: user.name || "",
+    surname: user.surname || "",
+    username: user.username || "",
+    bio: user.bio || "",
+  });
+  
+  const usernameRegex = /^[a-zA-Z0-9_-]{5,}$/;
+
+  const validateUserName = (username:string) =>{
+    const isValid = usernameRegex.test(username)
+    if(!isValid){
+      showToast("Warning", "Username must be at least 5 characters long", "alert")
+      return false
+    }
+    return true
+  }
+  
+  const nameRegex = /^[A-Z][a-zA-Z]*$/;
+
+  const validateName = (name :string) => {
+    const isValid = nameRegex.test(name);
+    if(!isValid){
+      showToast("Warning", "Name must start with an uppercase letter and can't include numbers", "alert")
+      return false
+    }
+    return true
+  };
+
+  const handleSubmit = async() =>{
+    const validUserName = validateUserName(inputs.username);
+    const validSurname = validateName(inputs.surname);
+    const validName = validateName(inputs.name);
+
+    if(validUserName || validName || validSurname){
+      // prepare data for submission
+      const formData = { ...inputs };
+      
+      try {
+        const response = await axiosClient.put(`${import.meta.env.VITE_API_KEY}/user/profile`, formData);
+
+        //updating global state
+        setAuthUser(response.data?.data)
+        setUserProfile(response.data?.data)
+
+        showToast("Success","Profile update successful!", "success");
+
+        setTimeout(()=>{
+
+          setIsOpen(false)
+        },1000)
+        } catch (error) {
+        // Check for server errors or network issues
+        if (axios.isAxiosError(error)) {
+          console.error("Error:", error.response?.data || error.message);
+          showToast("Error", `Profile update failed: ${error.response?.data?.message || error.message}`,"error");
+          } else {
+          console.error("Unexpected error:", error);
+          showToast("Error", "An unexpected error occurred. Please try again later.","error");
+          }
+        }
+    }
+
+
+
+  }
+  
   return (
     <>
       {/* Avatar */}
@@ -75,7 +160,7 @@ export const MyProfile: React.FC<User> = ({ user }) => {
               <Text fontSize={24}
                 fontWeight={600} 
                 width="190px" 
-                textAlign={"end"} 
+                textAlign={{base:"center", sm:"end"}} 
                 color={"fg.subtle"}
                 >
                 No ratings yet
@@ -84,15 +169,74 @@ export const MyProfile: React.FC<User> = ({ user }) => {
           )}
           </HStack>
 
-          {/* Button */}
-          <Button
-            w={{ base: "40px", sm: "55px" }}
-            h={{ base: "40px", sm: "55px" }}
-            ml={{ base: "", sm: "auto" }}
-          >
-            {/* size nefunguje */}
-            <Settings size={40} />
-          </Button>
+          <Dialog.Root open={isOpen}>
+            <Dialog.Trigger asChild>
+              {/* Button for triggering edit profile dialog*/}
+              <Button
+              px={"16px"}
+              maxHeight={"150px"}
+              maxWidth={"220px"}
+              minWidth={"150px"}
+              ml={{ base: "", sm: "auto" }}
+              onClick={()=> setIsOpen(!isOpen)}
+            >
+              <Flex gap={"8px"} alignItems={"center"}>
+                <Text>Edit profile</Text>  
+
+                {/* size nefunguje */}
+                <Settings size={40} />
+              </Flex>
+            </Button>
+            </Dialog.Trigger>
+            <Dialog.Backdrop />
+            <Dialog.Positioner>
+              <Dialog.Content>
+                <Stack gap="8" p="6">
+                  <Stack gap="1">
+                    <Dialog.Title>Edit profile</Dialog.Title>
+                  </Stack>
+                  <VStack alignItems={"start"}>
+                    <FormLabel>First name</FormLabel>
+                    <Input
+                      value={inputs.name}
+                      onChange={(e) => setInputs({ ...inputs, name: e.target.value })}
+                    />
+
+                    <FormLabel>Last name</FormLabel>
+                    <Input
+                      value={inputs.surname}
+                      onChange={(e) => setInputs({ ...inputs, surname: e.target.value })}
+                    />
+
+                    <FormLabel>Username</FormLabel>
+                    <Input
+                      value={inputs.username}
+                      onChange={(e) => setInputs({ ...inputs, username: e.target.value })}
+                    />
+
+                    <FormLabel>Bio</FormLabel>
+                    <Input
+                      value={inputs.bio}
+                      onChange={(e) => setInputs({ ...inputs, bio: e.target.value })}
+                    />
+                  </VStack>
+                  <Stack gap="3" direction="row" width="full">
+                    <Dialog.CloseTrigger asChild>
+                      <Button variant="outline" width="full">
+                        Cancel
+                      </Button>
+                    </Dialog.CloseTrigger>
+                    <Button width="full" onClick={()=> {handleSubmit()}}>Submit</Button>
+                  </Stack>
+                </Stack>
+                <Dialog.CloseTrigger asChild position="absolute" top="2" right="2">
+                  <IconButton aria-label="Close Dialog" variant="ghost" size="sm">
+                    <XIcon />
+                  </IconButton>
+                </Dialog.CloseTrigger>
+              </Dialog.Content>
+            </Dialog.Positioner>
+          </Dialog.Root>
         </Stack>
       </Flex>
     </>
