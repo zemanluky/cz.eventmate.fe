@@ -31,10 +31,10 @@ export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
 }) => {
   return (
     <>
-      <Link to={`/event-detail/${event.id}`}>
+      <Link to={`/event-detail/${event._id}`}>
         <Card.Root w="350px" h="430px" bg="bg.card" color="fg.card">
           <Card.Header w="100%" h="250px" bg="bg.emphasized">
-            {event.image}
+            {/* {event.image} */}
           </Card.Header>
           <Card.Body p="25px" w="100%">
             <Grid gridTemplateColumns="repeat(7, 1fr)" h="100%" gap={0}>
@@ -53,7 +53,7 @@ export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
                     <Icon>
                       <MapPin />
                     </Icon>
-                    <Text>{event.place}</Text>
+                    <Text>{event.location}</Text>
                   </HStack>
                 </Stack>
               </GridItem>
@@ -63,7 +63,7 @@ export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
                 alignItems="start"
                 justifyContent="end"
               >
-                <AvatarGroup members={event.memberList} />
+                {/* <AvatarGroup members={event.memberList} /> */}
               </GridItem>
             </Grid>
           </Card.Body>
