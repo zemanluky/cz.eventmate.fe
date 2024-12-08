@@ -8,28 +8,14 @@ import { Box, Divider, VStack } from "@Panda/jsx";
 import { Text } from "@ParkComponents/text";
 import { MyProfile, RatingCard } from "@Components/ui";
 import useAuthState from "src/hooks/useAuthState";
+import useAuthStore from "src/store/authStore";
 
 export const MyProfilePage: React.FC = () => {
   const [showEvents, setShowEvents] = React.useState(true);
   const showToast = useShowToast();
-  const { user, loading } = useAuthState()
-  let userData = null
-  if(loading){
-    return
-  }else{
-    userData = user?.data
-    console.log(userData)
-  }
-
-    
-
+  const userData = useAuthStore((state) => state.user)
 
   const mockUser = {
-    id: "4",
-    name: "Jon",
-    surname: "Jones",
-    imageUrl: "https://via.placeholder.com/40",
-    rating: 3.5,
     ratings: [
       {
         user: {
