@@ -16,7 +16,7 @@ interface EventCardMobileProps {
     name: string;
     image: string;
     date: string;
-    place: string;
+    location: string;
     private: boolean;
     memberList: {
       member: Member;
@@ -78,7 +78,7 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
                 <Icon>
                   <MapPin />
                 </Icon>
-                <Text size="sm">{event.place}</Text>
+                <Text size="sm">{event.location}</Text>
               </HStack>
             </GridItem>
 
@@ -89,7 +89,7 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
               alignItems="center"
               justifyContent="end"
             >
-              <AvatarGroup members={event.memberList} />
+              {/* <AvatarGroup members={event.memberList} /> */}
             </GridItem>
 
             {/* Buttons */}

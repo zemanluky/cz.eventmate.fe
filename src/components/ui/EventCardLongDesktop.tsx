@@ -32,7 +32,7 @@ interface EventCardLongDesktopProps {
     name: string;
     image: string;
     date: string;
-    place: string;
+    location: string;
     private: boolean;
     memberList: {
       member: Member;
@@ -91,7 +91,7 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
                         <Icon>
                           <MapPin />
                         </Icon>
-                        <Text>{event.place}</Text>
+                        <Text>{event.location}</Text>
                       </HStack>
                       {/* Event time */}
                       <HStack>
@@ -114,7 +114,7 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
                     >
                       <HStack>
                         <Text>Attendees:</Text>
-                        <AvatarGroup members={event.memberList} />
+                        {/* <AvatarGroup members={event.memberList} /> */}
                       </HStack>
                     </Box>
                   </HStack>
