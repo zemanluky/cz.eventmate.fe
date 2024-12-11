@@ -85,23 +85,19 @@ export const Navbar: React.FC = () => {
   const handleLogout = async () => {
     try {
       // Send the logout request
-      const response = await axiosClient.delete(
+      await axiosClient.delete(
         `${import.meta.env.VITE_API_KEY}/auth/logout`
       );
 
       // Remove the token in localStorage
       localStorage.removeItem("authToken");
 
-      // Remove the user information in localStorage
-      localStorage.removeItem("user-info");
-
-      // Logout user is state
+      // Logout user is state and localStorage
       logoutUser()
 
       // Provide user feedback on successful logout
       showToast("Success", "Logout successful", "success");
-
-      // update user context so content dissapears !!!
+      navigate("/")
 
     } catch (error) {
       // Check for server errors or network issues
