@@ -17,7 +17,6 @@ interface AvatarGroupProps {
 
 export const AvatarGroup: React.FC<AvatarGroupProps> = ({ members }) => {
   const numberOfMembers = `+${members.length - 2}`;
-  console.log(numberOfMembers);
 
   return (
     <HStack gap="0" position="relative">
