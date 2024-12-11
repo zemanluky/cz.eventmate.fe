@@ -4,30 +4,49 @@ import { Input } from "@ParkComponents/input";
 import { Button } from "@ParkComponents/button";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import * as React from "react";
+import { formatISO } from "date-fns";
 
 interface DatePickerProps {
-  onChange: (date: Date) => void;
+  onChange: (dates: { startDate: string; endDate: string }) => void;
+  defaultDates: {
+    startDate: string;
+    endDate: string;
+  };
+}
+
+interface DateRange {
+  startDate: string;
+  endDate: string;
 }
 
 export const DatePickerComponent: React.FC<DatePickerProps> = ({
   onChange,
+  defaultDates,
 }) => {
   const handleDateChange = (details: any) => {
-    const date = details.value?.[0];
-    if (date) {
-      onChange(date);
-    } else {
-      onChange(new Date());
+    const datepickerOutput = details.value;
+    if (datepickerOutput.length > 0) {
+      const dates: DateRange = {
+        startDate: formatISO(new Date(datepickerOutput[0])),
+        endDate: formatISO(new Date(datepickerOutput[1])),
+      };
+      console.log(dates);
+      onChange(dates);
     }
   };
 
   return (
     <div>
       <DatePicker.Root
+        closeOnSelect={false}
         positioning={{ sameWidth: true }}
         startOfWeek={1}
         selectionMode="range"
         onValueChange={handleDateChange}
+        defaultValue={[
+          new Date(defaultDates.startDate), //nevim co uz tam zadat aby to fungovalo
+          new Date(defaultDates.endDate),
+        ]}
       >
         <DatePicker.Label>Date Picker</DatePicker.Label>
         <DatePicker.Control>
@@ -82,7 +101,7 @@ export const DatePickerComponent: React.FC<DatePickerProps> = ({
                             {week.map((day, id) => (
                               <DatePicker.TableCell key={id} value={day}>
                                 <DatePicker.TableCellTrigger asChild>
-                                  <IconButton variant="ghost">
+                                  <IconButton variant="ghost" type="button">
                                     {day.day}
                                   </IconButton>
                                 </DatePicker.TableCellTrigger>
@@ -186,12 +205,6 @@ export const DatePickerComponent: React.FC<DatePickerProps> = ({
           </DatePicker.Content>
         </DatePicker.Positioner>
       </DatePicker.Root>
-      <input
-        type="date"
-        onChange={(e) =>
-          handleDateChange({ value: [new Date(e.target.value)] })
-        }
-      />
     </div>
   );
 };

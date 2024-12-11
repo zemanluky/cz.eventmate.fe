@@ -1,5 +1,5 @@
 //import { EditEventForm } from "@Components/ui";
-import { Text } from "@ParkComponents/text";
+import { EditEventForm } from "@Components/ui";
 import * as React from "react";
 import { useParams } from "react-router-dom";
 
@@ -8,8 +8,7 @@ export const EditEventFormPage: React.FC = () => {
   const eventId = params.eventId as string;
   return (
     <>
-      <Text>{eventId}</Text>
-      {/*<EditEventForm eventToEditId={eventId} />*/}
+      <EditEventForm eventToEditId={eventId} />
     </>
   );
 };

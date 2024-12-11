@@ -10,6 +10,7 @@ interface ComboBoxComponentProps {
   onChange?: (value: string) => void;
   label: string;
   placeholder: string;
+  defaultValue?: string;
 }
 
 export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
@@ -17,17 +18,38 @@ export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
   label,
   placeholder,
   onChange,
+  defaultValue,
 }) => {
+  const capitalizeFirstLetter = (str: string): string => {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
   const [collection, setCollection] = useState(inputCollection);
+  const [inputValue, setInputValue] = useState(
+    defaultValue ? capitalizeFirstLetter(defaultValue) : ""
+  );
 
   const comboboxCollection = React.useMemo(
     () => createListCollection({ items: collection }),
     [collection]
   );
 
+  React.useEffect(() => {
+    if (defaultValue) {
+      const filtered = inputCollection.filter((item) =>
+        item.label.toLowerCase().includes(defaultValue.toLowerCase())
+      );
+      setCollection(filtered);
+    } else {
+      setCollection(inputCollection);
+    }
+  }, [defaultValue, inputCollection]);
+
   const handleInputChange = ({
     inputValue,
   }: Combobox.InputValueChangeDetails) => {
+    setInputValue(inputValue);
     const filtered = inputCollection.filter((item) =>
       item.label.toLowerCase().includes(inputValue.toLowerCase())
     );
@@ -56,7 +78,7 @@ export const ComboBoxComponent: React.FC<ComboBoxComponentProps> = ({
     >
       <Combobox.Label>{label}</Combobox.Label>
       <Combobox.Control>
-        <Combobox.Input placeholder={placeholder} asChild>
+        <Combobox.Input value={inputValue} placeholder={placeholder} asChild>
           <Input />
         </Combobox.Input>
         <Combobox.Trigger asChild>

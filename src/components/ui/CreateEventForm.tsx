@@ -26,7 +26,6 @@ const eventCategories = [
   { label: "Product Launches", value: "product_launches" },
   { label: "Charity Events", value: "charity" },
 ];
-
 const eventTypes = [
   { label: "Public", value: "public" },
   { label: "Private", value: "private" },
@@ -40,7 +39,7 @@ const eventFormSchema = z.object({
   description: z.string().nonempty("Description is required"),
   category: z.string().nonempty("Category is required"),
   type: z.string().nonempty("Type is required"),
-  date: z.object({}),
+  date: z.object({ startDate: z.string(), endDate: z.string() }),
 });
 type EventFormValues = z.infer<typeof eventFormSchema>;
 
@@ -48,20 +47,10 @@ export const CreateEventForm: React.FC = () => {
   const {
     register,
     handleSubmit,
-    setValue,
     setError,
-    formState: { errors, isSubmitting },
     control,
+    formState: { errors, isSubmitting },
   } = useForm<EventFormValues>({
-    defaultValues: {
-      //default form values (later for implementing into edit form)
-      /*name: "",
-      place: "",
-      address: "",
-      description: "",
-      category: "",
-      type: "",*/
-    },
     resolver: zodResolver(eventFormSchema),
   });
 
@@ -73,7 +62,7 @@ export const CreateEventForm: React.FC = () => {
       console.log(data, files);
     } catch (error) {
       setError("root", {
-        message: "This email is already taken", //set up for backend errors
+        message: "error", //set up for backend errors
       });
     }
   };
@@ -131,36 +120,54 @@ export const CreateEventForm: React.FC = () => {
 
             {/* Date input */}
             <Controller
-              name="date"
               control={control}
+              name="date"
               render={({ field }) => (
                 <DatePickerComponent
-                  {...field}
-                  onChange={(date: Date) => setValue("date", date)}
+                  onChange={(dates: { startDate: string; endDate: string }) =>
+                    field.onChange(dates)
+                  }
                 />
               )}
             />
+
             {errors.date && <Text color="red">{errors.date.message}</Text>}
 
             {/* Category input */}
-            <ComboBoxComponent
-              key="category"
-              label="Category:"
-              placeholder="Event categories"
-              inputCollection={eventCategories}
-              onChange={(value: string) => setValue("category", value)}
+            <Controller
+              name="category"
+              control={control}
+              render={({ field }) => (
+                <ComboBoxComponent
+                  {...field}
+                  label="Category:"
+                  placeholder="Event categories"
+                  inputCollection={eventCategories}
+                  onChange={(value) => field.onChange(value)}
+                />
+              )}
             />
-            {errors.type && <Text color="red">{errors.type.message}</Text>}
+            {errors.category && (
+              <Text color="red">{errors.category.message}</Text>
+            )}
 
             {/* Type input */}
-            <ComboBoxComponent
-              key="type"
-              label="Type:"
-              placeholder="Event types"
-              inputCollection={eventTypes}
-              onChange={(value: string) => setValue("type", value)}
+            <Controller
+              name="type"
+              control={control}
+              render={({ field }) => (
+                <ComboBoxComponent
+                  {...field}
+                  label="Type:"
+                  placeholder="Event types"
+                  inputCollection={eventTypes}
+                  onChange={(value) => field.onChange(value)}
+                />
+              )}
             />
-            {errors.type && <Text color="red">{errors.type.message}</Text>}
+            {errors.type && ( // Correctly displaying the error for "type"
+              <Text color="red">{errors.type.message}</Text>
+            )}
           </Flex>
 
           {/* Right part of form */}
