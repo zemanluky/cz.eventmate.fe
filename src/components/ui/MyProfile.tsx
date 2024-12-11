@@ -26,14 +26,12 @@ interface User {
 }
 
 export const MyProfile: React.FC<User> = ({ user }) => {
-
   const setAuthUser = useAuthStore((state) => state.setUser);
-	const setUserProfile = useUserProfileStore((state) => state.setUserProfile);
+  const setUserProfile = useUserProfileStore((state) => state.setUserProfile);
 
-  const showToast = useShowToast()
+  const showToast = useShowToast();
 
-  const [isOpen, setIsOpen] = React.useState(false)
-
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const [inputs, setInputs] = React.useState({
     name: user.name || "",
@@ -41,67 +39,82 @@ export const MyProfile: React.FC<User> = ({ user }) => {
     username: user.username || "",
     bio: user.bio || "",
   });
-  
+
   const usernameRegex = /^[a-zA-Z0-9_-]{5,}$/;
 
-  const validateUserName = (username:string) =>{
-    const isValid = usernameRegex.test(username)
-    if(!isValid){
-      showToast("Warning", "Username must be at least 5 characters long", "alert")
-      return false
+  const validateUserName = (username: string) => {
+    const isValid = usernameRegex.test(username);
+    if (!isValid) {
+      showToast(
+        "Warning",
+        "Username must be at least 5 characters long",
+        "alert"
+      );
+      return false;
     }
-    return true
-  }
-  
-  const nameRegex = /^[A-Z][a-zA-Z]*$/;
-
-  const validateName = (name :string) => {
-    const isValid = nameRegex.test(name);
-    if(!isValid){
-      showToast("Warning", "Name must start with an uppercase letter and can't include numbers", "alert")
-      return false
-    }
-    return true
+    return true;
   };
 
-  const handleSubmit = async() =>{
+  const nameRegex = /^[A-Z][a-zA-Z]*$/;
+
+  const validateName = (name: string) => {
+    const isValid = nameRegex.test(name);
+    if (!isValid) {
+      showToast(
+        "Warning",
+        "Name must start with an uppercase letter and can't include numbers",
+        "alert"
+      );
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async () => {
     const validUserName = validateUserName(inputs.username);
     const validSurname = validateName(inputs.surname);
     const validName = validateName(inputs.name);
 
-    if(validUserName || validName || validSurname){
+    if (validUserName || validName || validSurname) {
       // prepare data for submission
       const formData = { ...inputs };
-      
+
       try {
-        const response = await axiosClient.put(`${import.meta.env.VITE_API_KEY}/user/profile`, formData);
+        const response = await axiosClient.put(
+          `${import.meta.env.VITE_API_KEY}/user/profile`,
+          formData
+        );
 
         //updating global state
-        setAuthUser(response.data?.data)
-        setUserProfile(response.data?.data)
+        setAuthUser(response.data?.data);
+        setUserProfile(response.data?.data);
 
-        showToast("Success","Profile update successful!", "success");
+        showToast("Success", "Profile update successful!", "success");
 
-        setTimeout(()=>{
-
-          setIsOpen(false)
-        },1000)
-        } catch (error) {
+        setTimeout(() => {
+          setIsOpen(false);
+        }, 1000);
+      } catch (error) {
         // Check for server errors or network issues
         if (axios.isAxiosError(error)) {
           console.error("Error:", error.response?.data || error.message);
-          showToast("Error", `Profile update failed: ${error.response?.data?.message || error.message}`,"error");
-          } else {
+          showToast(
+            "Error",
+            `Profile update failed: ${error.response?.data?.message || error.message}`,
+            "error"
+          );
+        } else {
           console.error("Unexpected error:", error);
-          showToast("Error", "An unexpected error occurred. Please try again later.","error");
-          }
+          showToast(
+            "Error",
+            "An unexpected error occurred. Please try again later.",
+            "error"
+          );
         }
+      }
     }
+  };
 
-
-
-  }
-  
   return (
     <>
       {/* Avatar */}
@@ -130,7 +143,11 @@ export const MyProfile: React.FC<User> = ({ user }) => {
           {/* Rating + Hosted events */}
           {user.rating?.length > 0 && (
             <HStack mb="10px">
-              <RatingGroup count={5} defaultValue={user.rating.length} disabled />
+              <RatingGroup
+                count={5}
+                defaultValue={user.rating.length}
+                disabled
+              />
               <Box w="5px" h="5px" borderRadius="full" bg="fg.subtle" />
               <Text fontSize="xs" color="fg.subtle" fontWeight="500">
                 {12} events hosted
@@ -148,45 +165,46 @@ export const MyProfile: React.FC<User> = ({ user }) => {
         <Stack>
           {/* Rating */}
           <HStack>
-          {user.ratings?.length > 0 ? (
-            <>
-              <Text fontSize={60} fontWeight={650}>
-                {user.ratings.length}
-              </Text>
-              <Star size={60} />
-            </>
-          ) : (
-            <>
-              <Text fontSize={24}
-                fontWeight={600} 
-                width="190px" 
-                textAlign={{base:"center", sm:"end"}} 
-                color={"fg.subtle"}
+            {user.ratings?.length > 0 ? (
+              <>
+                <Text fontSize={60} fontWeight={650}>
+                  {user.ratings.length}
+                </Text>
+                <Star size={60} />
+              </>
+            ) : (
+              <>
+                <Text
+                  fontSize={24}
+                  fontWeight={600}
+                  width="190px"
+                  textAlign={{ base: "center", sm: "end" }}
+                  color={"fg.subtle"}
                 >
-                No ratings yet
-              </Text>
-            </>
-          )}
+                  No ratings yet
+                </Text>
+              </>
+            )}
           </HStack>
 
           <Dialog.Root open={isOpen}>
             <Dialog.Trigger asChild>
               {/* Button for triggering edit profile dialog*/}
               <Button
-              px={"16px"}
-              maxHeight={"150px"}
-              maxWidth={"220px"}
-              minWidth={"150px"}
-              ml={{ base: "", sm: "auto" }}
-              onClick={()=> setIsOpen(!isOpen)}
-            >
-              <Flex gap={"8px"} alignItems={"center"}>
-                <Text>Edit profile</Text>  
+                px={"16px"}
+                maxHeight={"150px"}
+                maxWidth={"220px"}
+                minWidth={"150px"}
+                ml={{ base: "", sm: "auto" }}
+                onClick={() => setIsOpen(!isOpen)}
+              >
+                <Flex gap={"8px"} alignItems={"center"}>
+                  <Text>Edit profile</Text>
 
-                {/* size nefunguje */}
-                <Settings size={40} />
-              </Flex>
-            </Button>
+                  {/* size nefunguje */}
+                  <Settings size={40} />
+                </Flex>
+              </Button>
             </Dialog.Trigger>
             <Dialog.Backdrop />
             <Dialog.Positioner>
@@ -199,38 +217,67 @@ export const MyProfile: React.FC<User> = ({ user }) => {
                     <FormLabel>First name</FormLabel>
                     <Input
                       value={inputs.name}
-                      onChange={(e) => setInputs({ ...inputs, name: e.target.value })}
+                      onChange={(e) =>
+                        setInputs({ ...inputs, name: e.target.value })
+                      }
                     />
 
                     <FormLabel>Last name</FormLabel>
                     <Input
                       value={inputs.surname}
-                      onChange={(e) => setInputs({ ...inputs, surname: e.target.value })}
+                      onChange={(e) =>
+                        setInputs({ ...inputs, surname: e.target.value })
+                      }
                     />
 
                     <FormLabel>Username</FormLabel>
                     <Input
                       value={inputs.username}
-                      onChange={(e) => setInputs({ ...inputs, username: e.target.value })}
+                      onChange={(e) =>
+                        setInputs({ ...inputs, username: e.target.value })
+                      }
                     />
 
                     <FormLabel>Bio</FormLabel>
                     <Input
                       value={inputs.bio}
-                      onChange={(e) => setInputs({ ...inputs, bio: e.target.value })}
+                      onChange={(e) =>
+                        setInputs({ ...inputs, bio: e.target.value })
+                      }
                     />
                   </VStack>
                   <Stack gap="3" direction="row" width="full">
                     <Dialog.CloseTrigger asChild>
-                      <Button variant="outline" width="full">
+                      <Button
+                        variant="outline"
+                        width="full"
+                        onClick={() => setIsOpen(!isOpen)}
+                      >
                         Cancel
                       </Button>
                     </Dialog.CloseTrigger>
-                    <Button width="full" onClick={()=> {handleSubmit()}}>Submit</Button>
+                    <Button
+                      width="full"
+                      onClick={() => {
+                        handleSubmit();
+                      }}
+                    >
+                      Submit
+                    </Button>
                   </Stack>
                 </Stack>
-                <Dialog.CloseTrigger asChild position="absolute" top="2" right="2">
-                  <IconButton aria-label="Close Dialog" variant="ghost" size="sm">
+                <Dialog.CloseTrigger
+                  asChild
+                  position="absolute"
+                  top="2"
+                  right="2"
+                >
+                  <IconButton
+                    aria-label="Close Dialog"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsOpen(!isOpen)}
+                  >
                     <XIcon />
                   </IconButton>
                 </Dialog.CloseTrigger>
