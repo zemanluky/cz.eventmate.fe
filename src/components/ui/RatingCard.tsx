@@ -4,6 +4,7 @@ import { Card } from "@ParkComponents/card";
 import { Text } from "@ParkComponents/text";
 import { Star } from "lucide-react";
 import * as React from "react";
+import { Link } from "react-router-dom";
 
 interface RatingCardProps {
   rating: {
@@ -23,10 +24,14 @@ export const RatingCard: React.FC<RatingCardProps> = ({ rating }) => {
       <Card.Root w="100%">
         <Card.Header>
           <HStack>
-            <Avatar name={`${rating.user.name} ${rating.user.surname}`} />
-            <Text>
-              {rating.user.name} {rating.user.surname}
-            </Text>
+            <Link to={`/profile/${rating.user.id}`}>
+              <HStack>
+                <Avatar name={`${rating.user.name} ${rating.user.surname}`} />
+                <Text>
+                  {rating.user.name} {rating.user.surname}
+                </Text>
+              </HStack>
+            </Link>
             <Spacer />
             <Text>{rating.ratingNumber}</Text>
             <Star size={10} />
