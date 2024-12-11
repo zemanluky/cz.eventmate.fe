@@ -1,19 +1,15 @@
 import * as React from "react";
-import { useEffect } from "react";
-import axios from "axios";
-import axiosClient from "../../axiosClient";
 import { useShowToast } from "src/hooks";
-
 import { Box, Divider, VStack } from "@Panda/jsx";
 import { Text } from "@ParkComponents/text";
 import { MyProfile, RatingCard } from "@Components/ui";
-import useAuthState from "src/hooks/useAuthState";
 import useAuthStore from "src/store/authStore";
 
 export const MyProfilePage: React.FC = () => {
   const [showEvents, setShowEvents] = React.useState(true);
   const showToast = useShowToast();
   const userData = useAuthStore((state) => state.user)
+  
 
   const mockUser = {
     ratings: [
