@@ -13,6 +13,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { Spinner } from "@ParkComponents/spinner";
+import axiosClient from "axiosClient";
+import { useShowToast } from "src/hooks";
+import { isAxiosError } from "node_modules/axios/index.d.cts";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 //const eventCategories = handleGetCategories()
 const eventCategories = [
@@ -55,16 +60,50 @@ export const CreateEventForm: React.FC = () => {
     resolver: zodResolver(eventFormSchema),
   });
 
+  const showToast = useShowToast();
+
+  const navigate = useNavigate()
+
   const [files, setFiles] = React.useState<File[]>([]); //file upload images
 
   const onSubmit: SubmitHandler<EventFormValues> = async (data) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000)); //simulated call for isSubmitting state
       console.log(data, files);
+
+      const formData = {
+        name: data.name,
+        description: data.description,
+        location: data.place,
+        private: data.type === "private" ? true : false,
+      };
+
+      try {
+        const response = await axiosClient.post(
+          `${import.meta.env.VITE_API_KEY}/event`,
+          formData
+        );
+
+        // Success message
+        if (response.status === 201) {
+          showToast("Success", "Event created successfully!", "success");
+          navigate("/my-events")
+        } else {
+          showToast("Warning", "Creating event failed", "alert");
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          showToast(
+            "Error",
+            `Creating event failed ${error.response?.data?.message || error.message}`,
+            "error"
+          );
+        } else {
+          showToast("Error", `Unexpected error occured : ${error}`, "error");
+        }
+      }
     } catch (error) {
-      setError("root", {
-        message: "error", //set up for backend errors
-      });
+      showToast("Error", `Error occured on submission: ${error}`, "error");
     }
   };
 
