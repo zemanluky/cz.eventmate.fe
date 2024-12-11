@@ -12,6 +12,7 @@ import { ComboBoxComponent } from "./ComboBoxComponent";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { z } from "zod";
+import { Spinner } from "@ParkComponents/spinner";
 
 //const eventCategories = handleGetCategories()
 const eventCategories = [
@@ -130,7 +131,6 @@ export const CreateEventForm: React.FC = () => {
                 />
               )}
             />
-
             {errors.date && <Text color="red">{errors.date.message}</Text>}
 
             {/* Category input */}
@@ -239,7 +239,13 @@ export const CreateEventForm: React.FC = () => {
                 <Text>Cancel</Text>
               </Button>
               <Button type="submit" size="xl">
-                <Text>{isSubmitting ? "Loading..." : "Create"}</Text>
+                <Text>
+                  {isSubmitting ? (
+                    <Spinner colorPalette="white" zIndex={1} />
+                  ) : (
+                    "Create"
+                  )}
+                </Text>
               </Button>
             </HStack>
           </Stack>

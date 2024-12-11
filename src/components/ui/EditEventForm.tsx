@@ -12,6 +12,7 @@ import { ComboBoxComponent } from "./ComboBoxComponent";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { z } from "zod";
+import { Spinner } from "@ParkComponents/spinner";
 
 //handleLoad(eventId) => {return handleGetEventData(eventId)};
 
@@ -79,6 +80,9 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
       place: eventData.place,
       address: eventData.address,
       description: eventData.description,
+      category: eventData.category,
+      type: eventData.type,
+      date: eventData.date,
     },
     resolver: zodResolver(eventFormSchema),
   });
@@ -271,7 +275,17 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                 <Text>Cancel</Text>
               </Button>
               <Button type="submit" size="xl">
-                <Text>{isSubmitting ? "Loading..." : "Create"}</Text>
+                <Text>
+                  {isSubmitting ? (
+                    <Spinner
+                      colorPalette="white"
+                      borderWidth="4px"
+                      zIndex={1}
+                    />
+                  ) : (
+                    "Create"
+                  )}
+                </Text>
               </Button>
             </HStack>
           </Stack>

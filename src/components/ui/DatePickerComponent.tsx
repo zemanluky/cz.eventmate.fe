@@ -8,7 +8,7 @@ import { formatISO } from "date-fns";
 
 interface DatePickerProps {
   onChange: (dates: { startDate: string; endDate: string }) => void;
-  defaultDates: {
+  defaultDates?: {
     startDate: string;
     endDate: string;
   };
@@ -43,10 +43,8 @@ export const DatePickerComponent: React.FC<DatePickerProps> = ({
         startOfWeek={1}
         selectionMode="range"
         onValueChange={handleDateChange}
-        defaultValue={[
-          new Date(defaultDates.startDate), //nevim co uz tam zadat aby to fungovalo
-          new Date(defaultDates.endDate),
-        ]}
+        //defaultValue={}
+        locale="cs-CZ"
       >
         <DatePicker.Label>Date Picker</DatePicker.Label>
         <DatePicker.Control>
