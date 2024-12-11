@@ -9,11 +9,11 @@ import { Link } from "react-router-dom";
 
 interface EventCardBigDesktopProps {
   event: {
-    id: string;
+    _id: string;
     name: string;
     image: string;
     date: string;
-    place: string;
+    location: string;
     memberList: {
       member: Member;
     }[];
@@ -63,7 +63,7 @@ export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
                 alignItems="start"
                 justifyContent="end"
               >
-                {/* <AvatarGroup members={event.memberList} /> */}
+                <AvatarGroup members={event.memberList} />
               </GridItem>
             </Grid>
           </Card.Body>
