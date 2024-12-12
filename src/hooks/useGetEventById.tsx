@@ -5,12 +5,11 @@ import axiosClient from "axiosClient";
 // Define types for the event, error, and the return value of the hook
 interface Event {
   _id: string;
-  name: string;
-  surname: string;
-  email: string;
-  username: string;
-  bio: string;
-  ratings: string[];
+  name:string;
+  date:string;
+  description:string;
+  location: string;
+  private:boolean;
   // Add other event properties as needed
 }
 
