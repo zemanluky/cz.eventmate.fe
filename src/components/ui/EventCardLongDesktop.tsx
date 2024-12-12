@@ -28,7 +28,7 @@ import { Button } from "@ParkComponents/button";
 
 interface EventCardLongDesktopProps {
   event: {
-    id: string;
+    _id: string;
     name: string;
     image: string;
     date: string;
@@ -133,8 +133,8 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
                     <IconButton
                       w="95px"
                       h="95px"
-                      key={event.id}
-                      onClick={() => navigate(`/edit-event/${event.id}`)}
+                      key={event._id}
+                      onClick={() => navigate(`/edit-event/${event._id}`)}
                       aria-label="Edit Event"
                     >
                       {/* size nefunguje */}

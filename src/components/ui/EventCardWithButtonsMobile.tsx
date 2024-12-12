@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 interface EventCardMobileProps {
   event: {
-    id: string;
+    _id: string;
     name: string;
     image: string;
     date: string;
@@ -98,7 +98,7 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
                 <HStack mt="10px">
                   <Button
                     key={event.id}
-                    onClick={() => navigate(`/edit-event/${event.id}`)}
+                    onClick={() => navigate(`/edit-event/${event._id}`)}
                   >
                     {/* size nefunguje */}
                     <PencilLineIcon strokeWidth={2} size={40} />
