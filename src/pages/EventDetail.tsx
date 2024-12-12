@@ -51,15 +51,58 @@ import party2 from "@Components/assets/images/party_2.jpg";
 import party3 from "@Components/assets/images/party_3.jpg";
 import party4 from "@Components/assets/images/party_4.jpg";
 import party5 from "@Components/assets/images/party_5.jpg";
+import useGetEventById from "src/hooks/useGetEventById";
+import { useParams } from "react-router-dom";
 
 export const EventDetail: React.FC /*<EventDetailProps>*/ = () => {
-  //const params = useParams();
-  //const eventId = params.eventId as string;
-  //event = handleGetEvent(eventId);
+  const params = useParams();
+  const eventId = params.eventId;
+  const { event, loading, error } = useGetEventById(eventId);
 
   //mock event:
-  const event = {
-    id: "event1",
+  // const eventData = {
+  //   id: "event1",
+  //   creator: {
+  //     id: "36",
+  //     name: "Jon",
+  //     surname: "Jones",
+  //     imageUrl: "https://via.placeholder.com/50?text=JD",
+  //     rating: 3,
+  //   },
+  //   name: "Photography Workshop",
+  //   images: [party1, party2, party3, party4, party5],
+  //   date: "2024-12-10",
+  //   place: "New York City, NY",
+  //   private: false,
+  //   description:
+  //     "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis",
+  //   memberList: [
+  //     {
+  //       member: {
+  //         id: "1",
+  //         name: "John",
+  //         surname: "Doe",
+  //         imageUrl: "https://via.placeholder.com/50?text=JD",
+  //       },
+  //     },
+  //     {
+  //       member: {
+  //         id: "2",
+  //         name: "Jane",
+  //         surname: "Smith",
+  //         imageUrl: "https://via.placeholder.com/50?text=JS",
+  //       },
+  //     },
+  //   ],
+  // };
+console.log(event)
+
+  const eventData = {
+    name: event?.name,
+    description: event?.description,
+    date: event?.date,
+    location: event?.location,
+    // mock creator
     creator: {
       id: "36",
       name: "Jon",
@@ -67,13 +110,7 @@ export const EventDetail: React.FC /*<EventDetailProps>*/ = () => {
       imageUrl: "https://via.placeholder.com/50?text=JD",
       rating: 3,
     },
-    name: "Photography Workshop",
-    images: [party1, party2, party3, party4, party5],
-    date: "2024-12-10",
-    place: "New York City, NY",
-    private: false,
-    description:
-      "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis",
+    // mock members
     memberList: [
       {
         member: {
@@ -92,19 +129,23 @@ export const EventDetail: React.FC /*<EventDetailProps>*/ = () => {
         },
       },
     ],
+    // mock images
+    images: [party1, party2, party3, party4, party5],
   };
+
+  console.log(eventData)
 
   return (
     <>
       <EventToolbarEventDetail
-        eventName={event.name} /*userId={loggedInUser.id}*/
+        eventName={eventData.name} /*userId={loggedInUser.id}*/
       />
       <HStack mb="10px" gap={10}>
         {/* Carousel */}
         <Carousel.Root>
           <Carousel.Viewport>
             <Carousel.ItemGroup>
-              {event.images.map((image, index) => (
+              {eventData.images.map((image, index) => (
                 <Carousel.Item key={index} index={index}>
                   <img
                     src={image}
@@ -129,7 +170,7 @@ export const EventDetail: React.FC /*<EventDetailProps>*/ = () => {
                 </IconButton>
               </Carousel.PrevTrigger>
               <Carousel.IndicatorGroup>
-                {event.images.map((_, index) => (
+                {eventData.images.map((_, index) => (
                   <Carousel.Indicator
                     key={index}
                     index={index}
@@ -151,16 +192,16 @@ export const EventDetail: React.FC /*<EventDetailProps>*/ = () => {
           <Avatar
             h="200px"
             w="200px"
-            name={`${event.creator.name} ${event.creator.surname}`}
+            name={`${eventData.creator.name} ${eventData.creator.surname}`}
           />
-          <RatingGroup count={5} defaultValue={event.creator.rating} disabled />
+          <RatingGroup count={5} defaultValue={eventData.creator.rating} disabled />
 
           <Text>
-            {event.creator.name} {event.creator.surname}
+            {eventData.creator.name} {eventData.creator.surname}
           </Text>
           <Divider orientation="horizontal" thickness="2px" width="100%" />
           <Text>Attendees:</Text>
-          <AvatarGroup members={event.memberList} />
+          <AvatarGroup members={eventData.memberList} />
         </VStack>
       </HStack>
       {/* Content */}
@@ -173,14 +214,14 @@ export const EventDetail: React.FC /*<EventDetailProps>*/ = () => {
           <HStack>
             <Calendar />
             <Text fontWeight={700}>Date: </Text>
-            <Text>{event.date}</Text>
+            <Text>{eventData.date}</Text>
           </HStack>
         </GridItem>
 
         {/* Description */}
         <GridItem colSpan={1} rowSpan={4}>
           <Text>
-            <Text fontWeight={700}>Description:</Text> {event.description}
+            <Text fontWeight={700}>Description:</Text> {eventData.description}
           </Text>
         </GridItem>
 
@@ -189,7 +230,7 @@ export const EventDetail: React.FC /*<EventDetailProps>*/ = () => {
           <HStack>
             <MapPin />
             <Text fontWeight={700}>Place: </Text>
-            <Text>{event.place}</Text>
+            <Text>{eventData.location}</Text>
           </HStack>
         </GridItem>
 
@@ -198,7 +239,7 @@ export const EventDetail: React.FC /*<EventDetailProps>*/ = () => {
           <HStack>
             <Clock />
             <Text fontWeight={700}>Time: </Text>
-            <Text>{event.date}</Text>
+            <Text>{eventData.date}</Text>
           </HStack>
         </GridItem>
 
@@ -207,7 +248,7 @@ export const EventDetail: React.FC /*<EventDetailProps>*/ = () => {
           <HStack>
             <Lock />
             <Text fontWeight={700}>Type: </Text>
-            <Text>{event.private ? "Private" : "Public"}</Text>
+            <Text>{eventData.private ? "Private" : "Public"}</Text>
           </HStack>
         </GridItem>
       </Grid>
