@@ -42,7 +42,7 @@ const eventFormSchema = z.object({
   description: z.string().nonempty("Description is required"),
   category: z.string().nonempty("Category is required"),
   type: z.string().nonempty("Type is required"),
-  date: z.object({ startDate: z.string(), endDate: z.string() }),
+  date: z.date(),
 });
 type EventFormValues = z.infer<typeof eventFormSchema>;
 
@@ -57,10 +57,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
   const mockEvent = {
     address: "Holešovice",
     category: "meetups",
-    date: {
-      startDate: "2024-12-18T01:00:00+01:00",
-      endDate: "2024-12-19T01:00:00+01:00",
-    },
+    date: new Date(),
     description: "Nejlepší párty v celém okolí!!!",
     name: "Mega párty",
     place: "Praha",
@@ -157,10 +154,9 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
               name="date"
               render={({ field }) => (
                 <DatePickerComponent
-                  defaultDates={eventData.date}
-                  onChange={(dates: { startDate: string; endDate: string }) =>
-                    field.onChange(dates)
-                  }
+                  defaultDate={eventData.date}
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
                 />
               )}
             />

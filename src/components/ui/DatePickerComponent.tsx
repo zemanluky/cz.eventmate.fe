@@ -4,54 +4,38 @@ import { Input } from "@ParkComponents/input";
 import { Button } from "@ParkComponents/button";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import * as React from "react";
-import { formatISO } from "date-fns";
+import { parseISO } from "date-fns";
+import { parseDate, useDatePicker } from "@ark-ui/react";
 
 interface DatePickerProps {
-  onChange: (dates: { startDate: string; endDate: string }) => void;
-  defaultDates?: {
-    startDate: string;
-    endDate: string;
-  };
-}
-
-interface DateRange {
-  startDate: string;
-  endDate: string;
+  onChange: (date: Date) => void;
+  defaultDate?: Date;
+  value: Date;
 }
 
 export const DatePickerComponent: React.FC<DatePickerProps> = ({
   onChange,
-  defaultDates,
+  value,
+  defaultDate,
 }) => {
-  const handleDateChange = (details: any) => {
-    const datepickerOutput = details.value;
-    if (datepickerOutput.length > 0) {
-      const dates: DateRange = {
-        startDate: formatISO(new Date(datepickerOutput[0])),
-        endDate: formatISO(new Date(datepickerOutput[1])),
-      };
-      console.log(dates);
-      onChange(dates);
-    }
-  };
+  const datePicker = useDatePicker({
+    closeOnSelect: true,
+    positioning: { sameWidth: true },
+    startOfWeek: 1,
+    selectionMode: "single",
+    onValueChange(details) {
+      onChange(parseISO(details.valueAsString[0]));
+    },
+    value: [parseDate(value)],
+    defaultValue: defaultDate ? [parseDate(defaultDate)] : [],
+  });
 
   return (
     <div>
-      <DatePicker.Root
-        closeOnSelect={false}
-        positioning={{ sameWidth: true }}
-        startOfWeek={1}
-        selectionMode="range"
-        onValueChange={handleDateChange}
-        //defaultValue={}
-        locale="cs-CZ"
-      >
+      <DatePicker.RootProvider value={datePicker}>
         <DatePicker.Label>Date Picker</DatePicker.Label>
         <DatePicker.Control>
           <DatePicker.Input index={0} asChild>
-            <Input />
-          </DatePicker.Input>
-          <DatePicker.Input index={1} asChild>
             <Input />
           </DatePicker.Input>
           <DatePicker.Trigger asChild>
@@ -202,7 +186,7 @@ export const DatePickerComponent: React.FC<DatePickerProps> = ({
             </DatePicker.View>
           </DatePicker.Content>
         </DatePicker.Positioner>
-      </DatePicker.Root>
+      </DatePicker.RootProvider>
     </div>
   );
 };
