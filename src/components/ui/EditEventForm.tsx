@@ -35,8 +35,8 @@ const eventCategories = [
   { label: "Charity Events", value: "charity" },
 ];
 const eventTypes = [
-  { label: "Public", value: "public" },
-  { label: "Private", value: "private" },
+  { label: "Public", value: false },
+  { label: "Private", value: true },
 ];
 
 // Validation schema using zod
@@ -79,7 +79,6 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     place: event?.location,
     type: event?.private ? true : false,
   };
-  
   console.log(mockEvent)
   
   const [files, setFiles] = React.useState<File[]>([]); //file upload images
@@ -139,7 +138,7 @@ React.useEffect(() => {
         name: data.name,
         description: data.description,
         location: data.place,
-        private: data.type === "private" ? true : false,
+        private: data.type ? true : false,
       };
 
       try {
@@ -284,7 +283,7 @@ React.useEffect(() => {
                       label="Type:"
                       placeholder="Event types"
                       inputCollection={eventTypes}
-                      defaultValue={eventData?.type}
+  
                       onChange={(value) => field.onChange(value)}
                     />
                   )}
@@ -371,7 +370,7 @@ React.useEffect(() => {
                           zIndex={1}
                         />
                       ) : (
-                        "Create"
+                        "Update event"
                       )}
                     </Text>
                   </Button>
