@@ -22,7 +22,7 @@ export const Homepage: React.FC = () => {
     setIsLoading(true); // Set loading state
 
     try {
-      const response = await axiosClient.get(`/event`, {
+      const response = await axiosClient.get(`/event/`, {
         params: {
           userId: "null", // Adjust based on your logic
           pageSize,
@@ -30,12 +30,14 @@ export const Homepage: React.FC = () => {
         },
       });
 
-      const fetchedEvents = response.data;
+      const fetchedEvents = response.data
+      console.log(fetchedEvents)
 
       // Avoid duplicates by filtering out events already in the state
       setEvents((prev) => {
-        const newEvents = fetchedEvents.filter(
-          (event: any) => !prev.some((existingEvent: any) => existingEvent._id === event._id)
+        const newEvents = fetchedEvents?.filter(
+          (event: any) =>
+            !prev.some((existingEvent: any) => existingEvent._id === event._id)
         );
         return [...prev, ...newEvents];
       });

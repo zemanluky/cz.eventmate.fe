@@ -26,7 +26,7 @@ export const MyEvents: React.FC = () => {
     setIsLoading(true); // Set loading state
 
     try {
-      const response = await axiosClient.get(`/event`, {
+      const response = await axiosClient.get(`/event/`, {
         params: {
           userId: userObject._id, // Adjust based on your logic
           pageSize,
@@ -241,7 +241,7 @@ export const MyEvents: React.FC = () => {
         {events.map((event, index) => {
           const isLast = index === events.length - 1;
           return (
-            <div ref={isLast ? lastEventRef : null} key={event.id}>
+            <div ref={isLast ? lastEventRef : null} key={event._id}>
               <EventCardLongDesktop event={event} />
             </div>
           );
@@ -251,7 +251,7 @@ export const MyEvents: React.FC = () => {
         {events.map((event, index) => {
           const isLast = index === events.length - 1;
           return (
-            <div ref={isLast ? lastEventRef : null} key={event.id}>
+            <div ref={isLast ? lastEventRef : null} key={event._id}>
               <EventCardWithButtonsMobile event={event} />
             </div>
           );
