@@ -23,14 +23,16 @@ import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 
 interface User {
-  _id: string;
-  name: string;
-  surname: string;
-  email: string;
-  username: string;
-  bio: string;
-  friends: string[];
-  ratings: string[];
+  user: {
+    _id: string;
+    name: string;
+    surname: string;
+    email: string;
+    username: string;
+    bio: string;
+    friends: string[];
+    ratings: string[];
+  }
 }
 
 // Validation schema using zod
