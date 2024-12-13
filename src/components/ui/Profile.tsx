@@ -23,13 +23,14 @@ import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 
 interface User {
-  user: {
-    id: string;
-    name: string;
-    surname: string;
-    imageUrl: string;
-    rating: number;
-  };
+  _id: string;
+  name: string;
+  surname: string;
+  email: string;
+  username: string;
+  bio: string;
+  friends: string[];
+  ratings: string[];
 }
 
 // Validation schema using zod
@@ -80,11 +81,22 @@ export const Profile: React.FC<User> = ({ user }) => {
           {user.name} {user.surname}
         </Text>
         <HStack mb="10px">
-          <RatingGroup count={5} defaultValue={user.rating} disabled />
-          <Box w="5px" h="5px" borderRadius="full" bg="fg.subtle" />
-          <Text fontSize="xs" color="fg.subtle" fontWeight="500">
-            {12} events hosted
-          </Text>
+          {/* Conditional rendering if no ratings */}
+          {user.ratings.length === 0 ? (
+            <Text fontSize="xs" color="fg.subtle" fontWeight="500">
+              No ratings yet
+            </Text>
+          ) : (
+            <>
+              <RatingGroup count={5} defaultValue={user.ratings} disabled />
+              <Box w="5px" h="5px" borderRadius="full" bg="fg.subtle" />
+              <Text fontSize="xs" color="fg.subtle" fontWeight="500">
+                {12} events hosted
+              </Text>
+            </>
+          )}
+
+
         </HStack>
         <HStack mb="10px">
           <Text fontSize="lg">Following: {45}</Text>
