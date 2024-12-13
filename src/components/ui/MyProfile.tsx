@@ -16,13 +16,16 @@ import useAuthStore from "src/store/authStore";
 import useUserProfileStore from "src/store/userProfileStore";
 
 interface User {
-  user: {
-    id: string;
+  user:{
+    _id: string;
     name: string;
     surname: string;
-    imageUrl: string;
-    ratings: [];
-  };
+    email: string;
+    username: string;
+    bio: string;
+    friends: string[];
+    ratings: string[];
+  }
 }
 
 export const MyProfile: React.FC<User> = ({ user }) => {
@@ -134,32 +137,44 @@ export const MyProfile: React.FC<User> = ({ user }) => {
           justifyContent={{ base: "center", sm: "flex-start" }}
           alignItems={{ base: "center", sm: "flex-start" }}
           w="100%"
+          gap="8px"
         >
           {/* User name */}
           <Text fontWeight="700" fontSize="5xl">
             {user.name} {user.surname}
           </Text>
 
-          {/* Rating + Hosted events */}
-          {user.rating?.length > 0 && (
-            <HStack mb="10px">
-              <RatingGroup
-                count={5}
-                defaultValue={user.rating.length}
-                disabled
-              />
+          {/* Conditional rendering if no ratings */}
+          {user.ratings.length === 0 ? (
+            <Flex gap={"8px"} alignItems={"center"}>
+              <Text fontSize="xs" color="fg.subtle" fontWeight="500">
+                You don't have any ratings yet
+              </Text>
+            </Flex>
+          ) : (
+            <>
+              <RatingGroup count={5} defaultValue={user.ratings} disabled />
               <Box w="5px" h="5px" borderRadius="full" bg="fg.subtle" />
               <Text fontSize="xs" color="fg.subtle" fontWeight="500">
                 {12} events hosted
               </Text>
-            </HStack>
+            </>
           )}
 
-          {/* Following/Followers */}
+          {/* Friends*/}
           <HStack mb="10px">
-            <Text fontSize="lg">Following: {45}</Text>
-            <Divider h="20px" thickness="2px" orientation="vertical" />
-            <Text fontSize="lg">Followers: {120}</Text>
+          {/* Conditional rendering for no friends */}
+          {user.friends.length === 0 ? (
+            <Flex gap={"8px"} alignItems={"center"}>
+              <Text fontSize="xs" color="fg.subtle" fontWeight="500">
+              You don't have any friends yet
+              </Text>
+            </Flex>
+          ) : (
+            <>
+              <Text fontSize="lg">Friends: {user.friends.length}</Text>
+            </>
+          )}
           </HStack>
         </Flex>
         <Stack>
@@ -168,7 +183,7 @@ export const MyProfile: React.FC<User> = ({ user }) => {
             {user.ratings?.length > 0 ? (
               <>
                 <Text fontSize={60} fontWeight={650}>
-                  {user.ratings.length}
+                  {user.ratings?.length}
                 </Text>
                 <Star size={60} />
               </>
