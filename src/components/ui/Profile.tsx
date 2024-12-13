@@ -83,9 +83,16 @@ export const Profile: React.FC<User> = ({ user }) => {
         <HStack mb="10px">
           {/* Conditional rendering if no ratings */}
           {user.ratings.length === 0 ? (
-            <Text fontSize="xs" color="fg.subtle" fontWeight="500">
-              No ratings yet
-            </Text>
+            <Flex gap={"8px"} alignItems={"center"}>
+              <Text fontSize="xs" color="fg.subtle" fontWeight="500">
+                No ratings yet
+              </Text>
+              <Divider h="20px" thickness="2px" orientation="vertical" />
+              {/* add functionality */}
+              <Text color="bg.buttonSmall" cursor={"pointer"}>
+                Be the first one to rate this user !
+              </Text>
+            </Flex>
           ) : (
             <>
               <RatingGroup count={5} defaultValue={user.ratings} disabled />
@@ -95,13 +102,25 @@ export const Profile: React.FC<User> = ({ user }) => {
               </Text>
             </>
           )}
-
-
         </HStack>
         <HStack mb="10px">
-          <Text fontSize="lg">Following: {45}</Text>
-          <Divider h="20px" thickness="2px" orientation="vertical" />
-          <Text fontSize="lg">Followers: {120}</Text>
+          {/* Conditional rendering for no friends */}
+          {user.friends.length === 0 ? (
+            <Flex gap={"8px"} alignItems={"center"}>
+              <Text fontSize="xs" color="fg.subtle" fontWeight="500">
+                No friends yet
+              </Text>
+              <Divider h="20px" thickness="2px" orientation="vertical" />
+              {/* add functionality */}
+              <Text color="bg.buttonSmall" cursor={"pointer"}>
+                Be the first one to send a friend request!
+              </Text>
+            </Flex>
+          ) : (
+            <>
+              <Text fontSize="lg">Friends: {user.friends.length}</Text>
+            </>
+          )}
         </HStack>
         <Grid gridTemplateColumns="repeat(5, 1fr)" w="100%">
           <GridItem colSpan={{ base: 5, sm: 4 }}>
