@@ -165,22 +165,23 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
       ) : (
         <>
           {/* Title */}
-          <Text>Create Event</Text>
+          <Text fontSize={{ sm: "4xl", base: "4xl" }} fontWeight="500" mb="28px">
+            Edit Event
+          </Text>
 
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)}>
             <Flex
               direction={{ base: "column", md: "row" }}
-              h={{ base: "auto", md: "80vh" }}
               pb={{ base: "none", md: "30px" }}
             >
               {/* Left part of form */}
               <Flex
                 direction="column"
                 justifyContent="space-between"
-                h={{ base: "auto", md: "100%" }}
                 w={{ base: "100%", md: "48%" }}
                 mr={{ base: "none", md: "2%" }}
+                gap={{base : "16px", sm:"0px"}}
               >
                 {/* Name input */}
                 <Stack w="100%" gap="1.5">
@@ -276,18 +277,21 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
 
               {/* Right part of form */}
               <Stack
-                h={{ base: "1000px", md: "80vh" }}
                 w={{ base: "100%", md: "48%" }}
                 ml={{ base: "none", md: "2%" }}
+                pb="32px"
+                gap="16x"
               >
                 {/* Description input */}
-                <Stack h="20%" w="100%" gap="1.5">
+                <Stack h="20%" w="100%" gap="1.5" mt={{base:"16px", sm:"0px"}}>
                   <FormLabel htmlFor="description">Description</FormLabel>
                   <Input
                     {...register("description")}
                     h="80%"
                     id="description"
                     placeholder="About event"
+                    py={"32px"}
+                    px={"8px"}
                   />
                   {errors.description && (
                     <Text color="red">{errors.description.message}</Text>
@@ -304,6 +308,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                       const acceptedFiles = details.acceptedFiles;
                       setFiles(acceptedFiles);
                     }}
+                    maxHeight={"256px"}
                   >
                     {/* Image dropzone */}
                     <FileUpload.Dropzone>
@@ -338,9 +343,22 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                 </Stack>
 
                 {/* Buttons */}
-                <HStack h="10%" pl="40%" justifyContent="space-between">
-                  <Button size="xl" bg="bg.cancel" type="button">
-                    <Text>Cancel</Text>
+                <HStack
+                  h="10%"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  mt="80px"
+                >
+                  <Button
+                    size="xl"
+                    bg="bg.cancel"
+                    type="button"
+                    cursor={"pointer"}
+                    onClick={() => {
+                      navigate("/my-events");
+                    }}
+                  >
+                    Cancel
                   </Button>
                   <Button type="submit" size="xl">
                     <Text>
