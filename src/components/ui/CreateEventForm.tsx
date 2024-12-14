@@ -15,7 +15,6 @@ import { z } from "zod";
 import { Spinner } from "@ParkComponents/spinner";
 import axiosClient from "axiosClient";
 import { useShowToast } from "src/hooks";
-import { isAxiosError } from "node_modules/axios/index.d.cts";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -45,7 +44,7 @@ const eventFormSchema = z.object({
   description: z.string().nonempty("Description is required"),
   category: z.string().nonempty("Category is required"),
   type: z.string().nonempty("Type is required"),
-  date: z.object({ startDate: z.string(), endDate: z.string() }),
+  date: z.date(),
 });
 type EventFormValues = z.infer<typeof eventFormSchema>;
 
@@ -58,11 +57,14 @@ export const CreateEventForm: React.FC = () => {
     formState: { errors, isSubmitting },
   } = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
+    defaultValues: {
+      date: new Date(),
+    },
   });
 
   const showToast = useShowToast();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [files, setFiles] = React.useState<File[]>([]); //file upload images
 
@@ -87,7 +89,7 @@ export const CreateEventForm: React.FC = () => {
         // Success message
         if (response.status === 201) {
           showToast("Success", "Event created successfully!", "success");
-          navigate("/my-events")
+          navigate("/my-events");
         } else {
           showToast("Warning", "Creating event failed", "alert");
         }
@@ -164,9 +166,8 @@ export const CreateEventForm: React.FC = () => {
               name="date"
               render={({ field }) => (
                 <DatePickerComponent
-                  onChange={(dates: { startDate: string; endDate: string }) =>
-                    field.onChange(dates)
-                  }
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
                 />
               )}
             />
