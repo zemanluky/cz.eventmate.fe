@@ -52,41 +52,33 @@ const eventFormSchema = z.object({
 type EventFormValues = z.infer<typeof eventFormSchema>;
 
 interface EditEventFormProps {
-  eventToEditId: String;
+  eventToEditId: string;
 }
 
 export const EditEventForm: React.FC<EditEventFormProps> = ({
   eventToEditId,
 }) => {
-
-  // Getting eventId from params
-  const idObject = useParams();
-  const eventId = idObject.eventId;
-
-  // Getting event by id 
-  const { event, loading, error } = useGetEventById(eventId);
+  // Getting event by id
+  const { event, loading, error } = useGetEventById(eventToEditId);
 
   //const eventData = handleLoad(eventToEditId);
   const mockEvent = {
     address: "Holešovice",
     category: "meetups",
-    date: new Date(),
+    date: new Date(event?.date), // new Date if important for ISO 8601 format
     description: event?.description,
     name: event?.name,
     place: event?.location,
-    type: event?.private ? true : false,
+    type: false,
   };
-  console.log(mockEvent)
-  
+
   const [files, setFiles] = React.useState<File[]>([]); //file upload images
-  
+
   const showToast = useShowToast();
-  
+
   const navigate = useNavigate();
-  
-  
+
   const eventData = mockEvent;
-  console.log(eventData)
 
   const {
     register,
@@ -103,29 +95,25 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
       description: "",
       category: "",
       type: false,
-      date: { startDate: "", endDate: "" },
+      date: new Date(),
     },
     resolver: zodResolver(eventFormSchema),
   });
   // Update form values when event data is loaded
-React.useEffect(() => {
-  if (event) {
-    const eventData = {
-      address: "Holešovice",
-      category: "meetups",
-      date: {
-        startDate: "2024-12-18T01:00:00+01:00",
-        endDate: "2024-12-19T01:00:00+01:00",
-      },
-      description: event?.description,
-      name: event?.name,
-      place: event?.location,
-      type: event?.private ? true : false,
-    };
-    reset(eventData); // Dynamically update form values
-  }
-}, [event, reset]);
-
+  React.useEffect(() => {
+    if (event) {
+      const eventData = {
+        address: "Holešovice",
+        category: "meetups",
+        date: new Date(event?.date), // new Date if important for ISO 8601 format
+        description: event?.description,
+        name: event?.name,
+        place: event?.location,
+        type: event?.private ? true : false,
+      };
+      reset(eventData); // Dynamically update form values
+    }
+  }, [event, reset]);
 
   const onSubmit: SubmitHandler<EventFormValues> = async (data) => {
     try {
@@ -136,15 +124,14 @@ React.useEffect(() => {
         description: data.description,
         location: data.place,
         private: data.type ? true : false,
+        date: data.date,
       };
 
       try {
         const response = await axiosClient.put(
-          `${import.meta.env.VITE_API_KEY}/event/${eventId}`,
+          `${import.meta.env.VITE_API_KEY}/event/${eventToEditId}`,
           formData
         );
-
-        console.log(response);
 
         // Success message
         if (response.status === 200) {
@@ -234,18 +221,18 @@ React.useEffect(() => {
                   )}
                 </Stack>
 
-            {/* Date input */}
-            <Controller
-              control={control}
-              name="date"
-              render={({ field }) => (
-                <DatePickerComponent
-                  defaultDate={eventData.date}
-                  value={field.value}
-                  onChange={(date) => field.onChange(date)}
+                {/* Date input */}
+                <Controller
+                  control={control}
+                  name="date"
+                  render={({ field }) => (
+                    <DatePickerComponent
+                      defaultDate={eventData.date}
+                      value={field.value}
+                      onChange={(date) => field.onChange(date)}
+                    />
+                  )}
                 />
-              )}
-            />
 
                 {errors.date && <Text color="red">{errors.date.message}</Text>}
 
@@ -278,7 +265,6 @@ React.useEffect(() => {
                       label="Type:"
                       placeholder="Event types"
                       inputCollection={eventTypes}
-  
                       onChange={(value) => field.onChange(value)}
                     />
                   )}
