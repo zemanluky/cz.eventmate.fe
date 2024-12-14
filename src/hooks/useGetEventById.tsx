@@ -5,11 +5,11 @@ import axiosClient from "axiosClient";
 // Define types for the event, error, and the return value of the hook
 interface Event {
   _id: string;
-  name:string;
-  date:string;
-  description:string;
+  name: string;
+  date: string;
+  description: string;
   location: string;
-  private:boolean;
+  private: boolean;
   // Add other event properties as needed
 }
 
@@ -32,9 +32,10 @@ const useGetEventById = (eventId: string): UseGetEventByIdReturn => {
         `${import.meta.env.VITE_API_KEY}/event/${id}`
       );
 
-      console.log(response.data);
+      // restructuring response data
+      const userData = response.data
 
-      setEvent(response.data);
+      setEvent(userData);
       setError(null); // Clear previous errors if the fetch is successful
       return response.data;
     } catch (err) {
