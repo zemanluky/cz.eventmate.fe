@@ -43,10 +43,21 @@ const eventFormSchema = z.object({
   address: z.string().nonempty("Address is required"),
   description: z.string().nonempty("Description is required"),
   category: z.string().nonempty("Category is required"),
-  type: z.string().nonempty("Type is required"),
+  type: z.boolean(),
   date: z.date(),
 });
 type EventFormValues = z.infer<typeof eventFormSchema>;
+
+const isoParser = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+};
 
 export const CreateEventForm: React.FC = () => {
   const {
@@ -73,21 +84,25 @@ export const CreateEventForm: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000)); //simulated call for isSubmitting state
       console.log(data, files);
 
+
       const formData = {
         name: data.name,
         description: data.description,
         location: data.place,
-        private: data.type === "private" ? true : false,
+        date: isoParser(data.date),
+        private: data.type
       };
 
+      
       try {
         const response = await axiosClient.post(
           `${import.meta.env.VITE_API_KEY}/event/`,
           formData
         );
+        console.log(response);
 
         // Success message
-        if (response.status === 201) {
+        if (response.status === 201 || response.status === 200) {
           showToast("Success", "Event created successfully!", "success");
           navigate("/my-events");
         } else {
@@ -128,7 +143,7 @@ export const CreateEventForm: React.FC = () => {
             justifyContent="space-between"
             w={{ base: "100%", md: "48%" }}
             mr={{ base: "none", md: "2%" }}
-            gap={{base : "16px", sm:"0px"}}
+            gap={{ base: "16px", sm: "0px" }}
           >
             {/* Name input */}
             <Stack w="100%" gap="1.5">
@@ -202,7 +217,7 @@ export const CreateEventForm: React.FC = () => {
                   label="Type:"
                   placeholder="Event types"
                   inputCollection={eventTypes}
-                  onChange={(value) => field.onChange(value)}
+                  onChange={(value) =>{ field.onChange(value)}}
                 />
               )}
             />
@@ -219,7 +234,7 @@ export const CreateEventForm: React.FC = () => {
             gap="16px"
           >
             {/* Description input */}
-            <Stack h="20%" w="100%" gap="1.5" mt={{base:"16px", sm:"0px"}}>
+            <Stack h="20%" w="100%" gap="1.5" mt={{ base: "16px", sm: "0px" }}>
               <FormLabel htmlFor="description">Description</FormLabel>
               <Input
                 {...register("description")}
