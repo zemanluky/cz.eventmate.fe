@@ -69,7 +69,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     description: event?.description,
     name: event?.name,
     place: event?.location,
-    type: false,
+    type: event?.private,
   };
 
   const [files, setFiles] = React.useState<File[]>([]); //file upload images
