@@ -145,7 +145,7 @@ export const MyProfile: React.FC<User> = ({ user }) => {
           </Text>
 
           {/* Conditional rendering if no ratings */}
-          {user.ratings.length === 0 ? (
+          {user.ratings?.length === 0 ? (
             <Flex gap={"8px"} alignItems={"center"}>
               <Text fontSize="xs" color="fg.subtle" fontWeight="500">
                 You don't have any ratings yet
@@ -164,7 +164,7 @@ export const MyProfile: React.FC<User> = ({ user }) => {
           {/* Friends*/}
           <HStack mb="10px">
           {/* Conditional rendering for no friends */}
-          {user.friends.length === 0 ? (
+          {user.friends?.length < 1 ? (
             <Flex gap={"8px"} alignItems={"center"}>
               <Text fontSize="xs" color="fg.subtle" fontWeight="500">
               You don't have any friends yet
@@ -172,7 +172,7 @@ export const MyProfile: React.FC<User> = ({ user }) => {
             </Flex>
           ) : (
             <>
-              <Text fontSize="lg">Friends: {user.friends.length}</Text>
+              <Text fontSize="lg">Friends: {user.friends?.length}</Text>
             </>
           )}
           </HStack>
