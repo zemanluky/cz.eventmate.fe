@@ -9,6 +9,9 @@ import { Dialog } from "@ParkComponents/dialog";
 import { IconButton } from "@ParkComponents/icon-button";
 import { Button } from "@ParkComponents/button";
 import { useNavigate } from "react-router-dom";
+import useDeleteEventById from "src/hooks/useDeleteEventById";
+import { useShowToast } from "src/hooks";
+import { Spinner } from "@ParkComponents/spinner";
 
 interface EventCardMobileProps {
   event: {
@@ -34,6 +37,21 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
   event,
 }) => {
   const navigate = useNavigate();
+
+  const { deleteEvent, loading, error } = useDeleteEventById();
+  const showToast = useShowToast();
+
+  // deleting event
+  const handleDeleteEvent = async (eventId: string) => {
+    try {
+      const response = await deleteEvent(eventId);
+      if (response) {
+        showToast("Success", "Event deleted successfully", "success");
+      }
+    } catch (error) {
+      showToast("Error", error, "error");
+    }
+  };
   return (
     <>
       <Card.Root w="350px">
@@ -136,10 +154,10 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
                           </Button>
                         </Dialog.CloseTrigger>
                         <Button
-                          /*onClick={handleDeleteEvent(event.id)}*/
+                          onClick={() => handleDeleteEvent(event._id)}
                           width="full"
                         >
-                          Delete
+                          {loading ? <Spinner colorPalette={"white"} /> : "Delete"}
                         </Button>
                       </Stack>
                     </Stack>

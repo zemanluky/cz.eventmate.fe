@@ -25,6 +25,11 @@ import { IconButton } from "@ParkComponents/icon-button";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "@ParkComponents/dialog";
 import { Button } from "@ParkComponents/button";
+import axiosClient from "axiosClient";
+import { useShowToast } from "src/hooks";
+import axios from "axios";
+import useDeleteEventById from "src/hooks/useDeleteEventById";
+import { Spinner } from "@ParkComponents/spinner";
 
 interface EventCardLongDesktopProps {
   event: {
@@ -50,6 +55,21 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
   event,
 }) => {
   const navigate = useNavigate();
+  const showToast = useShowToast();
+  const {deleteEvent, loading, error} = useDeleteEventById()
+
+  // deleting event
+  const handleDeleteEvent = async(eventId: string) => {
+    try {
+      const response =await deleteEvent(eventId)
+      if(response){
+        showToast("Success", "Event deleted successfully", "success")
+      }
+    } catch (error) {
+      showToast("Error", error, "error")
+    }
+  };
+
   return (
     <>
       <Card.Root w="100%" h="300px" bg="bg.card" color="fg.card">
@@ -170,10 +190,10 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
                             </Button>
                           </Dialog.CloseTrigger>
                           <Button
-                            /*onClick={handleDeleteEvent(event.id)}*/
+                            onClick={()=> handleDeleteEvent(event._id)}
                             width="full"
                           >
-                            Delete
+                            {loading ? <Spinner colorPalette={"white"} /> : "Delete"}
                           </Button>
                         </Stack>
                       </Stack>
