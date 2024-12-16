@@ -6,7 +6,7 @@ import axiosClient from "axiosClient";
 interface Event {
   _id: string;
   name: string;
-  date: string;
+  date: Date;
   description: string;
   location: string;
   private: boolean;
@@ -33,9 +33,9 @@ const useGetEventById = (eventId: string): UseGetEventByIdReturn => {
       );
 
       // restructuring response data
-      const userData = response.data
+      const eventData = response.data?.data
 
-      setEvent(userData);
+      setEvent(eventData);
       setError(null); // Clear previous errors if the fetch is successful
       return response.data;
     } catch (err) {
