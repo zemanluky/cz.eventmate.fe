@@ -11,7 +11,7 @@ export const MyEvents: React.FC = () => {
   const [events, setEvents] = React.useState<any[]>([]); // Rendered events
   const [isLoading, setIsLoading] = React.useState(false); // Loading state
   const [hasMore, setHasMore] = React.useState(true); // Flag for more data
-  const [pageNumber, setPageNumber] = React.useState(0); // Current page number
+  const [pageNumber, setPageNumber] = React.useState(1); // Current page number
   const pageSize = 10; // Number of events per page
 
   const lastEventRef = React.useRef<HTMLDivElement | null>(null); // Reference to last element
@@ -27,6 +27,7 @@ export const MyEvents: React.FC = () => {
 
     try {
       const response = await axiosClient.get(`/event/`, {
+
         params: {
           userId: userObject._id, // Adjust based on your logic
           pageSize,
@@ -34,8 +35,7 @@ export const MyEvents: React.FC = () => {
         },
       });
 
-      const fetchedEvents = response.data;
-      console.log(response);
+      const fetchedEvents = response.data?.data;
 
       // Avoid duplicates by filtering out events already in the state
       setEvents((prev) => {
