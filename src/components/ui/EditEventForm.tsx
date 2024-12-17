@@ -115,6 +115,17 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     }
   }, [event, reset]);
 
+  const isoParser = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+  
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+  };
+
   const onSubmit: SubmitHandler<EventFormValues> = async (data) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000)); //simulated call for isSubmitting state
@@ -124,7 +135,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
         description: data.description,
         location: data.place,
         private: data.type ? true : false,
-        date: data.date,
+        date: isoParser(data.date),
       };
 
       try {
