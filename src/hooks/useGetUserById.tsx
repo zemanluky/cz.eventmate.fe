@@ -36,7 +36,7 @@ const useGetUserById = (userId : string) : UseGetUserByIdReturn => {
             )
 
             // destructuring response
-            const userData = response.data?.data?.user
+            const userData = response.data?.data
 
             setUser(userData)
             setError(null)
