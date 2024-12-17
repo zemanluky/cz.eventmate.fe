@@ -52,49 +52,13 @@ import party3 from "@Components/assets/images/party_3.jpg";
 import party4 from "@Components/assets/images/party_4.jpg";
 import party5 from "@Components/assets/images/party_5.jpg";
 import useGetEventById from "src/hooks/useGetEventById";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 export const EventDetail: React.FC /*<EventDetailProps>*/ = () => {
   const params = useParams();
   const eventId = params.eventId;
   const { event, loading, error } = useGetEventById(eventId);
 
-  //mock event:
-  // const eventData = {
-  //   id: "event1",
-  //   creator: {
-  //     id: "36",
-  //     name: "Jon",
-  //     surname: "Jones",
-  //     imageUrl: "https://via.placeholder.com/50?text=JD",
-  //     rating: 3,
-  //   },
-  //   name: "Photography Workshop",
-  //   images: [party1, party2, party3, party4, party5],
-  //   date: "2024-12-10",
-  //   place: "New York City, NY",
-  //   private: false,
-  //   description:
-  //     "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis",
-  //   memberList: [
-  //     {
-  //       member: {
-  //         id: "1",
-  //         name: "John",
-  //         surname: "Doe",
-  //         imageUrl: "https://via.placeholder.com/50?text=JD",
-  //       },
-  //     },
-  //     {
-  //       member: {
-  //         id: "2",
-  //         name: "Jane",
-  //         surname: "Smith",
-  //         imageUrl: "https://via.placeholder.com/50?text=JS",
-  //       },
-  //     },
-  //   ],
-  // };
 console.log(event)
 
   const eventData = {
@@ -103,13 +67,7 @@ console.log(event)
     date: event?.date,
     location: event?.location,
     // mock creator
-    creator: {
-      id: "36",
-      name: "Jon",
-      surname: "Jones",
-      imageUrl: "https://via.placeholder.com/50?text=JD",
-      rating: 3,
-    },
+    author: event?.author,
     // mock members
     memberList: [
       {
@@ -187,17 +145,19 @@ console.log(event)
           </Carousel.Viewport>
         </Carousel.Root>
 
-        {/* Creator */}
+        {/* Author */}
         <VStack>
-          <Avatar
-            h="200px"
-            w="200px"
-            name={`${eventData.creator.name} ${eventData.creator.surname}`}
-          />
-          <RatingGroup count={5} defaultValue={eventData.creator.rating} disabled />
+          <Link to={`/profile/${eventData.author?._id}`}>
+            <Avatar
+              h="200px"
+              w="200px"
+              name={`${eventData.author?.name} ${eventData.author?.surname}`}
+            />
+          </Link>
+          <RatingGroup count={5} defaultValue={eventData.author?.rating} disabled />
 
           <Text>
-            {eventData.creator.name} {eventData.creator.surname}
+            {eventData.author?.name} {eventData.author?.surname}
           </Text>
           <Divider orientation="horizontal" thickness="2px" width="100%" />
           <Text>Attendees:</Text>
@@ -214,14 +174,14 @@ console.log(event)
           <HStack>
             <Calendar />
             <Text fontWeight={700}>Date: </Text>
-            <Text>{eventData.date}</Text>
+            <Text>{eventData?.date}</Text>
           </HStack>
         </GridItem>
 
         {/* Description */}
         <GridItem colSpan={1} rowSpan={4}>
           <Text>
-            <Text fontWeight={700}>Description:</Text> {eventData.description}
+            <Text fontWeight={700}>Description:</Text> {eventData?.description}
           </Text>
         </GridItem>
 
@@ -230,7 +190,7 @@ console.log(event)
           <HStack>
             <MapPin />
             <Text fontWeight={700}>Place: </Text>
-            <Text>{eventData.location}</Text>
+            <Text>{eventData?.location}</Text>
           </HStack>
         </GridItem>
 
@@ -239,7 +199,7 @@ console.log(event)
           <HStack>
             <Clock />
             <Text fontWeight={700}>Time: </Text>
-            <Text>{eventData.date}</Text>
+            <Text>{eventData?.date}</Text>
           </HStack>
         </GridItem>
 
@@ -248,7 +208,7 @@ console.log(event)
           <HStack>
             <Lock />
             <Text fontWeight={700}>Type: </Text>
-            <Text>{eventData.private ? "Private" : "Public"}</Text>
+            <Text>{eventData?.private ? "Private" : "Public"}</Text>
           </HStack>
         </GridItem>
       </Grid>
