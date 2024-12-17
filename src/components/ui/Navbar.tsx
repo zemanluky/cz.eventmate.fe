@@ -148,7 +148,7 @@ export const Navbar: React.FC = () => {
 
               <Menu.Trigger asChild>
                 <Button variant="ghost" bg="none" borderRadius={"full"} p="0">
-                  <Avatar name="John Doe" />
+                  <Avatar name={`${authUser?.name}`+" "+`${authUser?.surname} `} />
                 </Button>
               </Menu.Trigger>
             </Box>
