@@ -21,12 +21,11 @@ export const Homepage: React.FC = () => {
     console.log("Filters updated:", filters);
   }, [filters]);
 
-
   // Fetch events from the backend
   const fetchEvents = React.useCallback(async () => {
-    console.log(filters)
+    console.log(filters);
 
-    if (isLoading ) return; // Don't fetch if already loading or no more events
+    if (isLoading) return; // Don't fetch if already loading or no more events
     const userJson = localStorage.getItem("user-info");
     const userObject = JSON.parse(userJson);
     setIsLoading(true); // Set loading state
@@ -37,11 +36,11 @@ export const Homepage: React.FC = () => {
         pageSize,
         pageNumber,
         location: filters.location,
-        dateStart: filters.dateStart,
-        dateEnd: filters.dateEnd,
+        dateStart: filters.dateStart === "" ? null : filters.dateStart,
+        dateEnd: filters.dateEnd === "" ? null : filters.dateEnd,
         rating: null,
-        category:null,
-        filter:"all"
+        category: null,
+        filter: "all",
       };
 
       // fetching events by parameters
@@ -53,13 +52,11 @@ export const Homepage: React.FC = () => {
 
       // setting events
       setEvents((prev) => {
-
         const newEvents = fetchedEvents?.filter(
           (event: any) =>
             !prev.some((existingEvent: any) => existingEvent._id === event._id)
         );
-        
-      
+
         return [...prev, ...newEvents];
       });
 
@@ -75,7 +72,7 @@ export const Homepage: React.FC = () => {
     } finally {
       setIsLoading(false); // Reset loading state
     }
-  }, [isLoading, hasMore, pageNumber,filters]);
+  }, [isLoading, hasMore, pageNumber, filters]);
 
   // filters changing logic
   React.useEffect(() => {
