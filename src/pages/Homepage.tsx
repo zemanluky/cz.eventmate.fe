@@ -37,8 +37,8 @@ export const Homepage: React.FC = () => {
         pageSize,
         pageNumber,
         location: filters.location,
-        dateStart: null,
-        dateEnd: null,
+        dateStart: filters.dateStart,
+        dateEnd: filters.dateEnd,
         rating: null,
         category:null,
         filter:"all"
@@ -53,14 +53,12 @@ export const Homepage: React.FC = () => {
 
       // setting events
       setEvents((prev) => {
-        console.log("Previous events:", prev);
-        console.log("Newly fetched events:", fetchedEvents);
-      
+
         const newEvents = fetchedEvents?.filter(
           (event: any) =>
             !prev.some((existingEvent: any) => existingEvent._id === event._id)
         );
-        console.log("Filtered new events to add:", newEvents);
+        
       
         return [...prev, ...newEvents];
       });
