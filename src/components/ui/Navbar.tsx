@@ -15,11 +15,40 @@ import axios from "axios";
 import axiosClient from "axiosClient";
 import useAuthState from "src/hooks/useAuthState";
 import useAuthStore from "src/store/authStore";
+import useGetFriendRequests from "src/hooks/useGetFriendRequests";
+import { Spinner } from "@ParkComponents/spinner";
 
 export const Navbar: React.FC = () => {
-  const navigate = useNavigate()
-  const authUser = useAuthStore((state) => state.user)
-  const logoutUser = useAuthStore((state) => state.logout)
+  interface FriendRequest {
+    _id: string;
+    sender: User;
+    receiver: string;
+    createdAt: string;
+    state: string;
+    __v: number;
+  }
+
+  interface User {
+    _id: string;
+    name: string;
+    surname: string;
+    email: string;
+    username: string;
+    bio: string | null;
+    profile_picture_path: string | null;
+    friends: string[];
+    ratings: string[];
+    __v: number;
+  }
+
+  const navigate = useNavigate();
+  const authUser = useAuthStore((state) => state.user);
+  const logoutUser = useAuthStore((state) => state.logout);
+  const { friendRequests, loading, error } = useGetFriendRequests();
+  const [friendRequestList, setFriendRequestList] = React.useState<
+    FriendRequest[] | null
+  >(null);
+  
 
   const mockUserList = [
     {
@@ -61,7 +90,7 @@ export const Navbar: React.FC = () => {
     h: "100px",
     paddingX: { base: "16px", sm: "48px" },
     display: "flex",
-    gap: { base:"32px" , sm:"60px"},
+    gap: { base: "32px", sm: "60px" },
     alignItems: "center",
     bg: "bg.navbar",
     boxShadow: "0px 4px 1px 0px var(--colors-neutrals-olive-3, #EFF1EF)",
@@ -85,20 +114,17 @@ export const Navbar: React.FC = () => {
   const handleLogout = async () => {
     try {
       // Send the logout request
-      await axiosClient.delete(
-        `${import.meta.env.VITE_API_KEY}/auth/logout`
-      );
+      await axiosClient.delete(`${import.meta.env.VITE_API_KEY}/auth/logout`);
 
       // Remove the token in localStorage
       localStorage.removeItem("authToken");
 
       // Logout user is state and localStorage
-      logoutUser()
+      logoutUser();
 
       // Provide user feedback on successful logout
       showToast("Success", "Logout successful", "success");
-      navigate("/")
-
+      navigate("/");
     } catch (error) {
       // Check for server errors or network issues
       if (axios.isAxiosError(error)) {
@@ -132,8 +158,9 @@ export const Navbar: React.FC = () => {
               className={inputStyles}
             />
 
-            <Box className={flexStyles} 
-            display={authUser ? "flex" : "none"} // comment out to see userMenu and friend requests icons
+            <Box
+              className={flexStyles}
+              display={authUser ? "flex" : "none"} // comment out to see userMenu and friend requests icons
             >
               <Popover.Trigger asChild>
                 <Button
@@ -148,20 +175,35 @@ export const Navbar: React.FC = () => {
 
               <Menu.Trigger asChild>
                 <Button variant="ghost" bg="none" borderRadius={"full"} p="0">
-                  <Avatar name={`${authUser?.name}`+" "+`${authUser?.surname} `} />
+                  <Avatar
+                    name={`${authUser?.name}` + " " + `${authUser?.surname} `}
+                  />
                 </Button>
               </Menu.Trigger>
             </Box>
             {/* Sign in & sign up buttons */}
-            <Flex gap="16px" alignItems={"center"} 
+            <Flex
+              gap="16px"
+              alignItems={"center"}
               display={!authUser ? "flex" : "none"} // comment out to see userMenu and friend requests icons
+            >
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  navigate("/auth#register");
+                }}
               >
-              <Button variant="ghost" onClick={()=>{navigate("/auth#register")}}>Sign up</Button>
-              <Button onClick={()=>{navigate("/auth#login")}}>Sign in</Button>
+                Sign up
+              </Button>
+              <Button
+                onClick={() => {
+                  navigate("/auth#login");
+                }}
+              >
+                Sign in
+              </Button>
             </Flex>
           </Box>
-
-
 
           {/*Friend request modal */}
           <Popover.Positioner>
@@ -176,7 +218,13 @@ export const Navbar: React.FC = () => {
                     color="grey.200"
                     borderRadius={2}
                   />
-                  <FriendRequestList userList={mockUserList} />
+                  <>
+                    {loading ? (
+                      <Spinner />
+                    ) : (
+                      <FriendRequestList requestsData={friendRequests} />
+                    )}
+                  </>
                 </VStack>
               </Stack>
             </Popover.Content>
