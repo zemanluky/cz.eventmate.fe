@@ -35,7 +35,7 @@ export interface UseGetFriendRequestsReturn {
 }
 
 const useGetFriendRequests = (): UseGetFriendRequestsReturn => {
-  const [friendRequests, setFriendRequests] = useState<FriendRequest[] | null>(
+  const [friendRequests, setFriendRequests] = useState<FriendRequest[] | []>(
     null
   );
   const [loading, setLoading] = useState<boolean>(true);
@@ -48,10 +48,13 @@ const useGetFriendRequests = (): UseGetFriendRequestsReturn => {
         `${import.meta.env.VITE_API_KEY}/user/friend-request`
       );
 
+
       //destructuring data from response
       const requestData = response.data?.data;
-      console.log(requestData)
       setFriendRequests(requestData);
+      console.log(requestData)
+      setError(null)
+      return requestData
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
       setError(
@@ -65,6 +68,7 @@ const useGetFriendRequests = (): UseGetFriendRequestsReturn => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchRequests();
   }, []);
