@@ -14,18 +14,16 @@ import { Spinner } from "@ParkComponents/spinner";
 export const ProfilePage: React.FC = () => {
   const params = useParams();
   const userId = params.userId as string;
-    const [events, setEvents] = React.useState<any[]>([]); // Rendered events
-    const [isLoading, setIsLoading] = React.useState(false); // Loading state
-    const [hasMore, setHasMore] = React.useState(true); // Flag for more data
-    const [pageNumber, setPageNumber] = React.useState(1); // Current page number
-    const pageSize = 10; // Number of events per page
-  
-    const lastEventRef = React.useRef<HTMLDivElement | null>(null); // Reference to last element
-    const observer = React.useRef<IntersectionObserver | null>(null); // Intersection Observer reference
+  const [events, setEvents] = React.useState<any[]>([]); // Rendered events
+  const [isLoading, setIsLoading] = React.useState(false); // Loading state
+  const [hasMore, setHasMore] = React.useState(true); // Flag for more data
+  const [pageNumber, setPageNumber] = React.useState(1); // Current page number
+  const pageSize = 10; // Number of events per page
+
+  const lastEventRef = React.useRef<HTMLDivElement | null>(null); // Reference to last element
+  const observer = React.useRef<IntersectionObserver | null>(null); // Intersection Observer reference
 
   const { fetchUser, user, loading, error } = useGetUserById(userId);
-
-  console.log(user);
 
   const mockEvents = [
     {
@@ -163,6 +161,39 @@ export const ProfilePage: React.FC = () => {
 
   const [showEvents, setShowEvents] = React.useState(true);
   const showToast = useShowToast();
+  const [ratings, setRatings] = React.useState<any[]>([]); // State to store ratings
+  const [isFetchingRatings, setIsFetchingRatings] = React.useState(false); // State to track loading
+
+  // Function to fetch ratings
+  const fetchRatings = React.useCallback(async (userId: string) => {
+    if (!userId) return;
+    setIsFetchingRatings(true); // Start loading state
+    try {
+      const response = await axiosClient.get(
+        `${import.meta.env.VITE_API_KEY}/user/${userId}/rating`
+      );
+      setRatings(response.data?.data || []); // Save fetched ratings
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        showToast(
+          "Error",
+          error.response?.data?.message || error.message,
+          "error"
+        );
+      } else {
+        showToast("Unexpected Error", "Please try again later", "error");
+      }
+    } finally {
+      setIsFetchingRatings(false); // Stop loading state
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (!showEvents && user?.ratings?.length > 0) {
+      // Fetch ratings only if toggled to "Ratings" tab and ratings exist
+      fetchRatings(user?._id);
+    }
+  }, [showEvents, user, fetchRatings]);
 
   // Fetch events from the backend
   const fetchEvents = React.useCallback(async () => {
@@ -171,7 +202,6 @@ export const ProfilePage: React.FC = () => {
 
     try {
       const response = await axiosClient.get(`/event/`, {
-
         params: {
           userId: userId, // Adjust based on your logic
           pageSize,
@@ -303,21 +333,28 @@ export const ProfilePage: React.FC = () => {
                 </Flex>
               ) : (
                 <>
-                  {user.ratings.length > 0 ? (
-
+                  {isFetchingRatings ? ( // Show spinner when loading ratings
+                    <Box display="grid" placeItems="center" mt="20px">
+                      <Spinner />
+                    </Box>
+                  ) : ratings.length > 0 ? ( // Render ratings if available
                     <VStack mt="20px" gap="16px">
-                      {user.ratings?.map((rating, index) => (
+                      {ratings.map((rating, index) => (
                         <RatingCard key={index} rating={rating} />
                       ))}
                     </VStack>
                   ) : (
+                    // No ratings available
                     <VStack>
-
-                      <Text fontWeight={600} fontSize={"32px"} color="fg.subtle">This user has no ratings yet</Text>
+                      <Text
+                        fontWeight={600}
+                        fontSize={"32px"}
+                        color="fg.subtle"
+                      >
+                        This user has no ratings yet
+                      </Text>
                     </VStack>
-                  )
-                    
-                  }
+                  )}
                 </>
               )}
             </Box>
