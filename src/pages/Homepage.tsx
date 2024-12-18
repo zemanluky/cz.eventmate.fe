@@ -4,46 +4,72 @@ import { EventCardBigDesktop } from "@Components/ui";
 import { Flex } from "@Panda/jsx";
 import { Spinner } from "@ParkComponents/spinner";
 import axiosClient from "axiosClient"; // assuming this is set up for axios
+import { useFilterContext } from "../contexts/FilterContext";
 
 export const Homepage: React.FC = () => {
+  const { filters } = useFilterContext(); // Filters from filter context
   const [events, setEvents] = React.useState<any[]>([]); // Rendered events
   const [isLoading, setIsLoading] = React.useState(false); // Loading state
   const [hasMore, setHasMore] = React.useState(true); // Flag for more data
-  const [pageNumber, setPageNumber] = React.useState(0); // Current page number
+  const [pageNumber, setPageNumber] = React.useState(1); // Current page number
   const pageSize = 10; // Number of events per page
 
   const lastEventRef = React.useRef<HTMLDivElement | null>(null); // Reference to last element
   const observer = React.useRef<IntersectionObserver | null>(null); // Intersection Observer reference
 
+  React.useEffect(() => {
+    console.log("Filters updated:", filters);
+  }, [filters]);
+
+
   // Fetch events from the backend
   const fetchEvents = React.useCallback(async () => {
-    if (isLoading || !hasMore) return; // Don't fetch if already loading or no more events
+    console.log(filters)
 
+    if (isLoading ) return; // Don't fetch if already loading or no more events
+    const userJson = localStorage.getItem("user-info");
+    const userObject = JSON.parse(userJson);
     setIsLoading(true); // Set loading state
 
     try {
+      const parameters = {
+        userId: userObject._id,
+        pageSize,
+        pageNumber,
+        location: filters.location,
+        dateStart: null,
+        dateEnd: null,
+        rating: null,
+        category:null,
+        filter:"all"
+      };
+
+      // fetching events by parameters
       const response = await axiosClient.get(`/event/`, {
-        params: {
-          userId: "null", // Adjust based on your logic
-          pageSize,
-          pageNumber,
-        },
+        params: parameters,
       });
+      // data from response
+      const fetchedEvents = response.data?.data;
 
-      const fetchedEvents = response.data
-      console.log(fetchedEvents)
-
-      // Avoid duplicates by filtering out events already in the state
+      // setting events
       setEvents((prev) => {
+        console.log("Previous events:", prev);
+        console.log("Newly fetched events:", fetchedEvents);
+      
         const newEvents = fetchedEvents?.filter(
           (event: any) =>
             !prev.some((existingEvent: any) => existingEvent._id === event._id)
         );
+        console.log("Filtered new events to add:", newEvents);
+      
         return [...prev, ...newEvents];
       });
 
+      // if there are no more events don't fetch even when filters are applied
       if (fetchedEvents.length < pageSize) {
         setHasMore(false); // No more events to fetch
+      } else {
+        setHasMore(true); // Allow fetching more events
       }
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -51,7 +77,14 @@ export const Homepage: React.FC = () => {
     } finally {
       setIsLoading(false); // Reset loading state
     }
-  }, [isLoading, hasMore, pageNumber]);
+  }, [isLoading, hasMore, pageNumber,filters]);
+
+  // filters changing logic
+  React.useEffect(() => {
+    setEvents([]); // Clear events when filters change
+    setPageNumber(1); // Reset to the first page
+    setHasMore(true); // Allow fetching new data
+  }, [filters]);
 
   // Load the next page of events
   const loadMoreEvents = React.useCallback(() => {
@@ -87,7 +120,7 @@ export const Homepage: React.FC = () => {
   // Fetch events whenever the page number changes
   React.useEffect(() => {
     fetchEvents();
-  }, [pageNumber]);
+  }, [pageNumber, filters]);
 
   return (
     <>
