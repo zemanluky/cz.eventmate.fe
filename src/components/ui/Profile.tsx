@@ -24,6 +24,7 @@ import { z } from "zod";
 import axiosClient from "axiosClient";
 import { useShowToast } from "src/hooks";
 import axios from "axios";
+import useUserProfileStore from "src/store/userProfileStore";
 
 interface User {
   user: {
@@ -46,6 +47,7 @@ const ratingFormSchema = z.object({
 type RatingFormValues = z.infer<typeof ratingFormSchema>;
 
 export const Profile: React.FC<User> = ({ user }) => {
+  const userProfile = useUserProfileStore((state) => state.userProfile);
   const showToast = useShowToast();
 
   const {
@@ -62,6 +64,33 @@ export const Profile: React.FC<User> = ({ user }) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000)); //simulated call for isSubmitting state
       console.log(data);
+
+      const formData = {
+        author: userProfile?._id,
+        starRating: data.ratingValue,
+        comment: data.comment,
+      };
+      try {
+        // TODO might need updating after merging be !!
+        const response = await axiosClient.post(
+          `${import.meta.env.VITE_API_KEY}/user/${user._id}/rating`,
+          formData
+        );
+        // success messages
+        showToast("Success" , "Rating submitted successfully", "success")
+      } catch (error) {
+        // Check for server errors or network issues
+        if (axios.isAxiosError(error)) {
+          showToast(
+            "Error",
+            error.response?.data?.message || error.message,
+            "error"
+          );
+        } else {
+          showToast("Unexpected Error", "Please try again later", "error");
+        }
+      }
+      console.log(formData);
     } catch (error) {
       setError("root", {
         message: "error", //set up for backend errors
