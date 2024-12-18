@@ -21,6 +21,9 @@ import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { z } from "zod";
+import axiosClient from "axiosClient";
+import { useShowToast } from "src/hooks";
+import axios from "axios";
 
 interface User {
   user: {
@@ -32,7 +35,7 @@ interface User {
     bio: string;
     friends: string[];
     ratings: string[];
-  }
+  };
 }
 
 // Validation schema using zod
@@ -43,6 +46,8 @@ const ratingFormSchema = z.object({
 type RatingFormValues = z.infer<typeof ratingFormSchema>;
 
 export const Profile: React.FC<User> = ({ user }) => {
+  const showToast = useShowToast();
+
   const {
     register,
     handleSubmit,
@@ -61,6 +66,29 @@ export const Profile: React.FC<User> = ({ user }) => {
       setError("root", {
         message: "error", //set up for backend errors
       });
+    }
+  };
+
+  const handleSendFriendRequest = async (receiverId: string) => {
+    try {
+      const body = { receiver: receiverId };
+      const response = await axiosClient.post(
+        `${import.meta.env.VITE_API_KEY}/user/friend-request/`,
+        body
+      );
+      if (response.status === 204) {
+        showToast("Success", "Friend Request Sent", "success");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        showToast(
+          "Error",
+          error.response?.data?.message || error.message,
+          "error"
+        );
+      } else {
+        showToast("Unexpected Error", "Please try again later", "error");
+      }
     }
   };
 
@@ -131,6 +159,9 @@ export const Profile: React.FC<User> = ({ user }) => {
               h={{ base: "40px", sm: "55px" }}
               bg="bg.buttonLarge"
               color="fg.buttonLarge"
+              onClick={() => {
+                handleSendFriendRequest(user._id);
+              }}
             >
               <Text fontSize={{ base: "md", md: "xl" }}>
                 Send friend request
