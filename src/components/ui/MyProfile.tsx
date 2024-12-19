@@ -6,17 +6,23 @@ import { FormLabel } from "@ParkComponents/form-label";
 import { IconButton } from "@ParkComponents/icon-button";
 import { Input } from "@ParkComponents/input";
 import { RatingGroup } from "@ParkComponents/rating-group";
+import { Spinner } from "@ParkComponents/spinner";
 import { Text } from "@ParkComponents/text";
 import axios from "axios";
 import axiosClient from "axiosClient";
 import { Settings, Star, XIcon } from "lucide-react";
 import * as React from "react";
+import { Link } from "react-router-dom";
 import { useShowToast } from "src/hooks";
+import useAuthState from "src/hooks/useAuthState";
+import useGetEventById from "src/hooks/useGetEventById";
+import useGetUserById from "src/hooks/useGetUserById";
+import useGetUsersByIds from "src/hooks/useGetUsersByIds";
 import useAuthStore from "src/store/authStore";
 import useUserProfileStore from "src/store/userProfileStore";
 
 interface User {
-  user:{
+  user: {
     _id: string;
     name: string;
     surname: string;
@@ -25,12 +31,20 @@ interface User {
     bio: string;
     friends: string[];
     ratings: string[];
-  }
+  };
 }
 
 export const MyProfile: React.FC<User> = ({ user }) => {
   const setAuthUser = useAuthStore((state) => state.setUser);
   const setUserProfile = useUserProfileStore((state) => state.setUserProfile);
+  const { fetchUsers, users, loading, error } = useGetUsersByIds();
+  const { fetchUserProfile } = useAuthState();
+
+  React.useEffect(() => {
+    if (user?.friends?.length > 0) {
+      fetchUsers(user.friends);
+    }
+  }, [user.friends]);
 
   const showToast = useShowToast();
 
@@ -118,6 +132,45 @@ export const MyProfile: React.FC<User> = ({ user }) => {
     }
   };
 
+  const handleRemoveFriend = async(friendId)=>{
+    try {
+      
+      const response = await axiosClient.delete(
+        `${import.meta.env.VITE_API_KEY}/user/friend/${friendId}`,
+      );
+      if(response.status === 204){
+        // Fetch the user profile and store it directly
+        const userData = await fetchUserProfile();
+        if (userData) {
+          // setting user-info for updating the friend count
+          localStorage.setItem("user-info", JSON.stringify(userData?.data));
+          // updating global state
+          setAuthUser(userData?.data);
+          setUserProfile(userData?.data);
+        showToast("Success", "Removed friend", "success")
+      }
+    }
+    } catch (error) {
+      // Check for server errors or network issues
+      if (axios.isAxiosError(error)) {
+        console.error("Error:", error.response?.data || error.message);
+        showToast(
+          "Error",
+          `Friend removal failed: ${error.response?.data?.message || error.message}`,
+          "error"
+        );
+      } else {
+        console.error("Unexpected error:", error);
+        showToast(
+          "Error",
+          "An unexpected error occurred. Please try again later.",
+          "error"
+        );
+      }
+    }
+
+  }
+
   return (
     <>
       {/* Avatar */}
@@ -163,18 +216,82 @@ export const MyProfile: React.FC<User> = ({ user }) => {
 
           {/* Friends*/}
           <HStack mb="10px">
-          {/* Conditional rendering for no friends */}
-          {user.friends?.length < 1 ? (
-            <Flex gap={"8px"} alignItems={"center"}>
-              <Text fontSize="xs" color="fg.subtle" fontWeight="500">
-              You don't have any friends yet
-              </Text>
-            </Flex>
-          ) : (
-            <>
-              <Text fontSize="lg">Friends: {user.friends?.length}</Text>
-            </>
-          )}
+            {/* Conditional rendering for no friends */}
+            {user.friends?.length < 1 ? (
+              <Flex gap={"8px"} alignItems={"center"}>
+                <Text fontSize="xs" color="fg.subtle" fontWeight="500">
+                  You don't have any friends yet
+                </Text>
+              </Flex>
+            ) : (
+              <>
+                <Dialog.Root>
+                  <Dialog.Trigger asChild>
+                    <Text fontSize="md" fontWeight={700} cursor={"pointer"}>
+                      Friends: {user.friends?.length}
+                    </Text>
+                  </Dialog.Trigger>
+                  <Dialog.Backdrop />
+                  <Dialog.Positioner>
+                    <Dialog.Content>
+                      <Stack gap="8" p="6">
+                        <Stack gap="1">
+                          <Dialog.Title>Friend List</Dialog.Title>
+                          <VStack gap="16px" mt="16px">
+                            {/* Displaying Friend List */}
+                            {loading && <Spinner/>}
+                            {error && <Text>Error: {error}</Text>}
+                            {!loading &&
+                              !error &&
+                              users.map((friend) => (
+                                <Flex
+                                  key={friend._id}
+                                  alignItems={"center"}
+                                  justifyContent={"space-between"}
+                                  gap="8px"
+                                  width="100%"
+                                >
+                                  <Link to={`/profile/${friend._id}`}>
+                                    <Flex alignItems={"center"} gap={4}>
+                                      <Avatar
+                                        name={`${friend.name} ${friend.surname}`}
+                                        size="sm"
+                                      />
+                                      <Text>{`${friend.name} ${friend.surname}`}</Text>
+                                    </Flex>
+                                  </Link>
+                                  <Button onClick={() =>{handleRemoveFriend(friend._id)}}>Remove Friend</Button>
+                                </Flex>
+                              ))}
+                          </VStack>
+                        </Stack>
+                        <Stack gap="3" direction="row" width="full">
+                          <Dialog.CloseTrigger asChild>
+                            <Button variant="outline" width="full">
+                              Close
+                            </Button>
+                          </Dialog.CloseTrigger>
+                        </Stack>
+                      </Stack>
+                      <Dialog.CloseTrigger
+                        asChild
+                        position="absolute"
+                        top="2"
+                        right="2"
+                      >
+                        <IconButton
+                          aria-label="Close Dialog"
+                          variant="ghost"
+                          size="sm"
+                        >
+                          <XIcon />
+                        </IconButton>
+                      </Dialog.CloseTrigger>
+                    </Dialog.Content>
+                  </Dialog.Positioner>
+                </Dialog.Root>
+              </>
+            )}
           </HStack>
         </Flex>
         <Stack>
