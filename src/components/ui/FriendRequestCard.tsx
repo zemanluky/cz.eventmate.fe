@@ -7,6 +7,9 @@ import axiosClient from "axiosClient";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { useShowToast } from "src/hooks";
+import useAuthState from "src/hooks/useAuthState";
+import useAuthStore from "src/store/authStore";
+import useUserProfileStore from "src/store/userProfileStore";
 
 export interface User {
   _id: string;
@@ -30,19 +33,24 @@ interface FriendRequest {
   __v: number;
 }
 
-export const FriendRequestCard: React.FC<FriendRequest[]> = ({ request }) => {
+export const FriendRequestCard: React.FC<{
+  request: FriendRequest;
+  onRequestUpdate: (requestId: string) => void;
+}> = ({ request, onRequestUpdate }) => {
   const showToast = useShowToast();
+  const setAuthUser = useAuthStore((state) => state.setUser);
+  const setUserProfile = useUserProfileStore((state) => state.setUserProfile);
+  const { fetchUserProfile } = useAuthState();
 
-  // rejecting friend request
   const handleRejectFriendRequest = async (friendRequestId: string) => {
     try {
       const body = { accept: false };
-      console.log(friendRequestId)
       const response = await axiosClient.patch(
         `${import.meta.env.VITE_API_KEY}/user/friend-request/${friendRequestId}`,
         body
       );
       if (response.status === 204) {
+        onRequestUpdate(friendRequestId); // Notify parent to remove request from state
         showToast("Success", "Rejected friend request", "success");
       }
     } catch (error) {
@@ -58,7 +66,6 @@ export const FriendRequestCard: React.FC<FriendRequest[]> = ({ request }) => {
     }
   };
 
-  // accepting friend request
   const handleAcceptFriendRequest = async (friendRequestId: string) => {
     try {
       const body = { accept: true };
@@ -67,6 +74,16 @@ export const FriendRequestCard: React.FC<FriendRequest[]> = ({ request }) => {
         body
       );
       if (response.status === 204) {
+        // Fetch the user profile and store it directly
+        const userData = await fetchUserProfile();
+        if (userData) {
+          // setting user-info for updating the friend count
+          localStorage.setItem("user-info", JSON.stringify(userData?.data));
+          // updating global state
+          setAuthUser(userData?.data);
+          setUserProfile(userData?.data);
+        }
+        onRequestUpdate(friendRequestId); // Notify parent to remove request from state
         showToast("Success", "Accepted friend request", "success");
       }
     } catch (error) {
