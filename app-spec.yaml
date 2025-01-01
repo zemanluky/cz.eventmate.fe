@@ -1,0 +1,10 @@
+name: eventmate-fe
+static_sites:
+  - name: eventmate-fe
+    github:
+      branch: main
+      deploy_on_push: true
+      repo: zemanluky/cz.eventmate.fe
+    dockerfile_path: Dockerfile
+    output_dir: /app
+    catchall_document: index.html
