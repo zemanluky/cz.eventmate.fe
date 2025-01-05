@@ -19,18 +19,19 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 //const eventCategories = handleGetCategories()
-const eventCategories = [
-  { label: "Workshops", value: "workshops" },
-  { label: "Conferences", value: "conferences" },
-  { label: "Webinars", value: "webinars" },
-  { label: "Meetups", value: "meetups" },
-  { label: "Hackathons", value: "hackathons" },
-  { label: "Networking Events", value: "networking" },
-  { label: "Seminars", value: "seminars" },
-  { label: "Trade Shows", value: "trade_shows" },
-  { label: "Product Launches", value: "product_launches" },
-  { label: "Charity Events", value: "charity" },
-];
+// const eventCategories = [
+//   { label: "Workshops", value: "workshops" },
+//   { label: "Conferences", value: "conferences" },
+//   { label: "Webinars", value: "webinars" },
+//   { label: "Meetups", value: "meetups" },
+//   { label: "Hackathons", value: "hackathons" },
+//   { label: "Networking Events", value: "networking" },
+//   { label: "Seminars", value: "seminars" },
+//   { label: "Trade Shows", value: "trade_shows" },
+//   { label: "Product Launches", value: "product_launches" },
+//   { label: "Charity Events", value: "charity" },
+// ];
+
 const eventTypes = [
   { label: "Public", value: false },
   { label: "Private", value: true },
@@ -58,6 +59,24 @@ const isoParser = (date) => {
 
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 };
+const getCategories = async () => {
+  const response = await axiosClient.get(
+    `${import.meta.env.VITE_API_KEY}/event/category`
+  );
+  const data = response?.data?.data;
+  console.log(data);
+  return data;
+};
+
+const getEventCategories = async () => {
+  const categories = await getCategories();
+  const transformedCategories = categories?.map(
+    ({ _id: value, name: label }) => ({ value, label })
+  );
+  return transformedCategories;
+};
+
+const eventCategories = await getEventCategories();
 
 export const CreateEventForm: React.FC = () => {
   const {
@@ -84,16 +103,15 @@ export const CreateEventForm: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000)); //simulated call for isSubmitting state
       console.log(data, files);
 
-
       const formData = {
         name: data.name,
         description: data.description,
         location: data.place,
         date: isoParser(data.date),
-        private: data.type
+        private: data.type,
+        category: data.category
       };
 
-      
       try {
         const response = await axiosClient.post(
           `${import.meta.env.VITE_API_KEY}/event/`,
@@ -217,7 +235,9 @@ export const CreateEventForm: React.FC = () => {
                   label="Type:"
                   placeholder="Event types"
                   inputCollection={eventTypes}
-                  onChange={(value) =>{ field.onChange(value)}}
+                  onChange={(value) => {
+                    field.onChange(value);
+                  }}
                 />
               )}
             />
