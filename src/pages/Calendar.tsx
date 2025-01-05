@@ -1,6 +1,5 @@
 import { DatePicker } from "@ParkComponents/date-picker";
-import { EventCardMobile } from "@Components/ui";
-import { Box, Flex, HStack, Stack, VStack } from "@Panda/jsx";
+import { Box, Flex, Stack, VStack } from "@Panda/jsx";
 import { Spinner } from "@ParkComponents/spinner";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import * as React from "react";
@@ -8,6 +7,9 @@ import { Button } from "@ParkComponents/button";
 import { IconButton } from "@ParkComponents/icon-button";
 import { Input } from "@ParkComponents/input";
 import { parseISO } from "date-fns";
+import { Text } from "@ParkComponents/text";
+import { EventCardCalendarDesktop } from "@Components/ui/EventCardCalendarDesktop";
+import { EventCardMobile } from "@Components/ui";
 
 export const Calendar: React.FC = () => {
   const mockEvents = [
@@ -157,17 +159,18 @@ export const Calendar: React.FC = () => {
 
   return (
     <>
-      <p>Calendar</p>
+      {/* Title */}
+      <Text fontSize={{ sm: "4xl", base: "4xl" }} fontWeight="500" mb="28px">
+        Calendar
+      </Text>
 
       <Stack w="100%" direction={{ base: "column", md: "row" }}>
         {/* Calendar */}
-        <VStack w={{ base: "100%", md: "50%" }}>
-          <DatePicker.Root
-            positioning={{ sameWidth: true }}
-            startOfWeek={1}
-            selectionMode="single"
-            open={true}
-          >
+        <VStack
+          w={{ base: "100%", xl: "40%" }}
+          h={{ base: "450px", xl: "auto" }}
+        >
+          <DatePicker.Root startOfWeek={1} selectionMode="single" open={true}>
             <DatePicker.Label>Today is:</DatePicker.Label>
             <DatePicker.Control>
               <DatePicker.Input value={todayString} disabled index={0} asChild>
@@ -236,7 +239,15 @@ export const Calendar: React.FC = () => {
                                       <Box
                                         w="40px"
                                         h="40px"
-                                        bg={isEventDate ? "red" : "white"}
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="center"
+                                        borderRadius="8px"
+                                        bg={
+                                          isEventDate
+                                            ? "rgba(255, 99, 71, 0.3)"
+                                            : "white"
+                                        }
                                       >
                                         {day.day}
                                       </Box>
@@ -351,7 +362,7 @@ export const Calendar: React.FC = () => {
         </VStack>
 
         {/* Events */}
-        <VStack w={{ base: "100%", md: "50%" }}>
+        <VStack w={{ base: "100%", xl: "60%" }}>
           <Flex
             gap="16px"
             mt={"20px"}
@@ -365,7 +376,7 @@ export const Calendar: React.FC = () => {
                   key={event._id}
                   //ref={isLast ? lastEventRef : null} // Attach ref to the last event
                 >
-                  <EventCardMobile event={event} />
+                  <EventCardCalendarDesktop event={event} />
                 </div>
               );
             })}
