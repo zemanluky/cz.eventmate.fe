@@ -45,7 +45,7 @@ interface EventCardLongDesktopProps {
   };
 }
 interface Member {
-  id: string;
+  _id: string;
   name: string;
   surname: string;
   imageUrl: string;
@@ -56,17 +56,17 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
 }) => {
   const navigate = useNavigate();
   const showToast = useShowToast();
-  const {deleteEvent, loading, error} = useDeleteEventById()
+  const { deleteEvent, loading, error } = useDeleteEventById();
 
   // deleting event
-  const handleDeleteEvent = async(eventId: string) => {
+  const handleDeleteEvent = async (eventId: string) => {
     try {
-      const response =await deleteEvent(eventId)
-      if(response){
-        showToast("Success", "Event deleted successfully", "success")
+      const response = await deleteEvent(eventId);
+      if (response) {
+        showToast("Success", "Event deleted successfully", "success");
       }
     } catch (error) {
-      showToast("Error", error, "error")
+      showToast("Error", error, "error");
     }
   };
 
@@ -190,10 +190,14 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
                             </Button>
                           </Dialog.CloseTrigger>
                           <Button
-                            onClick={()=> handleDeleteEvent(event._id)}
+                            onClick={() => handleDeleteEvent(event._id)}
                             width="full"
                           >
-                            {loading ? <Spinner colorPalette={"white"} /> : "Delete"}
+                            {loading ? (
+                              <Spinner colorPalette={"white"} />
+                            ) : (
+                              "Delete"
+                            )}
                           </Button>
                         </Stack>
                       </Stack>

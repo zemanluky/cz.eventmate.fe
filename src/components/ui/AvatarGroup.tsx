@@ -3,7 +3,7 @@ import { Avatar } from "@ParkComponents/avatar";
 import * as React from "react";
 
 interface Member {
-  id: string;
+  _id: string;
   name: string;
   surname: string;
   imageUrl: string;
@@ -22,7 +22,7 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({ members }) => {
     <HStack gap="0" position="relative">
       {members.slice(0, 2).map(({ member }, index) => (
         <Avatar
-          key={member.id}
+          key={member._id}
           name={`${member.name} ${member.surname}`}
           src={member.imageUrl}
           size="xs"

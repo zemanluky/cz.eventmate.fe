@@ -11,6 +11,7 @@ import { CreateEventFormPage } from "src/pages/CreateEventFormPage";
 import { MyEvents } from "src/pages/MyEvents";
 import { EditEventFormPage } from "src/pages/EditEventFormPage";
 import RouteGuard from "./RouteGuard";
+import { Calendar } from "src/pages/Calendar";
 
 const routes: RouteObject[] = [
   {
@@ -69,6 +70,10 @@ const routes: RouteObject[] = [
       {
         path: "profile/:userId",
         element: <ProfilePage /> /* 👈 Renders at /#/profile/:userId */,
+      },
+      {
+        path: "calendar",
+        element: <Calendar /> /* 👈 Renders at /#/calendar */,
       },
 
       // add more routes here...
