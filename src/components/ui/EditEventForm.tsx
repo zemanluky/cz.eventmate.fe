@@ -22,18 +22,24 @@ import useGetEventById from "src/hooks/useGetEventById";
 //handleLoad(eventId) => {return handleGetEventData(eventId)};
 
 //const eventCategories = handleGetCategories()
-const eventCategories = [
-  { label: "Workshops", value: "workshops" },
-  { label: "Conferences", value: "conferences" },
-  { label: "Webinars", value: "webinars" },
-  { label: "Meetups", value: "meetups" },
-  { label: "Hackathons", value: "hackathons" },
-  { label: "Networking Events", value: "networking" },
-  { label: "Seminars", value: "seminars" },
-  { label: "Trade Shows", value: "trade_shows" },
-  { label: "Product Launches", value: "product_launches" },
-  { label: "Charity Events", value: "charity" },
-];
+const getCategories = async () => {
+  const response = await axiosClient.get(
+    `${import.meta.env.VITE_API_KEY}/event/category`
+  );
+  const data = response?.data?.data;
+  console.log(data);
+  return data;
+};
+
+const getEventCategories = async () => {
+  const categories = await getCategories();
+  const transformedCategories = categories?.map(
+    ({ _id: value, name: label }) => ({ value, label })
+  );
+  return transformedCategories;
+};
+
+const eventCategories = await getEventCategories();
 const eventTypes = [
   { label: "Public", value: false },
   { label: "Private", value: true },
