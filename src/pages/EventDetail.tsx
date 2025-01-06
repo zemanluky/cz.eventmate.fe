@@ -59,9 +59,10 @@ export const EventDetail: React.FC /*<EventDetailProps>*/ = () => {
   const eventId = params.eventId;
   const { event, loading, error } = useGetEventById(eventId);
 
-console.log(event)
+  console.log(event);
 
   const eventData = {
+    _id: event?._id,
     name: event?.name,
     description: event?.description,
     date: event?.date,
@@ -69,35 +70,17 @@ console.log(event)
     // mock creator
     author: event?.author,
     // mock members
-    memberList: [
-      {
-        member: {
-          id: "1",
-          name: "John",
-          surname: "Doe",
-          imageUrl: "https://via.placeholder.com/50?text=JD",
-        },
-      },
-      {
-        member: {
-          id: "2",
-          name: "Jane",
-          surname: "Smith",
-          imageUrl: "https://via.placeholder.com/50?text=JS",
-        },
-      },
-    ],
+    attendees: event?.attendees,
+
     // mock images
     images: [party1, party2, party3, party4, party5],
   };
 
-  console.log(eventData)
+  console.log(eventData);
 
   return (
     <>
-      <EventToolbarEventDetail
-        eventName={eventData.name} /*userId={loggedInUser.id}*/
-      />
+      <EventToolbarEventDetail event={eventData} /*userId={loggedInUser.id}*/ />
       <HStack mb="10px" gap={10}>
         {/* Carousel */}
         <Carousel.Root>
@@ -154,14 +137,18 @@ console.log(event)
               name={`${eventData.author?.name} ${eventData.author?.surname}`}
             />
           </Link>
-          <RatingGroup count={5} defaultValue={eventData.author?.rating} disabled />
+          <RatingGroup
+            count={5}
+            defaultValue={eventData.author?.rating}
+            disabled
+          />
 
           <Text>
             {eventData.author?.name} {eventData.author?.surname}
           </Text>
           <Divider orientation="horizontal" thickness="2px" width="100%" />
           <Text>Attendees:</Text>
-          <AvatarGroup members={eventData.memberList} />
+          <AvatarGroup members={eventData.attendees} />
         </VStack>
       </HStack>
       {/* Content */}
