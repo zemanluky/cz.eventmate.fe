@@ -1,159 +1,62 @@
 import { DatePicker } from "@ParkComponents/date-picker";
 import { Box, Flex, Stack, VStack } from "@Panda/jsx";
-import { Spinner } from "@ParkComponents/spinner";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import * as React from "react";
 import { Button } from "@ParkComponents/button";
 import { IconButton } from "@ParkComponents/icon-button";
 import { Input } from "@ParkComponents/input";
-import { parseISO } from "date-fns";
 import { Text } from "@ParkComponents/text";
 import { EventCardCalendarDesktop } from "@Components/ui/EventCardCalendarDesktop";
-import { EventCardMobile } from "@Components/ui";
+import axiosClient from "axiosClient";
 
 export const Calendar: React.FC = () => {
-  const mockEvents = [
-    {
-      _id: "event1",
-      name: "Photography Workshop",
-      image: "https://via.placeholder.com/350x250?text=Event+1",
-      date: "2024-12-10T00:00:00.000Z",
-      location: "New York City, NY",
-      private: true,
-      memberList: [
-        {
-          member: {
-            _id: "1",
-            name: "John",
-            surname: "Doe",
-            imageUrl: "https://via.placeholder.com/50?text=JD",
-          },
-        },
-        {
-          member: {
-            _id: "2",
-            name: "Jane",
-            surname: "Smith",
-            imageUrl: "https://via.placeholder.com/50?text=JS",
-          },
-        },
-      ],
-    },
-    {
-      _id: "event2",
-      name: "Tech Expo 2024",
-      image: "https://via.placeholder.com/350x250?text=Event+2",
-      date: "2024-12-15T00:00:00.000Z",
-      location: "San Francisco, CA",
-      private: false,
-      memberList: [
-        {
-          member: {
-            _id: "3",
-            name: "Alice",
-            surname: "Johnson",
-            imageUrl: "https://via.placeholder.com/50?text=AJ",
-          },
-        },
-        {
-          member: {
-            _id: "4",
-            name: "Bob",
-            surname: "Brown",
-            imageUrl: "https://via.placeholder.com/50?text=BB",
-          },
-        },
-        {
-          member: {
-            _id: "5",
-            name: "Charlie",
-            surname: "Wilson",
-            imageUrl: "https://via.placeholder.com/50?text=CW",
-          },
-        },
-      ],
-    },
-    {
-      _id: "event3",
-      name: "Art & Design Conference",
-      image: "https://via.placeholder.com/350x250?text=Event+3",
-      date: "2024-12-20T00:00:00.000Z",
-      location: "Austin, TX",
-      private: true,
-      memberList: [
-        {
-          member: {
-            _id: "6",
-            name: "Emily",
-            surname: "Clark",
-            imageUrl: "https://via.placeholder.com/50?text=EC",
-          },
-        },
-      ],
-    },
-    {
-      _id: "event4",
-      name: "Music Festival",
-      image: "https://via.placeholder.com/350x250?text=Event+4",
-      date: "2024-12-30T00:00:00.000Z",
-      location: "Los Angeles, CA",
-      private: false,
-      memberList: [
-        {
-          member: {
-            _id: "7",
-            name: "David",
-            surname: "Evans",
-            imageUrl: "https://via.placeholder.com/50?text=DE",
-          },
-        },
-        {
-          member: {
-            _id: "8",
-            name: "Sophia",
-            surname: "Green",
-            imageUrl: "https://via.placeholder.com/50?text=SG",
-          },
-        },
-        {
-          member: {
-            _id: "9",
-            name: "Liam",
-            surname: "Hall",
-            imageUrl: "https://via.placeholder.com/50?text=LH",
-          },
-        },
-      ],
-    },
-    {
-      _id: "event5",
-      name: "Startup Pitch Night",
-      image: "https://via.placeholder.com/350x250?text=Event+5",
-      date: "2025-01-05T00:00:00.000Z",
-      location: "Seattle, WA",
-      private: true,
-      memberList: [
-        {
-          member: {
-            _id: "10",
-            name: "Olivia",
-            surname: "Harris",
-            imageUrl: "https://via.placeholder.com/50?text=OH",
-          },
-        },
-        {
-          member: {
-            _id: "11",
-            name: "Ethan",
-            surname: "Martinez",
-            imageUrl: "https://via.placeholder.com/50?text=EM",
-          },
-        },
-      ],
-    },
-  ];
+  const today = new Date().toISOString();
+  const [eventsMonthByDay, setEventsMonthByDay] = React.useState<any[]>([]); // Events in arrays by days in a month
+  const [eventsMonthArray, setEventsMonthArray] = React.useState<any[]>([]); // Array of all events in a month
+  const [currentCalendarMonth, setCurrentCalendarMonth] = React.useState(today); // Current month in calendar
+  const [isLoading, setIsLoading] = React.useState(false); // Loading state
 
-  const events = mockEvents;
+  const fetchEvents = React.useCallback(async () => {
+    if (isLoading) return; // Don't fetch if already loading
+    setIsLoading(true); // Set loading state
+
+    try {
+      const response = await axiosClient.get(`/event/month-overview`, {
+        params: {
+          date: currentCalendarMonth, // Adjust based on your logic
+        },
+      });
+
+      const fetchedEvents = response.data?.data;
+
+      setEventsMonthByDay(fetchedEvents);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    } finally {
+      setIsLoading(false); // Reset loading state
+    }
+  }, [isLoading, currentCalendarMonth]);
+
+  React.useEffect(() => {
+    fetchEvents();
+  }, [currentCalendarMonth]);
+
+  const events = Object.values(eventsMonthByDay).flatMap(
+    (eventArray) => eventArray
+  );
+
+  const changeCalendarMonth = (direction: "prev" | "next") => {
+    const currentDate = new Date(currentCalendarMonth);
+    let newDate: Date;
+
+    if (direction === "prev") {
+      newDate = new Date(currentDate.setMonth(currentDate.getMonth() - 1)); // Go to previous month
+    } else {
+      newDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1)); // Go to next month
+    }
+
+    setCurrentCalendarMonth(newDate.toISOString().split("T")[0]);
+  };
 
   const todayString = new Date().toISOString().split("T")[0];
 
@@ -191,17 +94,25 @@ export const Calendar: React.FC = () => {
                       <>
                         <DatePicker.ViewControl>
                           <DatePicker.PrevTrigger asChild>
-                            <IconButton variant="ghost" size="sm">
+                            <IconButton
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => changeCalendarMonth("prev")}
+                            >
                               <ChevronLeftIcon />
                             </IconButton>
                           </DatePicker.PrevTrigger>
                           <DatePicker.ViewTrigger asChild>
-                            <Button variant="ghost" size="sm">
+                            <Button variant="ghost" size="sm" disabled>
                               <DatePicker.RangeText />
                             </Button>
                           </DatePicker.ViewTrigger>
                           <DatePicker.NextTrigger asChild>
-                            <IconButton variant="ghost" size="sm">
+                            <IconButton
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => changeCalendarMonth("next")}
+                            >
                               <ChevronRightIcon />
                             </IconButton>
                           </DatePicker.NextTrigger>
@@ -220,16 +131,11 @@ export const Calendar: React.FC = () => {
                             {api.weeks.map((week, weekIndex) => (
                               <DatePicker.TableRow key={weekIndex}>
                                 {week.map((day, dayIndex) => {
-                                  const isoDateString = `${day.year}-${String(day.month).padStart(2, "0")}-${String(day.day).padStart(2, "0")}`;
-                                  const matchDate = parseISO(isoDateString);
+                                  const isEventDate =
+                                    Array.isArray(eventsMonthByDay[day.day]) &&
+                                    eventsMonthByDay[day.day].length > 0;
 
-                                  const isEventDate = events.some(
-                                    (event) =>
-                                      parseISO(event.date)
-                                        .toISOString()
-                                        .split("T")[0] ===
-                                      matchDate.toISOString().split("T")[0]
-                                  );
+                                  console.log(isEventDate);
 
                                   return (
                                     <DatePicker.TableCell
@@ -369,29 +275,14 @@ export const Calendar: React.FC = () => {
             flexWrap={"wrap"}
             justifyContent="center"
           >
-            {events.map((event, index) => {
-              //const isLast = index === events.length - 1;
+            {events.map((event) => {
               return (
-                <div
-                  key={event._id}
-                  //ref={isLast ? lastEventRef : null} // Attach ref to the last event
-                >
+                <div key={event._id}>
                   <EventCardCalendarDesktop event={event} />
                 </div>
               );
             })}
           </Flex>
-
-          {/* {isLoading && (
-            <Flex justifyContent="center" mt="20px">
-              <Spinner size="lg" />
-            </Flex>
-          )}
-          {!hasMore && !isLoading && (
-            <p style={{ textAlign: "center", margin: "20px" }}>
-              No more events to load
-            </p>
-          )} */}
         </VStack>
       </Stack>
     </>
