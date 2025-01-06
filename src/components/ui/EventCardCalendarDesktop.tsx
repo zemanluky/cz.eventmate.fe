@@ -5,6 +5,7 @@ import { Text } from "@ParkComponents/text";
 import { Calendar, MapPin } from "lucide-react";
 import * as React from "react";
 import { AvatarGroup } from "./AvatarGroup";
+import { format } from "date-fns";
 
 interface EventCardCalendarDesktopProps {
   event: {
@@ -62,7 +63,9 @@ export const EventCardCalendarDesktop: React.FC<
                     <Icon>
                       <Calendar />
                     </Icon>
-                    <Text>{event.date}</Text>
+                    <Text>
+                      {format(new Date(event.date), "	eee dd.MM.yyyy")}
+                    </Text>
                   </HStack>
                   {/* Event place */}
                   <HStack>

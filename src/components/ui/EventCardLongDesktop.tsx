@@ -28,9 +28,10 @@ import { Button } from "@ParkComponents/button";
 import { useShowToast } from "src/hooks";
 import useDeleteEventById from "src/hooks/useDeleteEventById";
 import { Spinner } from "@ParkComponents/spinner";
+import { format } from "date-fns";
 
 interface EventCardLongDesktopProps {
-  event: Event
+  event: Event;
 }
 
 interface Rating {
@@ -81,7 +82,7 @@ interface Event {
 export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
   event,
 }) => {
-  console.log(event)
+  console.log(event);
   const navigate = useNavigate();
   const showToast = useShowToast();
   const { deleteEvent, loading } = useDeleteEventById();
@@ -125,6 +126,7 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
                       {event.private ? "Private" : "Public"}
                     </Text>
                   </HStack>
+                  <Spacer />
                   <HStack pr="25px">
                     <Stack gap={12}>
                       {/* Event date */}
@@ -132,7 +134,9 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
                         <Icon>
                           <Calendar />
                         </Icon>
-                        <Text>{event.date}</Text>
+                        <Text>
+                          {format(new Date(event.date), "	eee dd.MM.yyyy")}
+                        </Text>
                       </HStack>
                       {/* Event place */}
                       <HStack>
@@ -140,13 +144,6 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
                           <MapPin />
                         </Icon>
                         <Text>{event.location}</Text>
-                      </HStack>
-                      {/* Event time */}
-                      <HStack>
-                        <Icon>
-                          <Clock />
-                        </Icon>
-                        <Text>{event.date}</Text>
                       </HStack>
                     </Stack>
                     <Spacer />

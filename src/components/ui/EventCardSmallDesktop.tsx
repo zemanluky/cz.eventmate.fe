@@ -2,6 +2,7 @@ import { Grid, GridItem, HStack, Stack } from "@Panda/jsx";
 import { Card } from "@ParkComponents/card";
 import { Icon } from "@ParkComponents/icon";
 import { Text } from "@ParkComponents/text";
+import { format } from "date-fns";
 import { Calendar, MapPin } from "lucide-react";
 import * as React from "react";
 import { Link } from "react-router-dom";
@@ -62,7 +63,9 @@ export const EventCardSmallDesktop: React.FC<EventCardSmallDesktopProps> = ({
                     <Icon>
                       <Calendar />
                     </Icon>
-                    <Text size="sm">{event.date}</Text>
+                    <Text size="sm">
+                      {format(new Date(event.date), "	eee dd.MM.yyyy")}
+                    </Text>
                   </HStack>
                   <HStack>
                     <Icon>

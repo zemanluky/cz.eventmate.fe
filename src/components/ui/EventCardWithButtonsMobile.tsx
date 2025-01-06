@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import useDeleteEventById from "src/hooks/useDeleteEventById";
 import { useShowToast } from "src/hooks";
 import { Spinner } from "@ParkComponents/spinner";
+import { format } from "date-fns";
 
 interface EventCardMobileProps {
   event: Event;
@@ -111,7 +112,9 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
               alignItems="center"
               justifyContent="end"
             >
-              <Text size="sm">{event?.date}</Text>
+              <Text size="sm">
+                {format(new Date(event?.date), "	eee dd.MM.yyyy")}
+              </Text>
             </GridItem>
 
             <GridItem
@@ -185,7 +188,11 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
                           onClick={() => handleDeleteEvent(event?._id)}
                           width="full"
                         >
-                          {loading ? <Spinner colorPalette={"white"} /> : "Delete"}
+                          {loading ? (
+                            <Spinner colorPalette={"white"} />
+                          ) : (
+                            "Delete"
+                          )}
                         </Button>
                       </Stack>
                     </Stack>

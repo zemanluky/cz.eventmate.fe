@@ -6,6 +6,7 @@ import { MapPin } from "lucide-react";
 import * as React from "react";
 import { AvatarGroup } from "./AvatarGroup";
 import { Link } from "react-router-dom";
+import { format } from "date-fns";
 
 interface EventCardMobileProps {
   event: {
@@ -60,7 +61,9 @@ export const EventCardMobile: React.FC<EventCardMobileProps> = ({ event }) => {
                 alignItems="center"
                 justifyContent="end"
               >
-                <Text size="sm">{event.date}</Text>
+                <Text size="sm">
+                  {format(new Date(event.date), "	eee dd.MM.yyyy")}
+                </Text>
               </GridItem>
 
               <GridItem
