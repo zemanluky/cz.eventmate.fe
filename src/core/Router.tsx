@@ -65,15 +65,28 @@ const routes: RouteObject[] = [
       },
       {
         path: "event-detail/:eventId",
-        element: <EventDetail /> /* 👈 Renders at /#/event-detail/:eventId/ */,
+
+        element: (
+          <RouteGuard>
+            <EventDetail />
+          </RouteGuard>
+          ) /* 👈 Renders at /#/event-detail/:eventId/ */,
       },
       {
         path: "profile/:userId",
-        element: <ProfilePage /> /* 👈 Renders at /#/profile/:userId */,
+        element: (
+          <RouteGuard>
+            <ProfilePage />
+          </RouteGuard>
+        ) /* 👈 Renders at /#/profile/:userId */,
       },
       {
         path: "calendar",
-        element: <Calendar /> /* 👈 Renders at /#/calendar */,
+        element: (
+          <RouteGuard>
+            <Calendar />
+          </RouteGuard>
+        ) /* 👈 Renders at /#/calendar */,
       },
 
       // add more routes here...
