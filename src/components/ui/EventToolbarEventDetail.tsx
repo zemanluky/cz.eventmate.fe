@@ -59,12 +59,12 @@ export const EventToolbarEventDetail: React.FC<
       );
 
       if(response) return;
-      
+
     } catch (error) {
       if (axios.isAxiosError(error)) {
         showToast(
           "Error",
-          `Creating event failed ${error.response?.data?.message || error.message}`,
+          `Joining event failed ${error.response?.data?.message || error.message}`,
           "error"
         );
       } else {
@@ -89,7 +89,7 @@ export const EventToolbarEventDetail: React.FC<
       if (axios.isAxiosError(error)) {
         showToast(
           "Error",
-          `Creating event failed ${error.response?.data?.message || error.message}`,
+          `Leaving event failed ${error.response?.data?.message || error.message}`,
           "error"
         );
       } else {
