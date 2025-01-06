@@ -10,9 +10,7 @@ interface Member {
 }
 
 interface AvatarGroupProps {
-  members: {
-    member: Member;
-  }[];
+  members: Member[];
 }
 
 export const AvatarGroup: React.FC<AvatarGroupProps> = ({ members }) => {
@@ -22,7 +20,6 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({ members }) => {
   return (
     <HStack gap="0" position="relative">
       {members?.map((member, index) => {
-        console.log("Member:", member); // Log each member
         return (
           <Avatar
             key={member?._id}
