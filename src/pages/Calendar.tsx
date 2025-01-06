@@ -8,11 +8,12 @@ import { Input } from "@ParkComponents/input";
 import { Text } from "@ParkComponents/text";
 import { EventCardCalendarDesktop } from "@Components/ui/EventCardCalendarDesktop";
 import axiosClient from "axiosClient";
+import { EventCardMobile } from "@Components/ui";
+import { Spinner } from "@ParkComponents/spinner";
 
 export const Calendar: React.FC = () => {
   const today = new Date().toISOString();
   const [eventsMonthByDay, setEventsMonthByDay] = React.useState<any[]>([]); // Events in arrays by days in a month
-  const [eventsMonthArray, setEventsMonthArray] = React.useState<any[]>([]); // Array of all events in a month
   const [currentCalendarMonth, setCurrentCalendarMonth] = React.useState(today); // Current month in calendar
   const [isLoading, setIsLoading] = React.useState(false); // Loading state
 
@@ -268,22 +269,32 @@ export const Calendar: React.FC = () => {
         </VStack>
 
         {/* Events */}
-        <VStack w={{ base: "100%", xl: "60%" }}>
-          <Flex
-            gap="16px"
-            mt={"20px"}
-            flexWrap={"wrap"}
-            justifyContent="center"
-          >
-            {events.map((event) => {
-              return (
-                <div key={event._id}>
-                  <EventCardCalendarDesktop event={event} />
-                </div>
-              );
-            })}
-          </Flex>
-        </VStack>
+        {isLoading ? (
+          <VStack w={{ base: "100%", xl: "60%" }}>
+            <Spinner />
+          </VStack>
+        ) : (
+          <>
+            <VStack hideBelow="lg" w={{ base: "100%", xl: "60%" }}>
+              {events.map((event) => {
+                return (
+                  <div key={event._id}>
+                    <EventCardCalendarDesktop event={event} />
+                  </div>
+                );
+              })}
+            </VStack>
+            <VStack hideFrom="lg" w={{ base: "100%", xl: "60%" }}>
+              {events.map((event) => {
+                return (
+                  <div key={event._id}>
+                    <EventCardMobile event={event} />
+                  </div>
+                );
+              })}
+            </VStack>
+          </>
+        )}
       </Stack>
     </>
   );
