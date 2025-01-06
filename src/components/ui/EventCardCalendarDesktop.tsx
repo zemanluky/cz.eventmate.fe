@@ -34,7 +34,7 @@ export const EventCardCalendarDesktop: React.FC<
       <Card.Root w="100%" h="200px" bg="bg.card" color="fg.card">
         <HStack>
           <Card.Header w="200px" h="200px" bg="bg.emphasized">
-            {event.image}
+            <img src={event.image} />
           </Card.Header>
           <Card.Body p="25px" w="350px">
             {/* Content */}
