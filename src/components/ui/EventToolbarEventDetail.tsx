@@ -1,6 +1,5 @@
 import { HStack, Spacer } from "@Panda/jsx";
 import { Button } from "@ParkComponents/button";
-
 import { Text } from "@ParkComponents/text";
 import axios from "axios";
 import axiosClient from "axiosClient";
@@ -8,6 +7,7 @@ import { CirclePlus, DoorOpen } from "lucide-react";
 import * as React from "react";
 import { useShowToast } from "src/hooks";
 import useAuthStore from "src/store/authStore";
+import { useEventStore } from "src/store/eventStore";
 
 interface EventCategory {
   _id: string;
@@ -46,94 +46,75 @@ interface EventToolbarEventDetailProps {
   event: Event;
 }
 
-export const EventToolbarEventDetail: React.FC<
-  EventToolbarEventDetailProps
-> = ({ event }) => {
+export const EventToolbarEventDetail: React.FC<EventToolbarEventDetailProps> = ({ event }) => {
   const showToast = useShowToast();
+  const authUser = useAuthStore((state) => state.user);  // Getting the authenticated user from global state
+  const { updateAttendees } = useEventStore();  // Extracting the global store method for updating attendees
+
+  const [isAlreadyJoined, setIsAlreadyJoined] = React.useState(false);
 
   const handleJoinEvent = async (eventId: string) => {
     try {
-
       const response = await axiosClient.post(
         `${import.meta.env.VITE_API_KEY}/event/${eventId}/attendance`
       );
 
-      if(response) return;
+      if (response) {
+        const newAttendee = { ...authUser };  // Create new attendee object based on authUser
+        const updatedAttendees = [...event.attendees, newAttendee];
+        updateAttendees(updatedAttendees);  // Update global attendees list
 
+        setIsAlreadyJoined(true);
+        showToast("Success", "You joined the event!", "success");
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        showToast(
-          "Error",
-          `Joining event failed ${error.response?.data?.message || error.message}`,
-          "error"
-        );
+        showToast("Error", `Joining event failed: ${error.response?.data?.message || error.message}`, "error");
       } else {
-        showToast("Error", `Unexpected error occured : ${error}`, "error");
+        showToast("Error", `Unexpected error occurred: ${error}`, "error");
       }
     }
   };
 
   const handleLeaveEvent = async (eventId: string) => {
     try {
-
       const response = await axiosClient.delete(
         `${import.meta.env.VITE_API_KEY}/event/${eventId}/attendance`
       );
 
-      if(response){
-        showToast("Success", "You left an event", "success");
-        return;
-      }
+      if (response) {
+        const updatedAttendees = event.attendees.filter(
+          (attendee) => attendee._id !== authUser?._id
+        );
+        updateAttendees(updatedAttendees);  // Update global attendees list
 
+        setIsAlreadyJoined(false);
+        showToast("Success", "You left the event!", "success");
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        showToast(
-          "Error",
-          `Leaving event failed ${error.response?.data?.message || error.message}`,
-          "error"
-        );
+        showToast("Error", `Leaving event failed: ${error.response?.data?.message || error.message}`, "error");
       } else {
-        showToast("Error", `Unexpected error occured : ${error}`, "error");
+        showToast("Error", `Unexpected error occurred: ${error}`, "error");
       }
     }
   };
 
-  // calling authenticated user
-  const authUser = useAuthStore((state) => state.user);
-  console.log(event);
-
-  const [isAlreadyJoined, setIsAlreadyJoined] = React.useState(false);
-
-  // checking if authenticated user is in the attendees _ids
+  // Sync the initial attendees with the local state on load or user change
   React.useEffect(() => {
-    event?.attendees?.forEach((attendee) => {
-      console.log(attendee);
-      if (attendee._id === authUser?._id) {
-        setIsAlreadyJoined(true);
-        return;
-      }
-    });
-  }, [event?.attendees]);
+    setIsAlreadyJoined(event.attendees?.some((attendee) => attendee._id === authUser?._id));
+  }, [event, authUser]);
 
   return (
-    <>
-      <HStack mb="10px">
-        <Text fontSize={{ base: "2xl", md: "3xl", xl: "4xl" }} fontWeight="500">
-          {event?.name}
-        </Text>
-        <Spacer />
-        <Button
-          onClick={() =>
-            isAlreadyJoined
-              ? handleLeaveEvent(event?._id)
-              : handleJoinEvent(event?._id)
-          }
-        >
-          {isAlreadyJoined ? <DoorOpen /> : <CirclePlus />}
-
-          <Text>{isAlreadyJoined ? "Leave Event" : "Join event"}</Text>
-        </Button>
-      </HStack>
-    </>
+    <HStack mb="10px">
+      <Text fontSize={{ base: "2xl", md: "3xl", xl: "4xl" }} fontWeight="500">
+        {event?.name}
+      </Text>
+      <Spacer />
+      <Button onClick={() => (isAlreadyJoined ? handleLeaveEvent(event?._id) : handleJoinEvent(event?._id))}>
+        {isAlreadyJoined ? <DoorOpen /> : <CirclePlus />}
+        <Text>{isAlreadyJoined ? "Leave Event" : "Join event"}</Text>
+      </Button>
+    </HStack>
   );
 };

@@ -14,52 +14,37 @@ import {
   MapPin,
 } from "lucide-react";
 import * as React from "react";
-//import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
-/*interface EventDetailProps {
-  event: {
-    id: string;
-    creator: Creator;
-    name: string;
-    images: string[];
-    date: string;
-    place: string;
-    private: boolean;
-    description: string;
-    memberList: {
-      member: Member;
-    }[];
-  };
-}
-interface Creator {
-  id: string;
-  name: string;
-  surname: string;
-  imageUrl: string;
-  rating: number;
-}
-interface Member {
-  id: string;
-  name: string;
-  surname: string;
-  imageUrl: string;
-}*/
-
-//mockImages
+// Mock images
 import party1 from "@Components/assets/images/party_1.jpg";
 import party2 from "@Components/assets/images/party_2.jpg";
 import party3 from "@Components/assets/images/party_3.jpg";
 import party4 from "@Components/assets/images/party_4.jpg";
 import party5 from "@Components/assets/images/party_5.jpg";
 import useGetEventById from "src/hooks/useGetEventById";
-import { Link, useParams } from "react-router-dom";
+import { useEventStore } from "src/store/eventStore";
 
-export const EventDetail: React.FC /*<EventDetailProps>*/ = () => {
+export const EventDetail: React.FC = () => {
   const params = useParams();
   const eventId = params.eventId;
-  const { event, loading, error } = useGetEventById(eventId);
 
-  console.log(event);
+  // Zustand store to manage global state
+  const { event, loading, error, setEvent, setLoading, setError } = useEventStore();
+
+  // Use the custom hook directly inside the component
+  const { event: fetchedEvent, loading: fetchLoading, error: fetchError } = useGetEventById(eventId);
+
+  React.useEffect(() => {
+    if (fetchedEvent) {
+      setEvent(fetchedEvent);
+      setError(null);
+    }
+    if (fetchError) {
+      setError(fetchError);
+    }
+    setLoading(fetchLoading);
+  }, [fetchedEvent, fetchError, fetchLoading, setEvent, setLoading, setError]);
 
   const eventData = {
     _id: event?._id,
@@ -67,26 +52,20 @@ export const EventDetail: React.FC /*<EventDetailProps>*/ = () => {
     description: event?.description,
     date: event?.date,
     location: event?.location,
-    // mock creator
     author: event?.author,
-    // mock members
-    attendees: event?.attendees,
-
-    // mock images
+    attendees: event?.attendees,  // The attendees will be automatically updated via global state
     images: [party1, party2, party3, party4, party5],
   };
 
-  console.log(eventData);
-
   return (
     <>
-      <EventToolbarEventDetail event={eventData} /*userId={loggedInUser.id}*/ />
+      <EventToolbarEventDetail event={eventData} />
       <HStack mb="10px" gap={10}>
         {/* Carousel */}
         <Carousel.Root>
           <Carousel.Viewport>
             <Carousel.ItemGroup>
-              {eventData.images.map((image, index) => (
+              {eventData?.images.map((image, index) => (
                 <Carousel.Item key={index} index={index}>
                   <img
                     src={image}
@@ -111,7 +90,7 @@ export const EventDetail: React.FC /*<EventDetailProps>*/ = () => {
                 </IconButton>
               </Carousel.PrevTrigger>
               <Carousel.IndicatorGroup>
-                {eventData.images.map((_, index) => (
+                {eventData?.images.map((_, index) => (
                   <Carousel.Indicator
                     key={index}
                     index={index}
@@ -130,25 +109,24 @@ export const EventDetail: React.FC /*<EventDetailProps>*/ = () => {
 
         {/* Author */}
         <VStack>
-          <Link to={`/profile/${eventData.author?._id}`}>
+          <Link to={`/profile/${eventData?.author?._id}`}>
             <Avatar
               h="200px"
               w="200px"
-              name={`${eventData.author?.name} ${eventData.author?.surname}`}
+              name={`${eventData?.author?.name} ${eventData?.author?.surname}`}
             />
           </Link>
           <RatingGroup
             count={5}
-            defaultValue={eventData.author?.rating}
+            defaultValue={eventData?.author?.rating}
             disabled
           />
-
           <Text>
-            {eventData.author?.name} {eventData.author?.surname}
+            {eventData?.author?.name} {eventData?.author?.surname}
           </Text>
           <Divider orientation="horizontal" thickness="2px" width="100%" />
           <Text>Attendees:</Text>
-          <AvatarGroup members={eventData.attendees} />
+          <AvatarGroup members={eventData?.attendees} />
         </VStack>
       </HStack>
       {/* Content */}
