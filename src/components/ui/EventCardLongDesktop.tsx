@@ -25,25 +25,39 @@ import { IconButton } from "@ParkComponents/icon-button";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "@ParkComponents/dialog";
 import { Button } from "@ParkComponents/button";
-import axiosClient from "axiosClient";
 import { useShowToast } from "src/hooks";
-import axios from "axios";
 import useDeleteEventById from "src/hooks/useDeleteEventById";
 import { Spinner } from "@ParkComponents/spinner";
 
 interface EventCardLongDesktopProps {
-  event: {
-    _id: string;
-    name: string;
-    image: string;
-    date: string;
-    location: string;
-    private: boolean;
-    memberList: {
-      member: Member;
-    }[];
-  };
+  event: Event
 }
+
+interface Rating {
+  author: string;
+  starRating: number;
+  comment: string;
+  _id: string;
+  createdAt: string; // ISO date string
+}
+
+interface User {
+  _id: string;
+  name: string;
+  surname: string;
+  username: string;
+  __v: number;
+  ratings?: Rating[]; // Optional because only the author has ratings
+  average_rating?: number; // Optional because only the author has it
+}
+
+interface Category {
+  _id: string;
+  name: string;
+  description: string;
+  __v: number;
+}
+
 interface Member {
   _id: string;
   name: string;
@@ -51,12 +65,26 @@ interface Member {
   imageUrl: string;
 }
 
+interface Event {
+  category: Category;
+  _id: string;
+  name: string;
+  description: string;
+  date: string;
+  private: boolean;
+  location: string;
+  attendees: Member[];
+  __v: number;
+  author: User;
+}
+
 export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
   event,
 }) => {
+  console.log(event)
   const navigate = useNavigate();
   const showToast = useShowToast();
-  const { deleteEvent, loading, error } = useDeleteEventById();
+  const { deleteEvent, loading } = useDeleteEventById();
 
   // deleting event
   const handleDeleteEvent = async (eventId: string) => {
@@ -75,7 +103,7 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
       <Card.Root w="100%" h="300px" bg="bg.card" color="fg.card">
         <HStack>
           <Card.Header w="300px" h="300px" bg="bg.emphasized">
-            {event.image}
+            {event?.image}
           </Card.Header>
           <Card.Body p="25px" w="700px">
             <Grid gridTemplateColumns="repeat(7, 1fr)" h="100%" gap={0}>
@@ -129,12 +157,11 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
                       mt="auto"
                       rounded="full"
                       bg="bg.muted"
-                      borderColor="black"
-                      borderWidth="2px"
+                      px={"16px"}
                     >
                       <HStack>
                         <Text>Attendees:</Text>
-                        {/* <AvatarGroup members={event.memberList} /> */}
+                        <AvatarGroup members={event?.attendees} />
                       </HStack>
                     </Box>
                   </HStack>
