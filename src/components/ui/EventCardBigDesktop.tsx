@@ -63,7 +63,7 @@ export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
                 alignItems="start"
                 justifyContent="end"
               >
-                <AvatarGroup members={event.memberList} />
+                <AvatarGroup members={event.attendees} />
               </GridItem>
             </Grid>
           </Card.Body>
