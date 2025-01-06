@@ -13,7 +13,7 @@ export const Homepage: React.FC = () => {
   const [hasMore, setHasMore] = React.useState(true); // Flag for more data
   const [pageNumber, setPageNumber] = React.useState(1); // Current page number
   const pageSize = 10; // Number of events per page
-
+  
   const lastEventRef = React.useRef<HTMLDivElement | null>(null); // Reference to last element
   const observer = React.useRef<IntersectionObserver | null>(null); // Intersection Observer reference
 
@@ -39,7 +39,7 @@ export const Homepage: React.FC = () => {
         dateStart: filters.dateStart === "" ? null : filters.dateStart,
         dateEnd: filters.dateEnd === "" ? null : filters.dateEnd,
         rating: null,
-        category: null,
+        category: filters.category,
         filter: "all",
       };
 
@@ -116,6 +116,7 @@ export const Homepage: React.FC = () => {
   React.useEffect(() => {
     fetchEvents();
   }, [pageNumber, filters]);
+
 
   return (
     <>
