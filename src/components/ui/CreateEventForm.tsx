@@ -32,53 +32,35 @@ import { useNavigate } from "react-router-dom";
 //   { label: "Charity Events", value: "charity" },
 // ];
 
-const eventTypes = [
-  { label: "Public", value: false },
-  { label: "Private", value: true },
-];
-
-// Validation schema using zod
-const eventFormSchema = z.object({
-  name: z.string().nonempty("Name is required"),
-  place: z.string().nonempty("Place is required"),
-  address: z.string().nonempty("Address is required"),
-  description: z.string().nonempty("Description is required"),
-  category: z.string().nonempty("Category is required"),
-  type: z.boolean(),
-  date: z.date(),
-});
-type EventFormValues = z.infer<typeof eventFormSchema>;
-
-const isoParser = (date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
-  const day = String(date.getDate()).padStart(2, "0");
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const seconds = String(date.getSeconds()).padStart(2, "0");
-
-  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-};
-const getCategories = async () => {
-  const response = await axiosClient.get(
-    `${import.meta.env.VITE_API_KEY}/event/category`
-  );
-  const data = response?.data?.data;
-  console.log(data);
-  return data;
-};
-
-const getEventCategories = async () => {
-  const categories = await getCategories();
-  const transformedCategories = categories?.map(
-    ({ _id: value, name: label }) => ({ value, label })
-  );
-  return transformedCategories;
-};
-
-const eventCategories = await getEventCategories();
-
 export const CreateEventForm: React.FC = () => {
+  const eventTypes = [
+    { label: "Public", value: false },
+    { label: "Private", value: true },
+  ];
+
+  // Validation schema using zod
+  const eventFormSchema = z.object({
+    name: z.string().nonempty("Name is required"),
+    place: z.string().nonempty("Place is required"),
+    address: z.string().nonempty("Address is required"),
+    description: z.string().nonempty("Description is required"),
+    category: z.string().nonempty("Category is required"),
+    type: z.boolean(),
+    date: z.date(),
+  });
+  type EventFormValues = z.infer<typeof eventFormSchema>;
+
+  const isoParser = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+  };
+
   const {
     register,
     handleSubmit,
@@ -97,6 +79,7 @@ export const CreateEventForm: React.FC = () => {
   const navigate = useNavigate();
 
   const [files, setFiles] = React.useState<File[]>([]); //file upload images
+  const [eventCategories, setEventCategories] = React.useState([]);
 
   const onSubmit: SubmitHandler<EventFormValues> = async (data) => {
     try {
@@ -109,7 +92,7 @@ export const CreateEventForm: React.FC = () => {
         location: data.place,
         date: isoParser(data.date),
         private: data.type,
-        category: data.category
+        category: data.category,
       };
 
       try {
@@ -141,6 +124,30 @@ export const CreateEventForm: React.FC = () => {
       showToast("Error", `Error occured on submission: ${error}`, "error");
     }
   };
+
+  const getCategories = async () => {
+    const response = await axiosClient.get(
+      `${import.meta.env.VITE_API_KEY}/event/category`
+    );
+    const data = response?.data?.data;
+    return data;
+  };
+
+  const getEventCategories = async () => {
+    const categories = await getCategories();
+    const transformedCategories = categories?.map(
+      ({ _id: value, name: label }) => ({ value, label })
+    );
+    return transformedCategories;
+  };
+
+  React.useEffect(() => {
+    const fetchCategories = async () => {
+      const categories = await getEventCategories();
+      setEventCategories(categories);
+    };
+    fetchCategories();
+  }, []);
 
   return (
     <>

@@ -19,42 +19,6 @@ import axiosClient from "axiosClient";
 import axios from "axios";
 import useGetEventById from "src/hooks/useGetEventById";
 
-//handleLoad(eventId) => {return handleGetEventData(eventId)};
-
-//const eventCategories = handleGetCategories()
-const getCategories = async () => {
-  const response = await axiosClient.get(
-    `${import.meta.env.VITE_API_KEY}/event/category`
-  );
-  const data = response?.data?.data;
-  console.log(data);
-  return data;
-};
-
-const getEventCategories = async () => {
-  const categories = await getCategories();
-  const transformedCategories = categories?.map(
-    ({ _id: value, name: label }) => ({ value, label })
-  );
-  return transformedCategories;
-};
-
-const eventCategories = await getEventCategories();
-const eventTypes = [
-  { label: "Public", value: false },
-  { label: "Private", value: true },
-];
-
-// Validation schema using zod
-const eventFormSchema = z.object({
-  name: z.string().nonempty("Name is required"),
-  place: z.string().nonempty("Place is required"),
-  address: z.string().nonempty("Address is required"),
-  description: z.string().nonempty("Description is required"),
-  category: z.string().nonempty("Category is required"),
-  type: z.boolean(),
-  date: z.date(),
-});
 type EventFormValues = z.infer<typeof eventFormSchema>;
 
 interface EditEventFormProps {
@@ -67,6 +31,21 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
   // Getting event by id
   const { event, loading, error } = useGetEventById(eventToEditId);
 
+  const eventTypes = [
+    { label: "Public", value: false },
+    { label: "Private", value: true },
+  ];
+
+  // Validation schema using zod
+  const eventFormSchema = z.object({
+    name: z.string().nonempty("Name is required"),
+    place: z.string().nonempty("Place is required"),
+    address: z.string().nonempty("Address is required"),
+    description: z.string().nonempty("Description is required"),
+    category: z.string().nonempty("Category is required"),
+    type: z.boolean(),
+    date: z.date(),
+  });
   //const eventData = handleLoad(eventToEditId);
   const mockEvent = {
     address: "Holešovice",
@@ -85,6 +64,8 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
   const navigate = useNavigate();
 
   const eventData = mockEvent;
+
+  const [eventCategories, setEventCategories] = React.useState([]);
 
   const {
     register,
@@ -128,7 +109,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
     const seconds = String(date.getSeconds()).padStart(2, "0");
-  
+
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   };
 
@@ -173,6 +154,30 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     }
   };
 
+  const getCategories = async () => {
+    const response = await axiosClient.get(
+      `${import.meta.env.VITE_API_KEY}/event/category`
+    );
+    const data = response?.data?.data;
+    return data;
+  };
+
+  const getEventCategories = async () => {
+    const categories = await getCategories();
+    const transformedCategories = categories?.map(
+      ({ _id: value, name: label }) => ({ value, label })
+    );
+    return transformedCategories;
+  };
+
+  React.useEffect(() => {
+    const fetchCategories = async () => {
+      const categories = await getEventCategories();
+      setEventCategories(categories);
+    };
+    fetchCategories();
+  }, []);
+
   return (
     <>
       {loading ? (
@@ -182,7 +187,11 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
       ) : (
         <>
           {/* Title */}
-          <Text fontSize={{ sm: "4xl", base: "4xl" }} fontWeight="500" mb="28px">
+          <Text
+            fontSize={{ sm: "4xl", base: "4xl" }}
+            fontWeight="500"
+            mb="28px"
+          >
             Edit Event
           </Text>
 
@@ -198,7 +207,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                 justifyContent="space-between"
                 w={{ base: "100%", md: "48%" }}
                 mr={{ base: "none", md: "2%" }}
-                gap={{base : "16px", sm:"0px"}}
+                gap={{ base: "16px", sm: "0px" }}
               >
                 {/* Name input */}
                 <Stack w="100%" gap="1.5">
@@ -300,7 +309,12 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                 gap="16x"
               >
                 {/* Description input */}
-                <Stack h="20%" w="100%" gap="1.5" mt={{base:"16px", sm:"0px"}}>
+                <Stack
+                  h="20%"
+                  w="100%"
+                  gap="1.5"
+                  mt={{ base: "16px", sm: "0px" }}
+                >
                   <FormLabel htmlFor="description">Description</FormLabel>
                   <Input
                     {...register("description")}
