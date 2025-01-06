@@ -4,89 +4,42 @@ import { Box, Divider, VStack } from "@Panda/jsx";
 import { Text } from "@ParkComponents/text";
 import { MyProfile, RatingCard } from "@Components/ui";
 import useAuthStore from "src/store/authStore";
+import { Spinner } from "@ParkComponents/spinner";
+import axios from "axios";
+import axiosClient from "axiosClient";
 
 export const MyProfilePage: React.FC = () => {
-  const [showEvents, setShowEvents] = React.useState(true);
-  const showToast = useShowToast();
-  const userData = useAuthStore((state) => state.user)
-  
-
-  const mockUser = {
-    ratings: [
-      {
-        user: {
-          id: "1",
-          name: "Alice",
-          surname: "Brown",
-        },
-        ratingNumber: 5,
-        comment:
-          "Jon was incredibly professional and helpful throughout the workshop. A fantastic experience!",
-      },
-      {
-        user: {
-          id: "2",
-          name: "Bob",
-          surname: "Smith",
-        },
-        ratingNumber: 4,
-        comment:
-          "Jon is a great instructor, but I felt the session was a bit rushed.",
-      },
-      {
-        user: {
-          id: "3",
-          name: "Charlie",
-          surname: "Johnson",
-        },
-        ratingNumber: 3,
-        comment:
-          "Jon was friendly, but I expected more advanced techniques in the workshop.",
-      },
-      {
-        user: {
-          id: "4",
-          name: "Diana",
-          surname: "Evans",
-        },
-        ratingNumber: 2,
-        comment:
-          "Jon's insights were invaluable. He made sure everyone felt included and learned something new.",
-      },
-      {
-        user: {
-          id: "5",
-          name: "Ethan",
-          surname: "Williams",
-        },
-        ratingNumber: 5,
-        comment:
-          "Jon was excellent, but I wish the workshop had more hands-on exercises.",
-      },
-    ],
-  };
+  const user = useAuthStore((state) => state.user); // Getting the authenticated user from global state
 
   return (
     <Box>
       {/* User profile */}
-      <MyProfile user={userData} />
+      <MyProfile user={user} />
 
       {/* Divider */}
       <Divider orientation="horizontal" thickness="2px" mt="10px" mb="10px" />
 
       {/* Rating cards */}
       <Box
-        w="100%"
-        pl={{ base: "0px", md: "10%" }}
-        pr={{ base: "0px", md: "10%" }}
       >
-        <Text fontSize="2xl" fontWeight={620} mb="20px">
+        <Text fontSize="2xl" fontWeight={600} mb="20px">
           Users Ratings
         </Text>
         <VStack>
-          {mockUser.ratings.map((rating, index) => (
-            <RatingCard key={index} rating={rating} />
-          ))}
+          {user?.ratings.length > 0 ? ( // Render ratings if available
+            <VStack mt="20px" gap="16px" w="full">
+              {user?.ratings?.map((rating, index) => (
+                <RatingCard key={index} rating={rating} />
+              ))}
+            </VStack>
+          ) : (
+            // No ratings available
+            <VStack>
+              <Text fontWeight={600} fontSize={"32px"} color="fg.subtle">
+                This user has no ratings yet
+              </Text>
+            </VStack>
+          )}
         </VStack>
       </Box>
     </Box>
