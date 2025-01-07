@@ -30,7 +30,7 @@ interface Member {
 export const EventCardMobile: React.FC<EventCardMobileProps> = ({ event }) => {
   return (
     <>
-      <Link to={`/eventDetail/${event._id}`}>
+      <Link to={`/event-detail/${event._id}`}>
         <Card.Root w="350px" h="270px">
           <Card.Header w="100%" h="170px" bg="bg.emphasized">
             {event.image}
