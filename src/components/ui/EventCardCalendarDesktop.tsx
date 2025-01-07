@@ -4,7 +4,6 @@ import { Icon } from "@ParkComponents/icon";
 import { Text } from "@ParkComponents/text";
 import { Calendar, MapPin } from "lucide-react";
 import * as React from "react";
-import { AvatarGroup } from "./AvatarGroup";
 import { format } from "date-fns";
 
 interface EventCardCalendarDesktopProps {
