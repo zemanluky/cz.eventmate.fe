@@ -9,7 +9,7 @@ import {
   Calendar,
   ChevronLeftIcon,
   ChevronRightIcon,
-  Clock,
+  LayoutList,
   Lock,
   MapPin,
 } from "lucide-react";
@@ -31,8 +31,7 @@ export const EventDetail: React.FC = () => {
   const eventId = params.eventId;
 
   // Zustand store to manage global state
-  const { event, loading, error, setEvent, setLoading, setError } =
-    useEventStore();
+  const { event, setEvent, setLoading, setError } = useEventStore();
 
   // Use the custom hook directly inside the component
   const {
@@ -56,6 +55,7 @@ export const EventDetail: React.FC = () => {
     _id: event?._id,
     name: event?.name,
     description: event?.description,
+    category: event?.category.name,
     date: event?.date,
     location: event?.location,
     author: event?.author,
@@ -165,13 +165,12 @@ export const EventDetail: React.FC = () => {
           </HStack>
         </GridItem>
 
-        {/* Time */}
+        {/* Category */}
         <GridItem colSpan={1} rowSpan={1}>
           <HStack>
-            <Clock />
-            <Text fontWeight={700}>Time: </Text>
-            <Text>{eventData?.date?.split("T")[0]}</Text>
-            {/* <Text>{format(new Date(eventData?.date), "	eee dd.MM.yyyy")}</Text> */}
+            <LayoutList />
+            <Text fontWeight={700}>Category: </Text>
+            <Text>{eventData?.category}</Text>
           </HStack>
         </GridItem>
 

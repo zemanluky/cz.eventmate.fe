@@ -18,20 +18,6 @@ import { useShowToast } from "src/hooks";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-//const eventCategories = handleGetCategories()
-// const eventCategories = [
-//   { label: "Workshops", value: "workshops" },
-//   { label: "Conferences", value: "conferences" },
-//   { label: "Webinars", value: "webinars" },
-//   { label: "Meetups", value: "meetups" },
-//   { label: "Hackathons", value: "hackathons" },
-//   { label: "Networking Events", value: "networking" },
-//   { label: "Seminars", value: "seminars" },
-//   { label: "Trade Shows", value: "trade_shows" },
-//   { label: "Product Launches", value: "product_launches" },
-//   { label: "Charity Events", value: "charity" },
-// ];
-
 export const CreateEventForm: React.FC = () => {
   const eventTypes = [
     { label: "Public", value: false },
@@ -64,7 +50,6 @@ export const CreateEventForm: React.FC = () => {
   const {
     register,
     handleSubmit,
-    setError,
     control,
     formState: { errors, isSubmitting },
   } = useForm<EventFormValues>({
@@ -96,10 +81,7 @@ export const CreateEventForm: React.FC = () => {
       };
 
       try {
-        const response = await axiosClient.post(
-          `/event`,
-          formData
-        );
+        const response = await axiosClient.post(`/event`, formData);
         console.log(response);
 
         // Success message
@@ -126,9 +108,7 @@ export const CreateEventForm: React.FC = () => {
   };
 
   const getCategories = async () => {
-    const response = await axiosClient.get(
-      `/event/category`
-    );
+    const response = await axiosClient.get(`/event/category`);
     const data = response?.data?.data;
     return data;
   };

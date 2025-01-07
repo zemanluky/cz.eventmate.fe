@@ -14,6 +14,7 @@ import { Text } from "@ParkComponents/text";
 import {
   Calendar,
   Clock,
+  LayoutList,
   MapPin,
   PencilLineIcon,
   Trash,
@@ -110,7 +111,7 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
             <Grid gridTemplateColumns="repeat(7, 1fr)" h="100%" gap={0}>
               {/* Content */}
               <GridItem colSpan={6}>
-                <Stack gap={10}>
+                <Stack gap={5}>
                   {/* Tittle + type */}
                   <HStack>
                     <Text size="xl" fontWeight="semibold">
@@ -137,6 +138,13 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
                         <Text>
                           {format(new Date(event.date), "eee dd.MM.yyyy")}
                         </Text>
+                      </HStack>
+                      {/* Event category */}
+                      <HStack>
+                        <Icon>
+                          <LayoutList />
+                        </Icon>
+                        <Text>{event?.category.name}</Text>
                       </HStack>
                       {/* Event place */}
                       <HStack>
