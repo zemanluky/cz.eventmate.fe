@@ -15,6 +15,7 @@ export const Calendar: React.FC = () => {
   const today = new Date().toISOString();
   const [eventsMonthByDay, setEventsMonthByDay] = React.useState<any[]>([]); // Events in arrays by days in a month
   const [currentCalendarMonth, setCurrentCalendarMonth] = React.useState(today); // Current month in calendar
+  const [eventsMonthArray, setEventsMonthArray] = React.useState<any[]>([]); // Array of all events in a month
   const [isLoading, setIsLoading] = React.useState(false); // Loading state
 
   const fetchEvents = React.useCallback(async () => {
@@ -136,8 +137,6 @@ export const Calendar: React.FC = () => {
                                     Array.isArray(eventsMonthByDay[day.day]) &&
                                     eventsMonthByDay[day.day].length > 0;
 
-                                  console.log(isEventDate);
-
                                   return (
                                     <DatePicker.TableCell
                                       key={dayIndex}
@@ -150,11 +149,7 @@ export const Calendar: React.FC = () => {
                                         alignItems="center"
                                         justifyContent="center"
                                         borderRadius="8px"
-                                        bg={
-                                          isEventDate
-                                            ? "rgba(255, 99, 71, 0.3)"
-                                            : "white"
-                                        }
+                                        bg={isEventDate ? "red" : "white"}
                                       >
                                         {day.day}
                                       </Box>
