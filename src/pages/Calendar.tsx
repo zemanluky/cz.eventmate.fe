@@ -15,7 +15,6 @@ export const Calendar: React.FC = () => {
   const today = new Date().toISOString();
   const [eventsMonthByDay, setEventsMonthByDay] = React.useState<any[]>([]); // Events in arrays by days in a month
   const [currentCalendarMonth, setCurrentCalendarMonth] = React.useState(today); // Current month in calendar
-  const [eventsMonthArray, setEventsMonthArray] = React.useState<any[]>([]); // Array of all events in a month
   const [isLoading, setIsLoading] = React.useState(false); // Loading state
 
   const fetchEvents = React.useCallback(async () => {
@@ -48,6 +47,8 @@ export const Calendar: React.FC = () => {
   );
 
   const changeCalendarMonth = (direction: "prev" | "next") => {
+    setEventsMonthByDay([]);
+
     const currentDate = new Date(currentCalendarMonth);
     let newDate: Date;
 
