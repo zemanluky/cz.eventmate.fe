@@ -68,7 +68,7 @@ export const EventToolbar: React.FC = () => {
 
   const getCategories = async () => {
     const response = await axiosClient.get(
-      `${import.meta.env.VITE_API_KEY}/event/category`
+      `/event/category`
     );
     const data = response?.data?.data;
     return data;
@@ -94,13 +94,16 @@ export const EventToolbar: React.FC = () => {
   }, []);
 
   const handleFiltersSubmit = async () => {
-    console.log(filterInputs.category);
-    const formData = {
-      location: filterInputs.location,
-      category: filterInputs.category,
-      dateStart: filterInputs.date.dateStart,
-      dateEnd: filterInputs.date.dateEnd,
-    };
+    // Dynamically construct the formData object without empty string values
+    const formData = Object.fromEntries(
+      Object.entries({
+        location: filterInputs.location,
+        category: filterInputs.category,
+        dateStart: filterInputs.date.dateStart,
+        dateEnd: filterInputs.date.dateEnd,
+      }).filter(([_, value]) => value !== "")
+    );
+  
     setFilters(formData);
     console.log("Filters applied:", formData);
   };

@@ -56,7 +56,7 @@ export const EventToolbarEventDetail: React.FC<EventToolbarEventDetailProps> = (
   const handleJoinEvent = async (eventId: string) => {
     try {
       const response = await axiosClient.post(
-        `${import.meta.env.VITE_API_KEY}/event/${eventId}/attendance`
+        `/event/${eventId}/attendance`
       );
 
       if (response) {
@@ -79,7 +79,7 @@ export const EventToolbarEventDetail: React.FC<EventToolbarEventDetailProps> = (
   const handleLeaveEvent = async (eventId: string) => {
     try {
       const response = await axiosClient.delete(
-        `${import.meta.env.VITE_API_KEY}/event/${eventId}/attendance`
+        `/event/${eventId}/attendance`
       );
 
       if (response) {

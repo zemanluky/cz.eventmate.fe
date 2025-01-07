@@ -76,7 +76,7 @@ export const Profile: React.FC<User> = ({ user }) => {
       setIsCalculating(true);
       try {
         const response = await axiosClient.get(
-          `${import.meta.env.VITE_API_KEY}/user/${userId}/rating`
+          `/user/${userId}/rating`
         );
         setRatings(response.data?.data || []);
       } catch (error) {
