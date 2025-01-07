@@ -36,7 +36,7 @@ export const CreateEventForm: React.FC = () => {
   });
   type EventFormValues = z.infer<typeof eventFormSchema>;
 
-  const isoParser = (date) => {
+  const isoParser = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
     const day = String(date.getDate()).padStart(2, "0");
@@ -64,7 +64,9 @@ export const CreateEventForm: React.FC = () => {
   const navigate = useNavigate();
 
   const [files, setFiles] = React.useState<File[]>([]); //file upload images
-  const [eventCategories, setEventCategories] = React.useState([]);
+  const [eventCategories, setEventCategories] = React.useState<
+    { value: string; label: string }[]
+  >([]);
 
   const onSubmit: SubmitHandler<EventFormValues> = async (data) => {
     try {
@@ -112,7 +114,7 @@ export const CreateEventForm: React.FC = () => {
   };
 
   const getEventCategories = async () => {
-    const categories = await getCategories();
+    const categories: Category[] = await getCategories();
     const transformedCategories = categories?.map(
       ({ _id: value, name: label }) => ({ value, label })
     );
@@ -126,6 +128,11 @@ export const CreateEventForm: React.FC = () => {
     };
     fetchCategories();
   }, []);
+
+  interface Category {
+    _id: string;
+    name: string;
+  }
 
   return (
     <>

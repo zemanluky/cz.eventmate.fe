@@ -14,13 +14,10 @@ import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { Spinner } from "@ParkComponents/spinner";
 import { useShowToast } from "src/hooks";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axiosClient from "axiosClient";
 import axios from "axios";
 import useGetEventById from "src/hooks/useGetEventById";
-
-type EventFormValues = z.infer<typeof eventFormSchema>;
-
 interface EditEventFormProps {
   eventToEditId: string;
 }
@@ -29,7 +26,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
   eventToEditId,
 }) => {
   // Getting event by id
-  const { event, loading, error } = useGetEventById(eventToEditId);
+  const { event, loading } = useGetEventById(eventToEditId);
 
   const eventTypes = [
     { label: "Public", value: false },
@@ -46,6 +43,8 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     type: z.boolean(),
     date: z.date(),
   });
+  type EventFormValues = z.infer<typeof eventFormSchema>;
+
   //const eventData = handleLoad(eventToEditId);
   const mockEvent = {
     address: "Holešovice",
@@ -65,12 +64,13 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
 
   const eventData = mockEvent;
 
-  const [eventCategories, setEventCategories] = React.useState([]);
+  const [eventCategories, setEventCategories] = React.useState<
+    { value: string; label: string }[]
+  >([]);
 
   const {
     register,
     handleSubmit,
-    setError,
     control,
     formState: { errors, isSubmitting },
     reset, // Import the reset function
@@ -102,7 +102,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     }
   }, [event, reset]);
 
-  const isoParser = (date) => {
+  const isoParser = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
     const day = String(date.getDate()).padStart(2, "0");
@@ -160,8 +160,13 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     return data;
   };
 
+  interface Category {
+    _id: string;
+    name: string;
+  }
+
   const getEventCategories = async () => {
-    const categories = await getCategories();
+    const categories: Category[] = await getCategories();
     const transformedCategories = categories?.map(
       ({ _id: value, name: label }) => ({
         value,
@@ -179,7 +184,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     fetchCategories();
   }, []);
 
-  const defaultCategory = (category) => {
+  const defaultCategory = (category: Category) => {
     const defaultCategoryObject = {
       value: category._id,
       label: category.name,
@@ -187,13 +192,14 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     return defaultCategoryObject.label;
   };
 
-  const defaultType = (type) => {
+  const defaultType = (type: boolean) => {
     const defaultCategoryObject = {
       value: type ? true : false,
       label: type ? "Private" : "Public",
     };
     return defaultCategoryObject.label;
   };
+
   return (
     <>
       {loading ? (
