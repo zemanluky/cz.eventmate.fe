@@ -24,9 +24,10 @@ import { z } from "zod";
 import axiosClient from "axiosClient";
 import { useShowToast } from "src/hooks";
 import axios from "axios";
-import useUserProfileStore from "src/store/userProfileStore";
 import { useParams } from "react-router-dom";
 import { Spinner } from "@ParkComponents/spinner";
+import useAuthStore from "src/store/authStore";
+import { useDialog } from "@ark-ui/react";
 
 interface User {
   user: {
@@ -51,12 +52,15 @@ type RatingFormValues = z.infer<typeof ratingFormSchema>;
 export const Profile: React.FC<User> = ({ user }) => {
   const params = useParams();
   const userId = params.userId as string;
-  const userProfile = useUserProfileStore((state) => state.userProfile);
+  const authUser = useAuthStore((state) => state.user); // Getting the authenticated user from global state
   const showToast = useShowToast();
   const [ratings, setRatings] = React.useState<any[]>([]); // State to store ratings
   const [isFetchingRatings, setIsFetchingRatings] = React.useState(false); // State to track loading
   const [averageRating, setAverageRating] = React.useState<number>(0);
   const [isCalculating, setIsCalculating] = React.useState<boolean>(false);
+  const [isAlreadyFriend, setIsAlreadyFriend] = React.useState<boolean>(false);
+  const dialog = useDialog() // dialog control
+  const [isFriendRequestSent, setIsFriendRequestSent] = React.useState<boolean>(false);
 
   const calculateAverageRating = React.useCallback(() => {
     if (ratings.length === 0) {
@@ -96,6 +100,15 @@ export const Profile: React.FC<User> = ({ user }) => {
   React.useEffect(() => {
     calculateAverageRating();
   }, [ratings, calculateAverageRating]); // Recalculate average when `ratings` changes
+  React.useEffect(() => {
+    user?.friends?.forEach((friendId) => {
+      if (friendId === authUser?._id) {
+        setIsAlreadyFriend(true);
+        console.log("hit");
+        return;
+      }
+    });
+  }, [user]);
 
   const {
     register,
@@ -138,6 +151,9 @@ export const Profile: React.FC<User> = ({ user }) => {
       setError("root", {
         message: "error", //set up for backend errors
       });
+    }finally {
+      //todo
+      dialog().setOpen(false)
     }
   };
 
@@ -148,6 +164,7 @@ export const Profile: React.FC<User> = ({ user }) => {
       if (response.status === 204) {
         showToast("Success", "Friend Request Sent", "success");
       }
+      console.log(response)
     } catch (error) {
       if (axios.isAxiosError(error)) {
         showToast(
@@ -158,6 +175,30 @@ export const Profile: React.FC<User> = ({ user }) => {
       } else {
         showToast("Unexpected Error", "Please try again later", "error");
       }
+    }finally{
+      setIsFriendRequestSent(true)
+    }
+  };
+
+  const handleCancelFriendRequest = async (requestId: string) => {
+    try {
+      const response = await axiosClient.delete(`/user/friend-request/${requestId}`);
+      if (response.status === 204) {
+        showToast("Success", "Friend Request cancelled", "success");
+      }
+      console.log(response)
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        showToast(
+          "Error",
+          error.response?.data?.message || error.message,
+          "error"
+        );
+      } else {
+        showToast("Unexpected Error", "Please try again later", "error");
+      }
+    }finally{
+      setIsFriendRequestSent(false)
     }
   };
 
@@ -230,25 +271,31 @@ export const Profile: React.FC<User> = ({ user }) => {
           )}
         </HStack>
         <Grid gridTemplateColumns="repeat(5, 1fr)" w="100%">
-          <GridItem colSpan={{ base: 5, sm: 4 }}>
-            <Button
-              w="100%"
-              h={{ base: "40px", sm: "55px" }}
-              bg="bg.buttonLarge"
-              color="fg.buttonLarge"
-              onClick={() => {
-                handleSendFriendRequest(user._id);
-              }}
-            >
-              <Text fontSize={{ base: "md", md: "xl" }}>
-                Send friend request
-              </Text>
-            </Button>
-          </GridItem>
+          {!isAlreadyFriend && (
+            <GridItem colSpan={{ base: 5, sm: 4 }}>
+              <Button
+                w="100%"
+                h={{ base: "40px", sm: "55px" }}
+                bg="bg.buttonLarge"
+                color="fg.buttonLarge"
+                onClick={() => {
+                  if (isFriendRequestSent) {
+                    handleCancelFriendRequest("id"); // be functionality missing that't why this is mock id string
+                  } else {
+                    handleSendFriendRequest(user._id);
+                  }
+                }}
+              >
+                <Text fontSize={{ base: "md", md: "xl" }}>
+                {isFriendRequestSent ? "Cancel friend request" : "Send friend request"}
+                </Text>
+              </Button>
+            </GridItem>
+          )}
 
           <GridItem colSpan={{ base: 5, sm: 1 }}>
             {/* Rating modal */}
-            <Dialog.Root>
+            <Dialog.RootProvider value={dialog}>
               <Dialog.Trigger asChild>
                 {/* Modal trigger */}
                 <Button
@@ -362,7 +409,7 @@ export const Profile: React.FC<User> = ({ user }) => {
                   </form>
                 </Dialog.Content>
               </Dialog.Positioner>
-            </Dialog.Root>
+            </Dialog.RootProvider>
           </GridItem>
         </Grid>
       </Flex>
