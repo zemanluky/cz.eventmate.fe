@@ -135,7 +135,7 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
                           <Calendar />
                         </Icon>
                         <Text>
-                          {format(new Date(event.date), "	eee dd.MM.yyyy")}
+                          {format(new Date(event.date), "eee dd.MM.yyyy")}
                         </Text>
                       </HStack>
                       {/* Event place */}

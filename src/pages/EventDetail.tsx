@@ -24,16 +24,22 @@ import party4 from "@Components/assets/images/party_4.jpg";
 import party5 from "@Components/assets/images/party_5.jpg";
 import useGetEventById from "src/hooks/useGetEventById";
 import { useEventStore } from "src/store/eventStore";
+import { format } from "date-fns";
 
 export const EventDetail: React.FC = () => {
   const params = useParams();
   const eventId = params.eventId;
 
   // Zustand store to manage global state
-  const { event, loading, error, setEvent, setLoading, setError } = useEventStore();
+  const { event, loading, error, setEvent, setLoading, setError } =
+    useEventStore();
 
   // Use the custom hook directly inside the component
-  const { event: fetchedEvent, loading: fetchLoading, error: fetchError } = useGetEventById(eventId);
+  const {
+    event: fetchedEvent,
+    loading: fetchLoading,
+    error: fetchError,
+  } = useGetEventById(eventId);
 
   React.useEffect(() => {
     if (fetchedEvent) {
@@ -53,7 +59,7 @@ export const EventDetail: React.FC = () => {
     date: event?.date,
     location: event?.location,
     author: event?.author,
-    attendees: event?.attendees,  // The attendees will be automatically updated via global state
+    attendees: event?.attendees, // The attendees will be automatically updated via global state
     images: [party1, party2, party3, party4, party5],
   };
 
@@ -164,7 +170,7 @@ export const EventDetail: React.FC = () => {
           <HStack>
             <Clock />
             <Text fontWeight={700}>Time: </Text>
-            <Text>{eventData?.date}</Text>
+            <Text>{format(new Date(eventData?.date), "	eee dd.MM.yyyy")}</Text>
           </HStack>
         </GridItem>
 
