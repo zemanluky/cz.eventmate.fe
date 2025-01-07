@@ -2,13 +2,7 @@ import { Grid, GridItem, HStack, Stack } from "@Panda/jsx";
 import { Card } from "@ParkComponents/card";
 import { Icon } from "@ParkComponents/icon";
 import { Text } from "@ParkComponents/text";
-import {
-  Calendar,
-  ChartColumn,
-  ChartColumnStacked,
-  LayoutList,
-  MapPin,
-} from "lucide-react";
+import { Calendar, LayoutList, MapPin } from "lucide-react";
 import * as React from "react";
 import { AvatarGroup } from "./AvatarGroup";
 import { Link } from "react-router-dom";
@@ -21,8 +15,8 @@ interface EventCardBigDesktopProps {
     image: string;
     date: string;
     location: string;
-    category: Object;
-    memberList: {
+    category: Category;
+    memebrList: {
       member: Member;
     }[];
   };
@@ -32,6 +26,10 @@ interface Member {
   name: string;
   surname: string;
   imageUrl: string;
+}
+
+interface Category {
+  name: string;
 }
 
 export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
