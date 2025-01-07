@@ -19,3 +19,4 @@ export * from "./EventCardWithButtonsMobile.tsx";
 export * from "./EventToolbarEventDetail.tsx";
 export * from "./MyProfile.tsx";
 export * from "./RatingCard.tsx";
+export * from "./EventCardCalendarDesktop.tsx";
