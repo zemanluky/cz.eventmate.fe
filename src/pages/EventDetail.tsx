@@ -145,7 +145,7 @@ export const EventDetail: React.FC = () => {
           <HStack>
             <Calendar />
             <Text fontWeight={700}>Date: </Text>
-            <Text>{eventData?.date}</Text>
+            <Text>{eventData?.date.split("T")[0]}</Text>
           </HStack>
         </GridItem>
 
@@ -170,7 +170,8 @@ export const EventDetail: React.FC = () => {
           <HStack>
             <Clock />
             <Text fontWeight={700}>Time: </Text>
-            <Text>{format(new Date(eventData?.date), "	eee dd.MM.yyyy")}</Text>
+            <Text>{eventData?.date.split("T")[0]}</Text>
+            {/* <Text>{format(new Date(eventData?.date), "	eee dd.MM.yyyy")}</Text> */}
           </HStack>
         </GridItem>
 
