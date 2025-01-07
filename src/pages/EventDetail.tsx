@@ -1,5 +1,14 @@
 import { AvatarGroup, EventToolbarEventDetail } from "@Components/ui";
-import { Divider, Grid, GridItem, HStack, Stack, VStack } from "@Panda/jsx";
+import {
+  Box,
+  Divider,
+  Flex,
+  Grid,
+  GridItem,
+  HStack,
+  Stack,
+  VStack,
+} from "@Panda/jsx";
 import { Avatar } from "@ParkComponents/avatar";
 import { Carousel } from "@ParkComponents/carousel";
 import { IconButton } from "@ParkComponents/icon-button";
@@ -12,6 +21,7 @@ import {
   LayoutList,
   Lock,
   MapPin,
+  XIcon,
 } from "lucide-react";
 import * as React from "react";
 import { Link, useParams } from "react-router-dom";
@@ -25,6 +35,8 @@ import party5 from "@Components/assets/images/party_5.jpg";
 import useGetEventById from "src/hooks/useGetEventById";
 import { useEventStore } from "src/store/eventStore";
 import { format } from "date-fns";
+import { Dialog } from "@ParkComponents/dialog";
+import { Button } from "@ParkComponents/button";
 
 export const EventDetail: React.FC = () => {
   const params = useParams();
@@ -62,6 +74,8 @@ export const EventDetail: React.FC = () => {
     attendees: event?.attendees, // The attendees will be automatically updated via global state
     images: [party1, party2, party3, party4, party5],
   };
+
+  const handleOpenAttendeesDialog = () => {};
 
   return (
     <>
@@ -140,8 +154,68 @@ export const EventDetail: React.FC = () => {
               {eventData?.author?.name} {eventData?.author?.surname}
             </Text>
             <Divider orientation="horizontal" thickness="2px" width="100%" />
-            <Text>Attendees:</Text>
-            <AvatarGroup members={eventData?.attendees} />
+            {/* dialog for attendees */}
+            <Dialog.Root>
+              <Dialog.Trigger asChild>
+                <Box cursor={"pointer"}>
+                  <Text>Attendees:</Text>
+                  <AvatarGroup members={eventData?.attendees} />
+                </Box>
+              </Dialog.Trigger>
+              <Dialog.Backdrop />
+              <Dialog.Positioner>
+                <Dialog.Content>
+                  <Stack gap="8" p="6">
+                    <Stack gap="1">
+                      <Dialog.Title>Attendees List</Dialog.Title>
+                      <VStack gap="16px" mt="16px">
+                        {/* Displaying attendees List */}
+                        {eventData?.attendees?.map((attendee) => (
+                          <Flex
+                            key={attendee._id}
+                            alignItems={"center"}
+                            justifyContent={"space-between"}
+                            gap="8px"
+                            width="100%"
+                          >
+                            <Link to={`/profile/${attendee._id}`}>
+                              <Flex alignItems={"center"} gap={4}>
+                                <Avatar
+                                  name={`${attendee.name} ${attendee.surname}`}
+                                  size="sm"
+                                />
+                                <Text>{`${attendee.name} ${attendee.surname}`}</Text>
+                              </Flex>
+                            </Link>
+                          </Flex>
+                        ))}
+                      </VStack>
+                    </Stack>
+                    <Stack gap="3" direction="row" width="full">
+                      <Dialog.CloseTrigger asChild>
+                        <Button variant="outline" width="full">
+                          Close
+                        </Button>
+                      </Dialog.CloseTrigger>
+                    </Stack>
+                  </Stack>
+                  <Dialog.CloseTrigger
+                    asChild
+                    position="absolute"
+                    top="2"
+                    right="2"
+                  >
+                    <IconButton
+                      aria-label="Close Dialog"
+                      variant="ghost"
+                      size="sm"
+                    >
+                      <XIcon />
+                    </IconButton>
+                  </Dialog.CloseTrigger>
+                </Dialog.Content>
+              </Dialog.Positioner>
+            </Dialog.Root>
           </VStack>
         </GridItem>
 
