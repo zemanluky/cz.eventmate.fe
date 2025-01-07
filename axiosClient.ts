@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 // Create an Axios instance
 const axiosClient = axios.create({
@@ -7,14 +7,14 @@ const axiosClient = axios.create({
 });
 
 // Utility to get the token
-const getAuthToken = () => localStorage.getItem('authToken');
+const getAuthToken = () => localStorage.getItem("authToken");
 
 // Utility to set the token
 const setAuthToken = (token: string | null) => {
   if (token) {
-    localStorage.setItem('authToken', token);
+    localStorage.setItem("authToken", token);
   } else {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem("authToken");
   }
 };
 
@@ -28,7 +28,7 @@ const processQueue = (token: string | null, error: Error | null) => {
     if (token) {
       callback(token);
     } else {
-      callback('');
+      callback("");
     }
   });
   requestQueue = [];
@@ -79,15 +79,15 @@ axiosClient.interceptors.response.use(
         const token = getAuthToken();
         const refreshResponse = await axios.get(
           `${import.meta.env.VITE_BASE_API_URL}/auth/refresh`,
-          { withCredentials: true,
-            headers:{
-                Authorization:`Bearer ${token}`
-            }
-           }
+          {
+            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
-        console.log(refreshResponse)
+
         const newToken = refreshResponse.data?.data.access_token;
-        console.log(newToken)
 
         // Save the new token
         setAuthToken(newToken);
@@ -102,7 +102,7 @@ axiosClient.interceptors.response.use(
         // Handle refresh failure
         setAuthToken(null); // Clear the token
         processQueue(null, refreshError); // Reject all queued requests
-        console.error('Token refresh failed:', refreshError);
+        console.error("Token refresh failed:", refreshError);
         return Promise.reject(refreshError); // Reject the original request
       } finally {
         isRefreshing = false;

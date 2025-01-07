@@ -67,9 +67,7 @@ export const EventToolbar: React.FC = () => {
   });
 
   const getCategories = async () => {
-    const response = await axiosClient.get(
-      `/event/category`
-    );
+    const response = await axiosClient.get(`/event/category`);
     const data = response?.data?.data;
     return data;
   };
@@ -103,9 +101,8 @@ export const EventToolbar: React.FC = () => {
         dateEnd: filterInputs.date.dateEnd,
       }).filter(([_, value]) => value !== "")
     );
-  
+
     setFilters(formData);
-    console.log("Filters applied:", formData);
   };
 
   const handleClearFilters = () => {
@@ -118,10 +115,7 @@ export const EventToolbar: React.FC = () => {
       },
     });
     datePicker.setValue(null); // Clear the DatePicker value
-    console.log("Filters cleared");
   };
-
-  console.log(eventCategories);
 
   return (
     <Menu.Root positioning={{ placement: "bottom-start" }}>
@@ -382,8 +376,8 @@ export const EventToolbar: React.FC = () => {
                     onChange={(value) => {
                       setFilterInputs({
                         ...filterInputs,
-                        category:value
-                      })
+                        category: value,
+                      });
                     }}
                   />
                 </Flex>

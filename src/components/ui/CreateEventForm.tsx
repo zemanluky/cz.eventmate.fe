@@ -69,7 +69,6 @@ export const CreateEventForm: React.FC = () => {
   const onSubmit: SubmitHandler<EventFormValues> = async (data) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000)); //simulated call for isSubmitting state
-      console.log(data, files);
 
       const formData = {
         name: data.name,
@@ -82,7 +81,6 @@ export const CreateEventForm: React.FC = () => {
 
       try {
         const response = await axiosClient.post(`/event`, formData);
-        console.log(response);
 
         // Success message
         if (response.status === 201 || response.status === 200) {

@@ -46,30 +46,34 @@ interface EventToolbarEventDetailProps {
   event: Event;
 }
 
-export const EventToolbarEventDetail: React.FC<EventToolbarEventDetailProps> = ({ event }) => {
+export const EventToolbarEventDetail: React.FC<
+  EventToolbarEventDetailProps
+> = ({ event }) => {
   const showToast = useShowToast();
-  const authUser = useAuthStore((state) => state.user);  // Getting the authenticated user from global state
-  const { updateAttendees } = useEventStore();  // Extracting the global store method for updating attendees
+  const authUser = useAuthStore((state) => state.user); // Getting the authenticated user from global state
+  const { updateAttendees } = useEventStore(); // Extracting the global store method for updating attendees
 
   const [isAlreadyJoined, setIsAlreadyJoined] = React.useState(false);
 
   const handleJoinEvent = async (eventId: string) => {
     try {
-      const response = await axiosClient.post(
-        `/event/${eventId}/attendance`
-      );
+      const response = await axiosClient.post(`/event/${eventId}/attendance`);
 
       if (response) {
-        const newAttendee = { ...authUser };  // Create new attendee object based on authUser
+        const newAttendee = { ...authUser }; // Create new attendee object based on authUser
         const updatedAttendees = [...event.attendees, newAttendee];
-        updateAttendees(updatedAttendees);  // Update global attendees list
+        updateAttendees(updatedAttendees); // Update global attendees list
 
         setIsAlreadyJoined(true);
         showToast("Success", "You joined the event!", "success");
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        showToast("Error", `Joining event failed: ${error.response?.data?.message || error.message}`, "error");
+        showToast(
+          "Error",
+          `Joining event failed: ${error.response?.data?.message || error.message}`,
+          "error"
+        );
       } else {
         showToast("Error", `Unexpected error occurred: ${error}`, "error");
       }
@@ -78,36 +82,35 @@ export const EventToolbarEventDetail: React.FC<EventToolbarEventDetailProps> = (
 
   const handleLeaveEvent = async (eventId: string) => {
     try {
-      const response = await axiosClient.delete(
-        `/event/${eventId}/attendance`
-      );
+      const response = await axiosClient.delete(`/event/${eventId}/attendance`);
 
       if (response) {
         const updatedAttendees = event.attendees.filter(
           (attendee) => attendee._id !== authUser?._id
         );
-        updateAttendees(updatedAttendees);  // Update global attendees list
+        updateAttendees(updatedAttendees); // Update global attendees list
 
         setIsAlreadyJoined(false);
         showToast("Success", "You left the event!", "success");
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        showToast("Error", `Leaving event failed: ${error.response?.data?.message || error.message}`, "error");
+        showToast(
+          "Error",
+          `Leaving event failed: ${error.response?.data?.message || error.message}`,
+          "error"
+        );
       } else {
         showToast("Error", `Unexpected error occurred: ${error}`, "error");
       }
     }
   };
 
-  console.log(authUser);
-  console.log(event);
-  
-  
-
   // Sync the initial attendees with the local state on load or user change
   React.useEffect(() => {
-    setIsAlreadyJoined(event.attendees?.some((attendee) => attendee._id === authUser?._id));
+    setIsAlreadyJoined(
+      event.attendees?.some((attendee) => attendee._id === authUser?._id)
+    );
   }, [event, authUser]);
 
   return (
@@ -116,12 +119,18 @@ export const EventToolbarEventDetail: React.FC<EventToolbarEventDetailProps> = (
         {event?.name}
       </Text>
       <Spacer />
-      {!(authUser?._id === event?.author?._id) &&
-        <Button onClick={() => (isAlreadyJoined ? handleLeaveEvent(event?._id) : handleJoinEvent(event?._id))}>
+      {!(authUser?._id === event?.author?._id) && (
+        <Button
+          onClick={() =>
+            isAlreadyJoined
+              ? handleLeaveEvent(event?._id)
+              : handleJoinEvent(event?._id)
+          }
+        >
           {isAlreadyJoined ? <DoorOpen /> : <CirclePlus />}
           <Text>{isAlreadyJoined ? "Leave Event" : "Join event"}</Text>
         </Button>
-      }
+      )}
     </HStack>
   );
 };

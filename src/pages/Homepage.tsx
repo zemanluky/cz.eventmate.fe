@@ -13,18 +13,12 @@ export const Homepage: React.FC = () => {
   const [hasMore, setHasMore] = React.useState(true); // Flag for more data
   const [pageNumber, setPageNumber] = React.useState(1); // Current page number
   const pageSize = 10; // Number of events per page
-  
+
   const lastEventRef = React.useRef<HTMLDivElement | null>(null); // Reference to last element
   const observer = React.useRef<IntersectionObserver | null>(null); // Intersection Observer reference
 
-  React.useEffect(() => {
-    console.log("Filters updated:", filters);
-  }, [filters]);
-
   // Fetch events from the backend
   const fetchEvents = React.useCallback(async () => {
-    console.log(filters);
-
     if (isLoading) return; // Don't fetch if already loading or no more events
     const userJson = localStorage.getItem("user-info");
     const userObject = JSON.parse(userJson);
@@ -116,7 +110,6 @@ export const Homepage: React.FC = () => {
   React.useEffect(() => {
     fetchEvents();
   }, [pageNumber, filters]);
-
 
   return (
     <>

@@ -116,7 +116,6 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
   const onSubmit: SubmitHandler<EventFormValues> = async (data) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000)); //simulated call for isSubmitting state
-      console.log(data, files);
       const formData = {
         name: data.name,
         description: data.description,
@@ -156,19 +155,19 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
   };
 
   const getCategories = async () => {
-    const response = await axiosClient.get(
-      `/event/category`
-    );
+    const response = await axiosClient.get(`/event/category`);
     const data = response?.data?.data;
     return data;
   };
 
   const getEventCategories = async () => {
     const categories = await getCategories();
-    const transformedCategories = categories?.map(({ _id: value, name: label }) => ({
-      value,
-      label,
-    }));
+    const transformedCategories = categories?.map(
+      ({ _id: value, name: label }) => ({
+        value,
+        label,
+      })
+    );
     return transformedCategories;
   };
 
@@ -180,21 +179,21 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     fetchCategories();
   }, []);
 
-  const defaultCategory =(category)=>{
+  const defaultCategory = (category) => {
     const defaultCategoryObject = {
-      value:category._id,
-      label:category.name
-    }
-    return defaultCategoryObject.label
-  } 
+      value: category._id,
+      label: category.name,
+    };
+    return defaultCategoryObject.label;
+  };
 
-  const defaultType = (type)=>{
+  const defaultType = (type) => {
     const defaultCategoryObject = {
       value: type ? true : false,
-      label: type ? "Private" : "Public"
-    }
-    return defaultCategoryObject.label
-  }
+      label: type ? "Private" : "Public",
+    };
+    return defaultCategoryObject.label;
+  };
   return (
     <>
       {loading ? (
@@ -290,9 +289,8 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                       label="Category:"
                       placeholder="Event categories"
                       inputCollection={eventCategories}
-                      defaultValue={defaultCategory(event?.category)} 
+                      defaultValue={defaultCategory(event?.category)}
                       onChange={(value) => {
-                        console.log("Selected category ID:", value); // This should log the selected _id as a string
                         field.onChange(value);
                       }}
                     />

@@ -44,17 +44,13 @@ const useGetFriendRequests = (): UseGetFriendRequestsReturn => {
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      const response = await axiosClient.get(
-        `/user/friend-request`
-      );
-
+      const response = await axiosClient.get(`/user/friend-request`);
 
       //destructuring data from response
       const requestData = response.data?.data;
       setFriendRequests(requestData);
-      console.log(requestData)
-      setError(null)
-      return requestData
+      setError(null);
+      return requestData;
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
       setError(

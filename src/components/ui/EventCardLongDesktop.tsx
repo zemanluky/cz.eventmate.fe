@@ -83,7 +83,6 @@ interface Event {
 export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
   event,
 }) => {
-  console.log(event);
   const navigate = useNavigate();
   const showToast = useShowToast();
   const { deleteEvent, loading } = useDeleteEventById();
