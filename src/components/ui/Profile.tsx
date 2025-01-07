@@ -75,9 +75,7 @@ export const Profile: React.FC<User> = ({ user }) => {
     const fetchRatingsAndCalculate = async () => {
       setIsCalculating(true);
       try {
-        const response = await axiosClient.get(
-          `/user/${userId}/rating`
-        );
+        const response = await axiosClient.get(`/user/${userId}/rating`);
         setRatings(response.data?.data || []);
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -146,10 +144,7 @@ export const Profile: React.FC<User> = ({ user }) => {
   const handleSendFriendRequest = async (receiverId: string) => {
     try {
       const body = { receiver: receiverId };
-      const response = await axiosClient.post(
-        `/user/friend-request/`,
-        body
-      );
+      const response = await axiosClient.post(`/user/friend-request/`, body);
       if (response.status === 204) {
         showToast("Success", "Friend Request Sent", "success");
       }
@@ -205,11 +200,7 @@ export const Profile: React.FC<User> = ({ user }) => {
                 </>
               ) : (
                 <Flex alignItems={"center"} gap="8px">
-                  <RatingGroup
-                    count={5}
-                    value={averageRating}
-                    disabled
-                  />
+                  <RatingGroup count={5} value={averageRating} disabled />
                   <Box w="5px" h="5px" borderRadius="full" bg="fg.subtle" />
                   <Text fontSize="xs" color="fg.subtle" fontWeight="500">
                     {ratings?.length} rating{ratings?.length > 1 ? "s" : ""}

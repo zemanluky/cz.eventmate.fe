@@ -1,5 +1,5 @@
 import { AvatarGroup, EventToolbarEventDetail } from "@Components/ui";
-import { Divider, Grid, GridItem, HStack, VStack } from "@Panda/jsx";
+import { Divider, Grid, GridItem, HStack, Stack, VStack } from "@Panda/jsx";
 import { Avatar } from "@ParkComponents/avatar";
 import { Carousel } from "@ParkComponents/carousel";
 import { IconButton } from "@ParkComponents/icon-button";
@@ -66,121 +66,133 @@ export const EventDetail: React.FC = () => {
   return (
     <>
       <EventToolbarEventDetail event={eventData} />
-      <HStack mb="10px" gap={10}>
-        {/* Carousel */}
-        <Carousel.Root>
-          <Carousel.Viewport>
-            <Carousel.ItemGroup>
-              {eventData?.images.map((image, index) => (
-                <Carousel.Item key={index} index={index}>
-                  <img
-                    src={image}
-                    alt={`Slide ${index}`}
-                    style={{
-                      height: "400px",
-                      width: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </Carousel.Item>
-              ))}
-            </Carousel.ItemGroup>
-            <Carousel.Control>
-              <Carousel.PrevTrigger asChild>
-                <IconButton
-                  size="sm"
-                  variant="link"
-                  aria-label="Previous Slide"
-                >
-                  <ChevronLeftIcon />
-                </IconButton>
-              </Carousel.PrevTrigger>
-              <Carousel.IndicatorGroup>
-                {eventData?.images.map((_, index) => (
-                  <Carousel.Indicator
-                    key={index}
-                    index={index}
-                    aria-label={`Goto slide ${index + 1}`}
-                  />
-                ))}
-              </Carousel.IndicatorGroup>
-              <Carousel.NextTrigger asChild>
-                <IconButton size="sm" variant="link" aria-label="Next Slide">
-                  <ChevronRightIcon />
-                </IconButton>
-              </Carousel.NextTrigger>
-            </Carousel.Control>
-          </Carousel.Viewport>
-        </Carousel.Root>
-
-        {/* Author */}
-        <VStack>
-          <Link to={`/profile/${eventData?.author?._id}`}>
-            <Avatar
-              h="200px"
-              w="200px"
-              name={`${eventData?.author?.name} ${eventData?.author?.surname}`}
-            />
-          </Link>
-          <RatingGroup
-            count={5}
-            defaultValue={eventData?.author?.rating}
-            disabled
-          />
-          <Text>
-            {eventData?.author?.name} {eventData?.author?.surname}
-          </Text>
-          <Divider orientation="horizontal" thickness="2px" width="100%" />
-          <Text>Attendees:</Text>
-          <AvatarGroup members={eventData?.attendees} />
-        </VStack>
-      </HStack>
-      {/* Content */}
       <Grid
-        gridTemplateColumns="repeat(2, 1fr)"
+        gridTemplateColumns="repeat(4, 1fr)"
         gridTemplateRows="repeat(4, 1fr)"
       >
-        {/* Date */}
-        <GridItem colSpan={1} rowSpan={1}>
-          <HStack>
-            <Calendar />
-            <Text fontWeight={700}>Date: </Text>
-            <Text>{eventData?.date?.split("T")[0]}</Text>
-          </HStack>
+        <GridItem colSpan={{ base: 4, lg: 3 }} rowSpan={{ base: 2, lg: 2 }}>
+          {/* Carousel */}
+          <Carousel.Root>
+            <Carousel.Viewport>
+              <Carousel.ItemGroup>
+                {eventData?.images.map((image, index) => (
+                  <Carousel.Item key={index} index={index}>
+                    <img
+                      src={image}
+                      alt={`Slide ${index}`}
+                      style={{
+                        height: "400px",
+                        width: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </Carousel.Item>
+                ))}
+              </Carousel.ItemGroup>
+              <Carousel.Control>
+                <Carousel.PrevTrigger asChild>
+                  <IconButton
+                    size="sm"
+                    variant="link"
+                    aria-label="Previous Slide"
+                  >
+                    <ChevronLeftIcon />
+                  </IconButton>
+                </Carousel.PrevTrigger>
+                <Carousel.IndicatorGroup>
+                  {eventData?.images.map((_, index) => (
+                    <Carousel.Indicator
+                      key={index}
+                      index={index}
+                      aria-label={`Goto slide ${index + 1}`}
+                    />
+                  ))}
+                </Carousel.IndicatorGroup>
+                <Carousel.NextTrigger asChild>
+                  <IconButton size="sm" variant="link" aria-label="Next Slide">
+                    <ChevronRightIcon />
+                  </IconButton>
+                </Carousel.NextTrigger>
+              </Carousel.Control>
+            </Carousel.Viewport>
+          </Carousel.Root>
         </GridItem>
 
-        {/* Description */}
-        <GridItem colSpan={1} rowSpan={4}>
-          <Text>
-            <Text fontWeight={700}>Description:</Text> {eventData?.description}
-          </Text>
+        <GridItem
+          colSpan={{ base: 4, md: 2, lg: 1 }}
+          rowSpan={{ base: 2, lg: 2 }}
+        >
+          {/* Author */}
+          <VStack>
+            <Link to={`/profile/${eventData?.author?._id}`}>
+              <Avatar
+                h="200px"
+                w="200px"
+                name={`${eventData?.author?.name} ${eventData?.author?.surname}`}
+              />
+            </Link>
+            <RatingGroup
+              count={5}
+              defaultValue={eventData?.author?.rating}
+              disabled
+            />
+            <Text>
+              {eventData?.author?.name} {eventData?.author?.surname}
+            </Text>
+            <Divider orientation="horizontal" thickness="2px" width="100%" />
+            <Text>Attendees:</Text>
+            <AvatarGroup members={eventData?.attendees} />
+          </VStack>
         </GridItem>
 
-        {/* Place */}
-        <GridItem colSpan={1} rowSpan={1}>
-          <HStack>
-            <MapPin />
-            <Text fontWeight={700}>Place: </Text>
-            <Text>{eventData?.location}</Text>
-          </HStack>
-        </GridItem>
+        <GridItem
+          colSpan={{ base: 4, md: 2, lg: 4 }}
+          rowSpan={{ base: 2, lg: 2 }}
+        >
+          {/* Content */}
+          <Stack
+            direction={{ base: "column", lg: "row" }}
+            gap={{ base: "5", lg: "0" }}
+            mt="25px"
+          >
+            <Stack w={{ base: "100%", lg: "50%" }}>
+              {/* Date */}
+              <HStack>
+                <Calendar />
+                <Text fontWeight={700}>Date: </Text>
+                <Text>{eventData?.date?.split("T")[0]}</Text>
+              </HStack>
 
-        {/* Category */}
-        <GridItem colSpan={1} rowSpan={1}>
-          <HStack>
-            <LayoutList />
-            <Text fontWeight={700}>Category: </Text>
-            <Text>{eventData?.category}</Text>
-          </HStack>
-        </GridItem>
+              {/* Place */}
+              <HStack>
+                <MapPin />
+                <Text fontWeight={700}>Place: </Text>
+                <Text>{eventData?.location}</Text>
+              </HStack>
 
-        {/* Type */}
-        <GridItem colSpan={1} rowSpan={1}>
-          <HStack>
-            <Lock />
-            <Text fontWeight={700}>Type: </Text>
-            <Text>{eventData?.private ? "Private" : "Public"}</Text>
-          </HStack>
+              {/* Category */}
+              <HStack>
+                <LayoutList />
+                <Text fontWeight={700}>Category: </Text>
+                <Text>{eventData?.category}</Text>
+              </HStack>
+
+              {/* Type */}
+              <HStack>
+                <Lock />
+                <Text fontWeight={700}>Type: </Text>
+                <Text>{eventData?.private ? "Private" : "Public"}</Text>
+              </HStack>
+            </Stack>
+
+            <Stack w={{ base: "100%", lg: "50%" }}>
+              {/* Description */}
+              <Text>
+                <Text fontWeight={700}>Description:</Text>{" "}
+                {eventData?.description}
+              </Text>
+            </Stack>
+          </Stack>
         </GridItem>
       </Grid>
     </>
