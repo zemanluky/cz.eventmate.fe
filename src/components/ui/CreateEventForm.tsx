@@ -127,7 +127,7 @@ export const CreateEventForm: React.FC = () => {
 
   const getCategories = async () => {
     const response = await axiosClient.get(
-      `${import.meta.env.VITE_API_KEY}/event/category`
+      `/event/category`
     );
     const data = response?.data?.data;
     return data;
