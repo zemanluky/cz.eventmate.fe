@@ -109,6 +109,10 @@ export const Navbar: React.FC = () => {
     }
   };
 
+  React.useEffect(()=>{
+    setFriendRequestList(friendRequests)
+  },[friendRequests])
+
   return (
     <>
       <Menu.Root>
@@ -132,16 +136,33 @@ export const Navbar: React.FC = () => {
               className={flexStyles}
               display={authUser ? "flex" : "none"} // comment out to see userMenu and friend requests icons
             >
-              <Popover.Trigger asChild>
-                <Button
-                  bg="bg.buttonSmall"
-                  color="fg.buttonSmall"
-                  borderRadius={"full"}
-                  p="0"
-                >
-                  <UserRoundPlus />
-                </Button>
-              </Popover.Trigger>
+              {!loading && (
+                <Popover.Trigger asChild>
+                  <Box position="relative" display="inline-block">
+                    {friendRequestList?.length > 0 && (
+                      <Box
+                        position="absolute"
+                        top="2px"
+                        left="1px"
+                        width="8px"
+                        height="8px"
+                        bgColor="#FF474D"
+                        borderRadius="full"
+                        zIndex="1"
+                        opacity={0.8}
+                      />
+                    )}
+                    <Button
+                      bg="bg.buttonSmall"
+                      color="fg.buttonSmall"
+                      borderRadius="full"
+                      p="0"
+                    >
+                      <UserRoundPlus />
+                    </Button>
+                  </Box>
+                </Popover.Trigger>
+              )}
 
               <Menu.Trigger asChild>
                 <Button variant="ghost" bg="none" borderRadius={"full"} p="0">
