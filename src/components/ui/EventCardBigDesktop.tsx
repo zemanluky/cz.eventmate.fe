@@ -2,7 +2,13 @@ import { Grid, GridItem, HStack, Stack } from "@Panda/jsx";
 import { Card } from "@ParkComponents/card";
 import { Icon } from "@ParkComponents/icon";
 import { Text } from "@ParkComponents/text";
-import { Calendar, MapPin } from "lucide-react";
+import {
+  Calendar,
+  ChartColumn,
+  ChartColumnStacked,
+  LayoutList,
+  MapPin,
+} from "lucide-react";
 import * as React from "react";
 import { AvatarGroup } from "./AvatarGroup";
 import { Link } from "react-router-dom";
@@ -15,6 +21,7 @@ interface EventCardBigDesktopProps {
     image: string;
     date: string;
     location: string;
+    category: Object;
     memberList: {
       member: Member;
     }[];
@@ -32,7 +39,7 @@ export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
 }) => {
   return (
     <>
-      <Link to={`/event-detail/${event._id}`}>
+      <Link to={`/event-detail/${event?._id}`}>
         <Card.Root w="350px" h="430px" bg="bg.card" color="fg.card">
           <Card.Header w="100%" h="250px" bg="bg.emphasized">
             {/* {event.image} */}
@@ -42,21 +49,27 @@ export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
               <GridItem colSpan={5}>
                 <Stack justifyContent="space-between" h="100%">
                   <Text size="xl" fontWeight="semibold">
-                    {event.name}
+                    {event?.name}
                   </Text>
                   <HStack>
                     <Icon>
                       <Calendar />
                     </Icon>
                     <Text>
-                      {format(new Date(event.date), "	eee dd.MM.yyyy")}
+                      {format(new Date(event?.date), "	eee dd.MM.yyyy")}
                     </Text>
+                  </HStack>
+                  <HStack>
+                    <Icon>
+                      <LayoutList />
+                    </Icon>
+                    <Text>{event?.category.name}</Text>
                   </HStack>
                   <HStack>
                     <Icon>
                       <MapPin />
                     </Icon>
-                    <Text>{event.location}</Text>
+                    <Text>{event?.location}</Text>
                   </HStack>
                 </Stack>
               </GridItem>
@@ -66,7 +79,7 @@ export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
                 alignItems="start"
                 justifyContent="end"
               >
-                <AvatarGroup members={event.attendees} />
+                <AvatarGroup members={event?.attendees} />
               </GridItem>
             </Grid>
           </Card.Body>
