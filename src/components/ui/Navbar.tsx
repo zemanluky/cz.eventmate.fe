@@ -8,7 +8,13 @@ import { Box, Divider, Flex, HStack, Stack, VStack } from "@Panda/jsx";
 import { FriendRequestList } from "./FriendRequestList";
 import { Popover } from "@ParkComponents/popover";
 import { Menu } from "@ParkComponents/menu";
-import { LogOutIcon, PartyPopper, UserIcon, UserRoundPlus } from "lucide-react";
+import {
+  Calendar,
+  LogOutIcon,
+  PartyPopper,
+  UserIcon,
+  UserRoundPlus,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useShowToast } from "src/hooks";
 import axios from "axios";
@@ -48,42 +54,6 @@ export const Navbar: React.FC = () => {
   const [friendRequestList, setFriendRequestList] = React.useState<
     FriendRequest[] | null
   >(null);
-  
-
-  const mockUserList = [
-    {
-      user: {
-        id: "1",
-        name: "John",
-        surname: "Doe",
-        imageUrl: "https://via.placeholder.com/40",
-      },
-    },
-    {
-      user: {
-        id: "2",
-        name: "Jane",
-        surname: "Smith",
-        imageUrl: "https://via.placeholder.com/40",
-      },
-    },
-    {
-      user: {
-        id: "3",
-        name: "Alice",
-        surname: "Johnson",
-        imageUrl: "https://via.placeholder.com/40",
-      },
-    },
-    {
-      user: {
-        id: "4",
-        name: "Bob",
-        surname: "Brown",
-        imageUrl: "https://via.placeholder.com/40",
-      },
-    },
-  ];
 
   const navBarStyles = css({
     w: "100%",
@@ -251,6 +221,15 @@ export const Navbar: React.FC = () => {
                   <HStack gap="2">
                     <PartyPopper />
                     My Events
+                  </HStack>
+                </Menu.Item>
+              </Link>
+
+              <Link to="/calendar">
+                <Menu.Item value="calendar">
+                  <HStack gap="2">
+                    <Calendar />
+                    Calendar
                   </HStack>
                 </Menu.Item>
               </Link>

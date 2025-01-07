@@ -12,25 +12,54 @@ import { useNavigate } from "react-router-dom";
 import useDeleteEventById from "src/hooks/useDeleteEventById";
 import { useShowToast } from "src/hooks";
 import { Spinner } from "@ParkComponents/spinner";
+import { format } from "date-fns";
 
 interface EventCardMobileProps {
-  event: {
-    _id: string;
-    name: string;
-    image: string;
-    date: string;
-    location: string;
-    private: boolean;
-    memberList: {
-      member: Member;
-    }[];
-  };
+  event: Event;
 }
+interface Rating {
+  author: string;
+  starRating: number;
+  comment: string;
+  _id: string;
+  createdAt: string; // ISO date string
+}
+
+interface User {
+  _id: string;
+  name: string;
+  surname: string;
+  username: string;
+  __v: number;
+  ratings?: Rating[]; // Optional because only the author has ratings
+  average_rating?: number; // Optional because only the author has it
+}
+
+interface Category {
+  _id: string;
+  name: string;
+  description: string;
+  __v: number;
+}
+
 interface Member {
-  id: string;
+  _id: string;
   name: string;
   surname: string;
   imageUrl: string;
+}
+
+interface Event {
+  category: Category;
+  _id: string;
+  name: string;
+  description: string;
+  date: string;
+  private: boolean;
+  location: string;
+  attendees: Member[];
+  __v: number;
+  author: User;
 }
 
 export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
@@ -38,7 +67,7 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  const { deleteEvent, loading, error } = useDeleteEventById();
+  const { deleteEvent, loading } = useDeleteEventById();
   const showToast = useShowToast();
 
   // deleting event
@@ -56,7 +85,7 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
     <>
       <Card.Root w="350px">
         <Card.Header w="100%" h="170px" bg="bg.emphasized">
-          {event.image}
+          {event?.image}
         </Card.Header>
         <Card.Body p="20px" w="100%">
           <Grid
@@ -72,7 +101,7 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
               alignItems="center"
             >
               <Text size="lg" fontWeight="semibold">
-                {event.name}
+                {event?.name}
               </Text>
             </GridItem>
 
@@ -83,7 +112,9 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
               alignItems="center"
               justifyContent="end"
             >
-              <Text size="sm">{event.date}</Text>
+              <Text size="sm">
+                {format(new Date(event?.date), "	eee dd.MM.yyyy")}
+              </Text>
             </GridItem>
 
             <GridItem
@@ -96,7 +127,7 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
                 <Icon>
                   <MapPin />
                 </Icon>
-                <Text size="sm">{event.location}</Text>
+                <Text size="sm">{event?.location}</Text>
               </HStack>
             </GridItem>
 
@@ -107,7 +138,7 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
               alignItems="center"
               justifyContent="end"
             >
-              {/* <AvatarGroup members={event.memberList} /> */}
+              <AvatarGroup members={event?.attendees} />
             </GridItem>
 
             {/* Buttons */}
@@ -115,8 +146,8 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
               <Dialog.Root role="alertdialog">
                 <HStack mt="10px">
                   <Button
-                    key={event.id}
-                    onClick={() => navigate(`/edit-event/${event._id}`)}
+                    key={event?._id}
+                    onClick={() => navigate(`/edit-event/${event?._id}`)}
                   >
                     {/* size nefunguje */}
                     <PencilLineIcon strokeWidth={2} size={40} />
@@ -154,10 +185,14 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
                           </Button>
                         </Dialog.CloseTrigger>
                         <Button
-                          onClick={() => handleDeleteEvent(event._id)}
+                          onClick={() => handleDeleteEvent(event?._id)}
                           width="full"
                         >
-                          {loading ? <Spinner colorPalette={"white"} /> : "Delete"}
+                          {loading ? (
+                            <Spinner colorPalette={"white"} />
+                          ) : (
+                            "Delete"
+                          )}
                         </Button>
                       </Stack>
                     </Stack>

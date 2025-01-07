@@ -19,47 +19,48 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 //const eventCategories = handleGetCategories()
-const eventCategories = [
-  { label: "Workshops", value: "workshops" },
-  { label: "Conferences", value: "conferences" },
-  { label: "Webinars", value: "webinars" },
-  { label: "Meetups", value: "meetups" },
-  { label: "Hackathons", value: "hackathons" },
-  { label: "Networking Events", value: "networking" },
-  { label: "Seminars", value: "seminars" },
-  { label: "Trade Shows", value: "trade_shows" },
-  { label: "Product Launches", value: "product_launches" },
-  { label: "Charity Events", value: "charity" },
-];
-const eventTypes = [
-  { label: "Public", value: false },
-  { label: "Private", value: true },
-];
-
-// Validation schema using zod
-const eventFormSchema = z.object({
-  name: z.string().nonempty("Name is required"),
-  place: z.string().nonempty("Place is required"),
-  address: z.string().nonempty("Address is required"),
-  description: z.string().nonempty("Description is required"),
-  category: z.string().nonempty("Category is required"),
-  type: z.boolean(),
-  date: z.date(),
-});
-type EventFormValues = z.infer<typeof eventFormSchema>;
-
-const isoParser = (date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
-  const day = String(date.getDate()).padStart(2, "0");
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const seconds = String(date.getSeconds()).padStart(2, "0");
-
-  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-};
+// const eventCategories = [
+//   { label: "Workshops", value: "workshops" },
+//   { label: "Conferences", value: "conferences" },
+//   { label: "Webinars", value: "webinars" },
+//   { label: "Meetups", value: "meetups" },
+//   { label: "Hackathons", value: "hackathons" },
+//   { label: "Networking Events", value: "networking" },
+//   { label: "Seminars", value: "seminars" },
+//   { label: "Trade Shows", value: "trade_shows" },
+//   { label: "Product Launches", value: "product_launches" },
+//   { label: "Charity Events", value: "charity" },
+// ];
 
 export const CreateEventForm: React.FC = () => {
+  const eventTypes = [
+    { label: "Public", value: false },
+    { label: "Private", value: true },
+  ];
+
+  // Validation schema using zod
+  const eventFormSchema = z.object({
+    name: z.string().nonempty("Name is required"),
+    place: z.string().nonempty("Place is required"),
+    address: z.string().nonempty("Address is required"),
+    description: z.string().nonempty("Description is required"),
+    category: z.string().nonempty("Category is required"),
+    type: z.boolean(),
+    date: z.date(),
+  });
+  type EventFormValues = z.infer<typeof eventFormSchema>;
+
+  const isoParser = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+  };
+
   const {
     register,
     handleSubmit,
@@ -78,22 +79,22 @@ export const CreateEventForm: React.FC = () => {
   const navigate = useNavigate();
 
   const [files, setFiles] = React.useState<File[]>([]); //file upload images
+  const [eventCategories, setEventCategories] = React.useState([]);
 
   const onSubmit: SubmitHandler<EventFormValues> = async (data) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000)); //simulated call for isSubmitting state
       console.log(data, files);
 
-
       const formData = {
         name: data.name,
         description: data.description,
         location: data.place,
         date: isoParser(data.date),
-        private: data.type
+        private: data.type,
+        category: data.category,
       };
 
-      
       try {
         const response = await axiosClient.post(
           `${import.meta.env.VITE_BASE_API_URL}/event/`,
@@ -123,6 +124,30 @@ export const CreateEventForm: React.FC = () => {
       showToast("Error", `Error occured on submission: ${error}`, "error");
     }
   };
+
+  const getCategories = async () => {
+    const response = await axiosClient.get(
+      `${import.meta.env.VITE_API_KEY}/event/category`
+    );
+    const data = response?.data?.data;
+    return data;
+  };
+
+  const getEventCategories = async () => {
+    const categories = await getCategories();
+    const transformedCategories = categories?.map(
+      ({ _id: value, name: label }) => ({ value, label })
+    );
+    return transformedCategories;
+  };
+
+  React.useEffect(() => {
+    const fetchCategories = async () => {
+      const categories = await getEventCategories();
+      setEventCategories(categories);
+    };
+    fetchCategories();
+  }, []);
 
   return (
     <>
@@ -217,7 +242,9 @@ export const CreateEventForm: React.FC = () => {
                   label="Type:"
                   placeholder="Event types"
                   inputCollection={eventTypes}
-                  onChange={(value) =>{ field.onChange(value)}}
+                  onChange={(value) => {
+                    field.onChange(value);
+                  }}
                 />
               )}
             />

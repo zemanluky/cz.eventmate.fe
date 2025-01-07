@@ -25,6 +25,8 @@ import axiosClient from "axiosClient";
 import { useShowToast } from "src/hooks";
 import axios from "axios";
 import useUserProfileStore from "src/store/userProfileStore";
+import { useParams } from "react-router-dom";
+import { Spinner } from "@ParkComponents/spinner";
 
 interface User {
   user: {
@@ -47,8 +49,55 @@ const ratingFormSchema = z.object({
 type RatingFormValues = z.infer<typeof ratingFormSchema>;
 
 export const Profile: React.FC<User> = ({ user }) => {
+  const params = useParams();
+  const userId = params.userId as string;
   const userProfile = useUserProfileStore((state) => state.userProfile);
   const showToast = useShowToast();
+  const [ratings, setRatings] = React.useState<any[]>([]); // State to store ratings
+  const [isFetchingRatings, setIsFetchingRatings] = React.useState(false); // State to track loading
+  const [averageRating, setAverageRating] = React.useState<number>(0);
+  const [isCalculating, setIsCalculating] = React.useState<boolean>(false);
+
+  const calculateAverageRating = React.useCallback(() => {
+    if (ratings.length === 0) {
+      setAverageRating(0);
+    } else {
+      const totalStars = ratings.reduce(
+        (sum, review) => sum + review.starRating,
+        0
+      );
+      setAverageRating(totalStars / ratings.length);
+    }
+    setIsCalculating(false);
+  }, [ratings]);
+
+  React.useEffect(() => {
+    const fetchRatingsAndCalculate = async () => {
+      setIsCalculating(true);
+      try {
+        const response = await axiosClient.get(
+          `${import.meta.env.VITE_API_KEY}/user/${userId}/rating`
+        );
+        setRatings(response.data?.data || []);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          showToast(
+            "Error",
+            error.response?.data?.message || error.message,
+            "error"
+          );
+        } else {
+          showToast("Unexpected Error", "Please try again later", "error");
+        }
+      }
+    };
+
+    fetchRatingsAndCalculate();
+  }, [userId]); // Fetch ratings when `userId` changes
+
+  React.useEffect(() => {
+    calculateAverageRating();
+  }, [ratings, calculateAverageRating]); // Recalculate average when `ratings` changes
 
   const {
     register,
@@ -62,22 +111,18 @@ export const Profile: React.FC<User> = ({ user }) => {
 
   const onSubmit: SubmitHandler<RatingFormValues> = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //simulated call for isSubmitting state
-      console.log(data);
-
       const formData = {
-        author: userProfile?._id,
-        starRating: data.ratingValue,
-        comment: data.comment,
+        starRating: Number(data?.ratingValue),
+        comment: data?.comment,
       };
       try {
-        // TODO might need updating after merging be !!
         const response = await axiosClient.post(
           `${import.meta.env.VITE_BASE_API_URL}/user/${user._id}/rating`,
           formData
         );
+        console.log(formData);
         // success messages
-        showToast("Success" , "Rating submitted successfully", "success")
+        showToast("Success", "Rating submitted successfully", "success");
       } catch (error) {
         // Check for server errors or network issues
         if (axios.isAxiosError(error)) {
@@ -154,11 +199,23 @@ export const Profile: React.FC<User> = ({ user }) => {
             </Flex>
           ) : (
             <>
-              <RatingGroup count={5} defaultValue={user.ratings} disabled />
-              <Box w="5px" h="5px" borderRadius="full" bg="fg.subtle" />
-              <Text fontSize="xs" color="fg.subtle" fontWeight="500">
-                {12} events hosted
-              </Text>
+              {isCalculating ? (
+                <>
+                  <Spinner size="sm" />
+                </>
+              ) : (
+                <Flex alignItems={"center"} gap="8px">
+                  <RatingGroup
+                    count={5}
+                    value={averageRating}
+                    disabled
+                  />
+                  <Box w="5px" h="5px" borderRadius="full" bg="fg.subtle" />
+                  <Text fontSize="xs" color="fg.subtle" fontWeight="500">
+                    {ratings?.length} rating{ratings?.length > 1 ? "s" : ""}
+                  </Text>
+                </Flex>
+              )}
             </>
           )}
         </HStack>

@@ -39,6 +39,27 @@ export const MyProfile: React.FC<User> = ({ user }) => {
   const setUserProfile = useUserProfileStore((state) => state.setUserProfile);
   const { fetchUsers, users, loading, error } = useGetUsersByIds();
   const { fetchUserProfile } = useAuthState();
+  const [isCalculating, setIsCalculating] = React.useState<boolean>(false);
+  const [averageRating, setAverageRating] = React.useState<string>("");
+
+  const calculateAverageRating = React.useCallback(() => {
+    if (user?.ratings?.length === 0) {
+      setAverageRating("0.0");  // Store as string to enforce decimal places
+    } else {
+      const totalStars = user?.ratings.reduce(
+        (sum, review) => sum + review?.starRating,
+        0
+      );
+      const average = totalStars / user?.ratings?.length;
+      // Ensure the result is stored as a string with one decimal
+      setAverageRating(average.toFixed(1)); // Store as string
+    }
+    setIsCalculating(false);
+  }, [user?.ratings]);
+
+  React.useEffect(() => {
+    calculateAverageRating();
+  }, [user?.ratings, calculateAverageRating]); // Recalculate average when `ratings` changes
 
   React.useEffect(() => {
     if (user?.friends?.length > 0) {
@@ -132,13 +153,12 @@ export const MyProfile: React.FC<User> = ({ user }) => {
     }
   };
 
-  const handleRemoveFriend = async(friendId)=>{
+  const handleRemoveFriend = async (friendId) => {
     try {
-      
       const response = await axiosClient.delete(
         `${import.meta.env.VITE_BASE_API_URL}/user/friend/${friendId}`,
       );
-      if(response.status === 204){
+      if (response.status === 204) {
         // Fetch the user profile and store it directly
         const userData = await fetchUserProfile();
         if (userData) {
@@ -147,9 +167,9 @@ export const MyProfile: React.FC<User> = ({ user }) => {
           // updating global state
           setAuthUser(userData?.data);
           setUserProfile(userData?.data);
-        showToast("Success", "Removed friend", "success")
+          showToast("Success", "Removed friend", "success");
+        }
       }
-    }
     } catch (error) {
       // Check for server errors or network issues
       if (axios.isAxiosError(error)) {
@@ -168,8 +188,7 @@ export const MyProfile: React.FC<User> = ({ user }) => {
         );
       }
     }
-
-  }
+  };
 
   return (
     <>
@@ -198,24 +217,9 @@ export const MyProfile: React.FC<User> = ({ user }) => {
           </Text>
 
           {/* Conditional rendering if no ratings */}
-          {user.ratings?.length === 0 ? (
-            <Flex gap={"8px"} alignItems={"center"}>
-              <Text fontSize="xs" color="fg.subtle" fontWeight="500">
-                You don't have any ratings yet
-              </Text>
-            </Flex>
-          ) : (
-            <>
-              <RatingGroup count={5} defaultValue={user.ratings} disabled />
-              <Box w="5px" h="5px" borderRadius="full" bg="fg.subtle" />
-              <Text fontSize="xs" color="fg.subtle" fontWeight="500">
-                {12} events hosted
-              </Text>
-            </>
-          )}
 
           {/* Friends*/}
-          <HStack mb="10px">
+          <HStack mt="16px" mb="10px">
             {/* Conditional rendering for no friends */}
             {user.friends?.length < 1 ? (
               <Flex gap={"8px"} alignItems={"center"}>
@@ -239,7 +243,7 @@ export const MyProfile: React.FC<User> = ({ user }) => {
                           <Dialog.Title>Friend List</Dialog.Title>
                           <VStack gap="16px" mt="16px">
                             {/* Displaying Friend List */}
-                            {loading && <Spinner/>}
+                            {loading && <Spinner />}
                             {error && <Text>Error: {error}</Text>}
                             {!loading &&
                               !error &&
@@ -260,7 +264,13 @@ export const MyProfile: React.FC<User> = ({ user }) => {
                                       <Text>{`${friend.name} ${friend.surname}`}</Text>
                                     </Flex>
                                   </Link>
-                                  <Button onClick={() =>{handleRemoveFriend(friend._id)}}>Remove Friend</Button>
+                                  <Button
+                                    onClick={() => {
+                                      handleRemoveFriend(friend._id);
+                                    }}
+                                  >
+                                    Remove Friend
+                                  </Button>
                                 </Flex>
                               ))}
                           </VStack>
@@ -296,13 +306,21 @@ export const MyProfile: React.FC<User> = ({ user }) => {
         </Flex>
         <Stack>
           {/* Rating */}
-          <HStack>
+          <HStack justifyContent={"center"}>
             {user.ratings?.length > 0 ? (
               <>
-                <Text fontSize={60} fontWeight={650}>
-                  {user.ratings?.length}
-                </Text>
-                <Star size={60} />
+                {isCalculating ? (
+                  <>
+                    <Spinner size="sm" />
+                  </>
+                ) : (
+                  <>
+                    <Text fontSize={60} fontWeight={650}>
+                      {averageRating}
+                    </Text>
+                    <Star size={60} />
+                  </>
+                )}
               </>
             ) : (
               <>

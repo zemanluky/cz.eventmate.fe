@@ -17,10 +17,13 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 import { useFilterContext } from "src/contexts/FilterContext";
+import { ComboBoxComponent } from "./ComboBoxComponent";
+import axiosClient from "axiosClient";
 
 export const EventToolbar: React.FC = () => {
   const [showEvents, setShowEvents] = useState(true);
   const { setFilters } = useFilterContext();
+  const [eventCategories, setEventCategories] = React.useState([]);
 
   const [filterInputs, setFilterInputs] = useState({
     location: "",
@@ -63,7 +66,35 @@ export const EventToolbar: React.FC = () => {
     },
   });
 
+  const getCategories = async () => {
+    const response = await axiosClient.get(
+      `${import.meta.env.VITE_API_KEY}/event/category`
+    );
+    const data = response?.data?.data;
+    return data;
+  };
+
+  const getEventCategories = async () => {
+    const categories = await getCategories();
+    const transformedCategories = categories?.map(
+      ({ _id: value, name: label }) => ({
+        value,
+        label,
+      })
+    );
+    return transformedCategories;
+  };
+
+  React.useEffect(() => {
+    const fetchCategories = async () => {
+      const categories = await getEventCategories();
+      setEventCategories(categories);
+    };
+    fetchCategories();
+  }, []);
+
   const handleFiltersSubmit = async () => {
+    console.log(filterInputs.category);
     const formData = {
       location: filterInputs.location,
       category: filterInputs.category,
@@ -86,6 +117,8 @@ export const EventToolbar: React.FC = () => {
     datePicker.setValue(null); // Clear the DatePicker value
     console.log("Filters cleared");
   };
+
+  console.log(eventCategories);
 
   return (
     <Menu.Root positioning={{ placement: "bottom-start" }}>
@@ -339,10 +372,17 @@ export const EventToolbar: React.FC = () => {
                     </DatePicker.Positioner>
                   </DatePicker.RootProvider>
 
-                  {/* Category input */}
-                  <Text fontWeight={500} fontSize="14px">
-                    Category
-                  </Text>
+                  <ComboBoxComponent
+                    label="Category"
+                    placeholder="Event categories"
+                    inputCollection={eventCategories}
+                    onChange={(value) => {
+                      setFilterInputs({
+                        ...filterInputs,
+                        category:value
+                      })
+                    }}
+                  />
                 </Flex>
                 <Menu.Separator />
                 <Button m={"auto"} w="225px" onClick={handleFiltersSubmit}>

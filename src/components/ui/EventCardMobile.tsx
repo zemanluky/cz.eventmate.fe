@@ -6,21 +6,22 @@ import { MapPin } from "lucide-react";
 import * as React from "react";
 import { AvatarGroup } from "./AvatarGroup";
 import { Link } from "react-router-dom";
+import { format } from "date-fns";
 
 interface EventCardMobileProps {
   event: {
-    id: string;
+    _id: string;
     name: string;
     image: string;
     date: string;
-    place: string;
+    location: string;
     memberList: {
       member: Member;
     }[];
   };
 }
 interface Member {
-  id: string;
+  _id: string;
   name: string;
   surname: string;
   imageUrl: string;
@@ -29,7 +30,7 @@ interface Member {
 export const EventCardMobile: React.FC<EventCardMobileProps> = ({ event }) => {
   return (
     <>
-      <Link to={`/eventDetail/${event.id}`}>
+      <Link to={`/eventDetail/${event._id}`}>
         <Card.Root w="350px" h="270px">
           <Card.Header w="100%" h="170px" bg="bg.emphasized">
             {event.image}
@@ -60,7 +61,9 @@ export const EventCardMobile: React.FC<EventCardMobileProps> = ({ event }) => {
                 alignItems="center"
                 justifyContent="end"
               >
-                <Text size="sm">{event.date}</Text>
+                <Text size="sm">
+                  {format(new Date(event.date), "	eee dd.MM.yyyy")}
+                </Text>
               </GridItem>
 
               <GridItem
@@ -73,7 +76,7 @@ export const EventCardMobile: React.FC<EventCardMobileProps> = ({ event }) => {
                   <Icon>
                     <MapPin />
                   </Icon>
-                  <Text size="sm">{event.place}</Text>
+                  <Text size="sm">{event.location}</Text>
                 </HStack>
               </GridItem>
 

@@ -6,6 +6,7 @@ import { Calendar, MapPin } from "lucide-react";
 import * as React from "react";
 import { AvatarGroup } from "./AvatarGroup";
 import { Link } from "react-router-dom";
+import { format } from "date-fns";
 
 interface EventCardBigDesktopProps {
   event: {
@@ -47,7 +48,9 @@ export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
                     <Icon>
                       <Calendar />
                     </Icon>
-                    <Text>{event.date}</Text>
+                    <Text>
+                      {format(new Date(event.date), "	eee dd.MM.yyyy")}
+                    </Text>
                   </HStack>
                   <HStack>
                     <Icon>
@@ -63,7 +66,7 @@ export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
                 alignItems="start"
                 justifyContent="end"
               >
-                <AvatarGroup members={event.memberList} />
+                <AvatarGroup members={event.attendees} />
               </GridItem>
             </Grid>
           </Card.Body>

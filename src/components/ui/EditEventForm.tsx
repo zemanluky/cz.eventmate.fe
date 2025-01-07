@@ -19,36 +19,6 @@ import axiosClient from "axiosClient";
 import axios from "axios";
 import useGetEventById from "src/hooks/useGetEventById";
 
-//handleLoad(eventId) => {return handleGetEventData(eventId)};
-
-//const eventCategories = handleGetCategories()
-const eventCategories = [
-  { label: "Workshops", value: "workshops" },
-  { label: "Conferences", value: "conferences" },
-  { label: "Webinars", value: "webinars" },
-  { label: "Meetups", value: "meetups" },
-  { label: "Hackathons", value: "hackathons" },
-  { label: "Networking Events", value: "networking" },
-  { label: "Seminars", value: "seminars" },
-  { label: "Trade Shows", value: "trade_shows" },
-  { label: "Product Launches", value: "product_launches" },
-  { label: "Charity Events", value: "charity" },
-];
-const eventTypes = [
-  { label: "Public", value: false },
-  { label: "Private", value: true },
-];
-
-// Validation schema using zod
-const eventFormSchema = z.object({
-  name: z.string().nonempty("Name is required"),
-  place: z.string().nonempty("Place is required"),
-  address: z.string().nonempty("Address is required"),
-  description: z.string().nonempty("Description is required"),
-  category: z.string().nonempty("Category is required"),
-  type: z.boolean(),
-  date: z.date(),
-});
 type EventFormValues = z.infer<typeof eventFormSchema>;
 
 interface EditEventFormProps {
@@ -61,10 +31,25 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
   // Getting event by id
   const { event, loading, error } = useGetEventById(eventToEditId);
 
+  const eventTypes = [
+    { label: "Public", value: false },
+    { label: "Private", value: true },
+  ];
+
+  // Validation schema using zod
+  const eventFormSchema = z.object({
+    name: z.string().nonempty("Name is required"),
+    place: z.string().nonempty("Place is required"),
+    address: z.string().nonempty("Address is required"),
+    description: z.string().nonempty("Description is required"),
+    category: z.string().nonempty("Category is required"),
+    type: z.boolean(),
+    date: z.date(),
+  });
   //const eventData = handleLoad(eventToEditId);
   const mockEvent = {
     address: "Holešovice",
-    category: "meetups",
+    category: event?.category,
     date: new Date(event?.date), // new Date if important for ISO 8601 format
     description: event?.description,
     name: event?.name,
@@ -79,6 +64,8 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
   const navigate = useNavigate();
 
   const eventData = mockEvent;
+
+  const [eventCategories, setEventCategories] = React.useState([]);
 
   const {
     register,
@@ -104,7 +91,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     if (event) {
       const eventData = {
         address: "Holešovice",
-        category: "meetups",
+        category: event?.category?._id,
         date: new Date(event?.date), // new Date if important for ISO 8601 format
         description: event?.description,
         name: event?.name,
@@ -122,7 +109,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
     const seconds = String(date.getSeconds()).padStart(2, "0");
-  
+
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   };
 
@@ -136,6 +123,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
         location: data.place,
         private: data.type ? true : false,
         date: isoParser(data.date),
+        category: data.category,
       };
 
       try {
@@ -167,6 +155,46 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     }
   };
 
+  const getCategories = async () => {
+    const response = await axiosClient.get(
+      `${import.meta.env.VITE_API_KEY}/event/category`
+    );
+    const data = response?.data?.data;
+    return data;
+  };
+
+  const getEventCategories = async () => {
+    const categories = await getCategories();
+    const transformedCategories = categories?.map(({ _id: value, name: label }) => ({
+      value,
+      label,
+    }));
+    return transformedCategories;
+  };
+
+  React.useEffect(() => {
+    const fetchCategories = async () => {
+      const categories = await getEventCategories();
+      setEventCategories(categories);
+    };
+    fetchCategories();
+  }, []);
+
+  const defaultCategory =(category)=>{
+    const defaultCategoryObject = {
+      value:category._id,
+      label:category.name
+    }
+    return defaultCategoryObject.label
+  } 
+
+  const defaultType = (type)=>{
+    const defaultCategoryObject = {
+      value: type ? true : false,
+      label: type ? "Private" : "Public"
+    }
+    return defaultCategoryObject.label
+  }
   return (
     <>
       {loading ? (
@@ -176,7 +204,11 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
       ) : (
         <>
           {/* Title */}
-          <Text fontSize={{ sm: "4xl", base: "4xl" }} fontWeight="500" mb="28px">
+          <Text
+            fontSize={{ sm: "4xl", base: "4xl" }}
+            fontWeight="500"
+            mb="28px"
+          >
             Edit Event
           </Text>
 
@@ -192,7 +224,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                 justifyContent="space-between"
                 w={{ base: "100%", md: "48%" }}
                 mr={{ base: "none", md: "2%" }}
-                gap={{base : "16px", sm:"0px"}}
+                gap={{ base: "16px", sm: "0px" }}
               >
                 {/* Name input */}
                 <Stack w="100%" gap="1.5">
@@ -239,7 +271,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                   name="date"
                   render={({ field }) => (
                     <DatePickerComponent
-                      defaultDate={eventData.date}
+                      defaultDate={eventData?.date}
                       value={field.value}
                       onChange={(date) => field.onChange(date)}
                     />
@@ -258,8 +290,11 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                       label="Category:"
                       placeholder="Event categories"
                       inputCollection={eventCategories}
-                      defaultValue={eventData?.category}
-                      onChange={(value) => field.onChange(value)}
+                      defaultValue={defaultCategory(event?.category)} 
+                      onChange={(value) => {
+                        console.log("Selected category ID:", value); // This should log the selected _id as a string
+                        field.onChange(value);
+                      }}
                     />
                   )}
                 />
@@ -276,6 +311,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                       {...field}
                       label="Type:"
                       placeholder="Event types"
+                      defaultValue={defaultType(event?.private)}
                       inputCollection={eventTypes}
                       onChange={(value) => field.onChange(value)}
                     />
@@ -294,7 +330,12 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                 gap="16x"
               >
                 {/* Description input */}
-                <Stack h="20%" w="100%" gap="1.5" mt={{base:"16px", sm:"0px"}}>
+                <Stack
+                  h="20%"
+                  w="100%"
+                  gap="1.5"
+                  mt={{ base: "16px", sm: "0px" }}
+                >
                   <FormLabel htmlFor="description">Description</FormLabel>
                   <Input
                     {...register("description")}

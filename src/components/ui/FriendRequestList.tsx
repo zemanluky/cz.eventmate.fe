@@ -44,8 +44,8 @@ export const FriendRequestList: React.FC<RequestsData> = ({ requestsData }) => {
 
   return (
     <Stack w="100%">
-      {requests.length > 0 ? (
-        requests.map((request) => (
+      {requests?.length > 0 ? (
+        requests?.map((request) => (
           <FriendRequestCard
             key={request._id}
             request={request}
