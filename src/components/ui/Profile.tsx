@@ -117,7 +117,7 @@ export const Profile: React.FC<User> = ({ user }) => {
       };
       try {
         const response = await axiosClient.post(
-          `${import.meta.env.VITE_BASE_API_URL}/user/${user._id}/rating`,
+          `/user/${user._id}/rating`,
           formData
         );
         console.log(formData);
@@ -147,7 +147,7 @@ export const Profile: React.FC<User> = ({ user }) => {
     try {
       const body = { receiver: receiverId };
       const response = await axiosClient.post(
-        `${import.meta.env.VITE_BASE_API_URL}/user/friend-request/`,
+        `/user/friend-request/`,
         body
       );
       if (response.status === 204) {

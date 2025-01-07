@@ -128,7 +128,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
 
       try {
         const response = await axiosClient.put(
-          `${import.meta.env.VITE_BASE_API_URL}/event/${eventToEditId}`,
+          `/event/${eventToEditId}`,
           formData
         );
 

@@ -37,7 +37,7 @@ const useAuthState = (): UseAuthStateReturn => {
       }
   
       const response = await axiosClient.get<User>(
-        `${import.meta.env.VITE_BASE_API_URL}/user/profile`
+        `/user/profile`
       );
   
       setUser(response.data);

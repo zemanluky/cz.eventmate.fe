@@ -84,7 +84,7 @@ export const Navbar: React.FC = () => {
   const handleLogout = async () => {
     try {
       // Send the logout request
-      await axiosClient.delete(`${import.meta.env.VITE_BASE_API_URL}/auth/logout`);
+      await axiosClient.delete(`/auth/logout`);
 
       // Remove the token in localStorage
       localStorage.removeItem("authToken");

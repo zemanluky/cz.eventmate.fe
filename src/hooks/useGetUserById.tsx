@@ -32,7 +32,7 @@ const useGetUserById = (userId : string) : UseGetUserByIdReturn => {
         try {
             setLoading(true)
             const response = await axiosClient.get<User>(
-                `${import.meta.env.VITE_BASE_API_URL}/user/${userId}`
+                `/user/${userId}`
             )
 
             // destructuring response

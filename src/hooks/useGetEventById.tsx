@@ -29,7 +29,7 @@ const useGetEventById = (eventId: string): UseGetEventByIdReturn => {
     try {
       setLoading(true); // Ensure loading is set to true on fetch start
       const response = await axiosClient.get<Event>(
-        `${import.meta.env.VITE_BASE_API_URL}/event/${id}`
+        `/event/${id}`
       );
 
       // restructuring response data

@@ -18,7 +18,7 @@ const useDeleteEventById = (): UseDeleteEventByIdReturn => {
     try {
       setLoading(true);
       const response = await axiosClient.delete(
-        `${import.meta.env.VITE_BASE_API_URL}/event/${eventId}`
+        `/event/${eventId}`
       );
 
       if (response?.status === 200) {
