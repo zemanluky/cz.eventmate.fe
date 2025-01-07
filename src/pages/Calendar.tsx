@@ -149,7 +149,7 @@ export const Calendar: React.FC = () => {
                                         alignItems="center"
                                         justifyContent="center"
                                         borderRadius="8px"
-                                        bg={isEventDate ? "red" : "white"}
+                                        bgColor={isEventDate ? "red" : "white"}
                                       >
                                         {day.day}
                                       </Box>
