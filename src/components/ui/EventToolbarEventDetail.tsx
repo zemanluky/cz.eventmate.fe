@@ -100,6 +100,11 @@ export const EventToolbarEventDetail: React.FC<EventToolbarEventDetailProps> = (
     }
   };
 
+  console.log(authUser);
+  console.log(event);
+  
+  
+
   // Sync the initial attendees with the local state on load or user change
   React.useEffect(() => {
     setIsAlreadyJoined(event.attendees?.some((attendee) => attendee._id === authUser?._id));
@@ -111,10 +116,12 @@ export const EventToolbarEventDetail: React.FC<EventToolbarEventDetailProps> = (
         {event?.name}
       </Text>
       <Spacer />
-      <Button onClick={() => (isAlreadyJoined ? handleLeaveEvent(event?._id) : handleJoinEvent(event?._id))}>
-        {isAlreadyJoined ? <DoorOpen /> : <CirclePlus />}
-        <Text>{isAlreadyJoined ? "Leave Event" : "Join event"}</Text>
-      </Button>
+      {!(authUser?._id === event?.author?._id) &&
+        <Button onClick={() => (isAlreadyJoined ? handleLeaveEvent(event?._id) : handleJoinEvent(event?._id))}>
+          {isAlreadyJoined ? <DoorOpen /> : <CirclePlus />}
+          <Text>{isAlreadyJoined ? "Leave Event" : "Join event"}</Text>
+        </Button>
+      }
     </HStack>
   );
 };
