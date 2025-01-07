@@ -98,7 +98,7 @@ export const MyProfile: React.FC<User> = ({ user }) => {
 
       try {
         const response = await axiosClient.put(
-          `${import.meta.env.VITE_API_KEY}/user/profile`,
+          `${import.meta.env.VITE_BASE_API_URL}/user/profile`,
           formData
         );
 
@@ -136,7 +136,7 @@ export const MyProfile: React.FC<User> = ({ user }) => {
     try {
       
       const response = await axiosClient.delete(
-        `${import.meta.env.VITE_API_KEY}/user/friend/${friendId}`,
+        `${import.meta.env.VITE_BASE_API_URL}/user/friend/${friendId}`,
       );
       if(response.status === 204){
         // Fetch the user profile and store it directly

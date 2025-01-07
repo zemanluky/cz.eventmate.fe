@@ -46,7 +46,7 @@ export const FriendRequestCard: React.FC<{
     try {
       const body = { accept: false };
       const response = await axiosClient.patch(
-        `${import.meta.env.VITE_API_KEY}/user/friend-request/${friendRequestId}`,
+        `${import.meta.env.VITE_BASE_API_URL}/user/friend-request/${friendRequestId}`,
         body
       );
       if (response.status === 204) {
@@ -70,7 +70,7 @@ export const FriendRequestCard: React.FC<{
     try {
       const body = { accept: true };
       const response = await axiosClient.patch(
-        `${import.meta.env.VITE_API_KEY}/user/friend-request/${friendRequestId}`,
+        `${import.meta.env.VITE_BASE_API_URL}/user/friend-request/${friendRequestId}`,
         body
       );
       if (response.status === 204) {

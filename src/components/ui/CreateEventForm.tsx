@@ -96,7 +96,7 @@ export const CreateEventForm: React.FC = () => {
       
       try {
         const response = await axiosClient.post(
-          `${import.meta.env.VITE_API_KEY}/event/`,
+          `${import.meta.env.VITE_BASE_API_URL}/event/`,
           formData
         );
         console.log(response);

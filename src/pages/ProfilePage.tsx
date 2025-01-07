@@ -170,7 +170,7 @@ export const ProfilePage: React.FC = () => {
     setIsFetchingRatings(true); // Start loading state
     try {
       const response = await axiosClient.get(
-        `${import.meta.env.VITE_API_KEY}/user/${userId}/rating`
+        `${import.meta.env.VITE_BASE_API_URL}/user/${userId}/rating`
       );
       setRatings(response.data?.data || []); // Save fetched ratings
     } catch (error) {

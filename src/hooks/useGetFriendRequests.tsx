@@ -45,7 +45,7 @@ const useGetFriendRequests = (): UseGetFriendRequestsReturn => {
     try {
       setLoading(true);
       const response = await axiosClient.get(
-        `${import.meta.env.VITE_API_KEY}/user/friend-request`
+        `${import.meta.env.VITE_BASE_API_URL}/user/friend-request`
       );
 
 

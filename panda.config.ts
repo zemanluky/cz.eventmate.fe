@@ -29,7 +29,7 @@ export default defineConfig({
             buttonLarge: { value: "#ffffff" }, // large button color
             buttonSmall: { value: "{colors.olive.12}" }, // small button color
             card: { value: "{colors.olive.12}" }, // event cards text color (date,location)
-            cardHeading: { value: "{#000000}" }, // event cards text color (heading)
+            cardHeading: { value: "#000000" }, // event cards text color (heading)
           },
           bg: {
             reject: { value: "#ec8e7b" }, // reject button background color

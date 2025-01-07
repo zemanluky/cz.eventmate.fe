@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 // Create an Axios instance
 const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_API_KEY,
+  baseURL: import.meta.env.VITE_BASE_API_URL,
   withCredentials: true, // Include cookies (__auth)
 });
 
@@ -78,7 +78,7 @@ axiosClient.interceptors.response.use(
         // Request a new token
         const token = getAuthToken();
         const refreshResponse = await axios.get(
-          `${import.meta.env.VITE_API_KEY}/auth/refresh`,
+          `${import.meta.env.VITE_BASE_API_URL}/auth/refresh`,
           { withCredentials: true,
             headers:{
                 Authorization:`Bearer ${token}`

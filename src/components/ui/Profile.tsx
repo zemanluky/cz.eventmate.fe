@@ -73,7 +73,7 @@ export const Profile: React.FC<User> = ({ user }) => {
       try {
         // TODO might need updating after merging be !!
         const response = await axiosClient.post(
-          `${import.meta.env.VITE_API_KEY}/user/${user._id}/rating`,
+          `${import.meta.env.VITE_BASE_API_URL}/user/${user._id}/rating`,
           formData
         );
         // success messages
@@ -102,7 +102,7 @@ export const Profile: React.FC<User> = ({ user }) => {
     try {
       const body = { receiver: receiverId };
       const response = await axiosClient.post(
-        `${import.meta.env.VITE_API_KEY}/user/friend-request/`,
+        `${import.meta.env.VITE_BASE_API_URL}/user/friend-request/`,
         body
       );
       if (response.status === 204) {

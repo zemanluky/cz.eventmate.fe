@@ -128,7 +128,7 @@ export const RegisterForm: React.FC = () => {
 		  };
 
 		  try {
-			const response = await axios.post(`${import.meta.env.VITE_API_KEY}/user/registration`, formData);
+			const response = await axios.post(`${import.meta.env.VITE_BASE_API_URL}/user/registration`, formData);
 			console.log("Registration successful:", response.data);
 		
 			showToast("Success","Registration successful!", "success");

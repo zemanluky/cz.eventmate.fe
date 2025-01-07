@@ -31,7 +31,7 @@ const useGetUsersByIds = (): UseGetUsersByIdsReturn => {
       const fetchedUsers: User[] = [];
       for (const userId of userIds) {
         const response = await axiosClient.get<User>(
-          `${import.meta.env.VITE_API_KEY}/user/${userId}`
+          `${import.meta.env.VITE_BASE_API_URL}/user/${userId}`
         );
         fetchedUsers.push(response.data?.data);
       }
