@@ -264,6 +264,7 @@ export const CreateEventForm: React.FC = () => {
                   const acceptedFiles = details.acceptedFiles;
                   setFiles(acceptedFiles);
                 }}
+                accept="image/*"
               >
                 {/* Image dropzone */}
                 <FileUpload.Dropzone>
