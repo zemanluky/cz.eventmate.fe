@@ -8,7 +8,6 @@ import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import defaultImage from "@Components/assets/images/default.jpg";
 
-
 interface EventCardCalendarDesktopProps {
   event: {
     _id: string;
@@ -37,7 +36,7 @@ interface Category {
   __v: number;
 }
 
-const baseURL = import.meta.env.VITE_BASE_API_URL
+const baseURL = import.meta.env.VITE_BASE_API_URL;
 
 export const EventCardCalendarDesktop: React.FC<
   EventCardCalendarDesktopProps
@@ -45,16 +44,20 @@ export const EventCardCalendarDesktop: React.FC<
   return (
     <>
       <Link to={`/event-detail/${event?._id}`}>
-        <Card.Root w="100%" h="200px" bg="bg.card" color="fg.card">
+        <Card.Root w="100%" minH="200px" bg="bg.card" color="fg.card">
           <HStack>
-            <Card.Header w="200px" h="200px" bg="bg.emphasized" p="0px">
+            <Card.Header w="200px" h="100%" bg="bg.emphasized" p="0px">
               <img
                 style={{
                   objectFit: "cover",
                   width: "100%",
                   height: "100%",
                 }}
-                src={`${baseURL+event?.image_paths[0]}` === `${baseURL}undefined` ?  defaultImage : `${baseURL+event?.image_paths[0]}`}
+                src={
+                  `${baseURL + event?.image_paths[0]}` === `${baseURL}undefined`
+                    ? defaultImage
+                    : `${baseURL + event?.image_paths[0]}`
+                }
                 alt={event?.name}
               ></img>
             </Card.Header>
