@@ -25,9 +25,13 @@ export const Homepage: React.FC = () => {
       setEvents([]); // Clear events
       setPageNumber(1); // Reset pagination
       setHasMore(true); // Enable fetching more
+
     }, []);
 
-    console.log(appliedFilter)
+React.useEffect(()=>{
+  console.log(appliedFilter)
+},[appliedFilter])
+
   // Fetch events from the backend
   const fetchEvents = React.useCallback(async () => {
     if (isLoading) return; // Don't fetch if already loading or no more events
@@ -76,7 +80,7 @@ export const Homepage: React.FC = () => {
     } finally {
       setIsLoading(false); // Reset loading state
     }
-  }, [isLoading, hasMore, pageNumber, filters]);
+  }, [isLoading, hasMore, pageNumber, filters, appliedFilter]);
 
   // filters changing logic
   React.useEffect(() => {
