@@ -58,6 +58,8 @@ interface Category {
   __v: number;
 }
 
+const baseURL = import.meta.env.VITE_BASE_API_URL
+
 export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
   event,
 }) => {
@@ -68,7 +70,7 @@ export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
           <Card.Header w="100%" h="250px" bg="bg.emphasized" p={0}>
             <img
               style={{ objectFit: "cover", width: "100%", height: "100%" }}
-              src={`https://127.0.0.1${event?.image_paths[0]}` === 'https://127.0.0.1undefined' ?  defaultImage : `https://127.0.0.1${event?.image_paths[0]}`}
+              src={`${baseURL+event?.image_paths[0]}` === `${baseURL}undefined` ?  defaultImage : `${baseURL+event?.image_paths[0]}`}
               alt={event?.name}
             ></img>
           </Card.Header>

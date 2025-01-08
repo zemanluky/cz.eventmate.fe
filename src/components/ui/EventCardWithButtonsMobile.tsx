@@ -65,6 +65,8 @@ interface Event {
   author: User;
 }
 
+const baseURL = import.meta.env.VITE_BASE_API_URL
+
 export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
   event,
 }) => {
@@ -94,8 +96,8 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
             width: "100%",
             height: "100%",
           }}
-            src={`https://127.0.0.1${event?.image_paths[0]}` == 'https://127.0.0.1undefined' ? defaultImage : `https://127.0.0.1${event?.image_paths[0]}`}
-            alt={event.name}
+          src={`${baseURL+event?.image_paths[0]}` === `${baseURL}undefined` ?  defaultImage : `${baseURL+event?.image_paths[0]}`}
+          alt={event.name}
           ></img>
         </Card.Header>
         <Card.Body p="20px" w="100%">

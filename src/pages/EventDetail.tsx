@@ -32,6 +32,8 @@ import defaultImage from "@Components/assets/images/default.jpg";
 import { Dialog } from "@ParkComponents/dialog";
 import { Button } from "@ParkComponents/button";
 
+const baseURL = import.meta.env.VITE_BASE_API_URL
+
 export const EventDetail: React.FC = () => {
   const params = useParams();
   const eventId = params.eventId;
@@ -92,7 +94,7 @@ export const EventDetail: React.FC = () => {
                       src={
                         Array.isArray(event?.image_paths) &&
                         event?.image_paths.length !== 0
-                          ? `https://127.0.0.1${image}`
+                          ? `${baseURL + image}`
                           : `${image}`
                       }
                       alt={event?.name}

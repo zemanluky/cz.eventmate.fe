@@ -29,6 +29,8 @@ interface Member {
   imageUrl: string;
 }
 
+const baseURL = import.meta.env.VITE_BASE_API_URL
+
 export const EventCardSmallDesktop: React.FC<EventCardSmallDesktopProps> = ({
   event,
 }) => {
@@ -50,7 +52,7 @@ export const EventCardSmallDesktop: React.FC<EventCardSmallDesktopProps> = ({
                     width: "100%",
                     height: "100%",
                   }}
-                  src={`https://127.0.0.1${event?.image_paths[0]}` == 'https://127.0.0.1undefined' ? defaultImage : `https://127.0.0.1${event?.image_paths[0]}`}
+                  src={`${baseURL+event?.image_paths[0]}` === `${baseURL}undefined` ?  defaultImage : `${baseURL+event?.image_paths[0]}`}
                   alt={event?.name}
                 ></img>
               </GridItem>
