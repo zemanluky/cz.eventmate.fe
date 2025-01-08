@@ -63,6 +63,11 @@ export const MyEvents: React.FC = () => {
     }
   }, [isLoading, hasMore]);
 
+  const handleDeleteEvent = (eventId: string) => {
+    setEvents((prev) => prev.filter((event) => event._id !== eventId));
+  };
+  
+
   // Observer to detect scrolling to the last element
   React.useEffect(() => {
     const options = {
@@ -101,7 +106,7 @@ export const MyEvents: React.FC = () => {
           const isLast = index === events.length - 1;
           return (
             <div ref={isLast ? lastEventRef : null} key={event._id}>
-              <EventCardLongDesktop event={event} />
+              <EventCardLongDesktop event={event} onDelete={handleDeleteEvent}/>
             </div>
           );
         })}
