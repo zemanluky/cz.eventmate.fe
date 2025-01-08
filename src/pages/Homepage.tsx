@@ -119,7 +119,7 @@ export const Homepage: React.FC = () => {
   // Fetch events whenever the page number changes
   React.useEffect(() => {
     fetchEvents();
-  }, [pageNumber, filters]);
+  }, [pageNumber, filters,appliedFilter]);
 
   return (
     <>
