@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Stack } from "@Panda/jsx";
+import { Box, Flex, HStack, Stack, VStack } from "@Panda/jsx";
 import { Button } from "@ParkComponents/button";
 import { FormLabel } from "@ParkComponents/form-label";
 import { IconButton } from "@ParkComponents/icon-button";
@@ -215,18 +215,8 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
 
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Flex
-              direction={{ base: "column", md: "row" }}
-              pb={{ base: "none", md: "30px" }}
-            >
-              {/* Left part of form */}
-              <Flex
-                direction="column"
-                justifyContent="space-between"
-                w={{ base: "100%", md: "48%" }}
-                mr={{ base: "none", md: "2%" }}
-                gap={{ base: "16px", sm: "0px" }}
-              >
+            <VStack>
+              <Stack gap={5} w="50%">
                 {/* Name input */}
                 <Stack w="100%" gap="1.5">
                   <FormLabel htmlFor="name">Name</FormLabel>
@@ -307,15 +297,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                 {errors.type && ( // Correctly displaying the error for "type"
                   <Text color="red">{errors.type.message}</Text>
                 )}
-              </Flex>
 
-              {/* Right part of form */}
-              <Stack
-                w={{ base: "100%", md: "48%" }}
-                ml={{ base: "none", md: "2%" }}
-                pb="32px"
-                gap="16x"
-              >
                 {/* Description input */}
                 <Stack
                   h="20%"
@@ -337,56 +319,11 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                   )}
                 </Stack>
 
-                {/* Image input */}
-                <Stack>
-                  {/* Label */}
-                  <FormLabel htmlFor="eventPhotos">Event photos</FormLabel>
-                  <FileUpload.Root
-                    maxFiles={3}
-                    onFileChange={(details) => {
-                      const acceptedFiles = details.acceptedFiles;
-                      setFiles(acceptedFiles);
-                    }}
-                    maxHeight={"256px"}
-                  >
-                    {/* Image dropzone */}
-                    <FileUpload.Dropzone>
-                      <FileUpload.Label>Drop your files here</FileUpload.Label>
-                      <FileUpload.Trigger asChild>
-                        <Button size="sm">Open Dialog</Button>
-                      </FileUpload.Trigger>
-                    </FileUpload.Dropzone>
-                    {/* Submitted images */}
-                    <FileUpload.ItemGroup>
-                      <FileUpload.Context>
-                        {({ acceptedFiles }: { acceptedFiles: File[] }) =>
-                          acceptedFiles.map((file, id) => (
-                            <FileUpload.Item key={id} file={file}>
-                              <FileUpload.ItemPreview type="image/*">
-                                <FileUpload.ItemPreviewImage />
-                              </FileUpload.ItemPreview>
-                              <FileUpload.ItemName />
-                              <FileUpload.ItemSizeText />
-                              <FileUpload.ItemDeleteTrigger asChild>
-                                <IconButton variant="link" size="sm">
-                                  <Trash2Icon />
-                                </IconButton>
-                              </FileUpload.ItemDeleteTrigger>
-                            </FileUpload.Item>
-                          ))
-                        }
-                      </FileUpload.Context>
-                    </FileUpload.ItemGroup>
-                    <FileUpload.HiddenInput />
-                  </FileUpload.Root>
-                </Stack>
-
                 {/* Buttons */}
                 <HStack
                   h="10%"
                   alignItems="center"
                   justifyContent="space-between"
-                  mt="80px"
                 >
                   <Button
                     size="xl"
@@ -414,7 +351,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                   </Button>
                 </HStack>
               </Stack>
-            </Flex>
+            </VStack>
           </form>
         </>
       )}
