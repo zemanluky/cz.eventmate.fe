@@ -43,7 +43,7 @@ export const EventCardCalendarDesktop: React.FC<
       <Link to={`/event-detail/${event?._id}`}>
         <Card.Root w="100%" h="200px" bg="bg.card" color="fg.card">
           <HStack>
-            <Card.Header w="200px" h="200px" bg="bg.emphasized" p="0px">
+            <Card.Header w="200px" h="200px" bg="bg.emphasized" p="0px" p="0px">
               <img
                 style={{
                   objectFit: "cover",

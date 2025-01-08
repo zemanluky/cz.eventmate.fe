@@ -41,7 +41,7 @@ export const EventCardMobile: React.FC<EventCardMobileProps> = ({ event }) => {
     <>
       <Link to={`/event-detail/${event?._id}`}>
         <Card.Root w="350px" h="270px">
-          <Card.Header w="100%" h="170px" bg="bg.emphasized">
+          <Card.Header w="100%" h="170px" bg="bg.emphasized" p="0px">
             <img
               src={`https://127.0.0.1${event?.image_paths[0]}`}
               alt={event?.name}
