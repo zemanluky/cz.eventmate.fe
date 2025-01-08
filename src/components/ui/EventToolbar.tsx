@@ -21,11 +21,20 @@ import { ComboBoxComponent } from "./ComboBoxComponent";
 import axiosClient from "axiosClient";
 import useAuthStore from "src/store/authStore";
 
-export const EventToolbar: React.FC = () => {
+export const EventToolbar: React.FC<{ onFilterChange?: (filter: string) => void }> = ({ onFilterChange }) => {
+
   const authUser = useAuthStore((state) => state.user);
   const [showEvents, setShowEvents] = useState(true);
   const { setFilters } = useFilterContext();
+
   const [eventCategories, setEventCategories] = React.useState([]);
+
+  const handleFilterSelection = (filterParam: string) => {
+    if (onFilterChange) {
+      onFilterChange(filterParam); // Call the parent-provided callback
+      setFilter(filterParam)
+    }
+  }
 
   const [filterInputs, setFilterInputs] = useState({
     location: "",
@@ -35,6 +44,8 @@ export const EventToolbar: React.FC = () => {
       dateEnd: "",
     },
   });
+
+  const [filter, setFilter] = useState("public-only");
 
   const isoParser = (date) => {
     const year = date.getFullYear();
@@ -101,6 +112,7 @@ export const EventToolbar: React.FC = () => {
         category: filterInputs.category,
         dateStart: filterInputs.date.dateStart,
         dateEnd: filterInputs.date.dateEnd,
+        filter: filterInputs.filter,
       }).filter(([_, value]) => value !== "")
     );
 
@@ -118,6 +130,7 @@ export const EventToolbar: React.FC = () => {
     });
     datePicker.setValue(null); // Clear the DatePicker value
   };
+  
 
   return (
     <Menu.Root positioning={{ placement: "bottom-start" }}>
@@ -133,8 +146,10 @@ export const EventToolbar: React.FC = () => {
                   w="70px"
                   h="26px"
                   rounded="full"
-                  bg={showEvents ? "bg.buttonSmall" : "transparent"}
-                  onClick={() => setShowEvents(true)}
+                  bg={
+                    filter === "public-only" ? "bg.buttonSmall" : "transparent"
+                  }
+                  onClick={() => handleFilterSelection("public-only")}
                 >
                   <Text>Public</Text>
                 </Button>
@@ -142,8 +157,10 @@ export const EventToolbar: React.FC = () => {
                   w="70px"
                   h="26px"
                   rounded="full"
-                  bg={showEvents ? "transparent" : "bg.buttonSmall"}
-                  onClick={() => setShowEvents(false)}
+                  bg={
+                    filter === "friends-only" ? "bg.buttonSmall" : "transparent"
+                  }
+                  onClick={() => handleFilterSelection("friends-only")}
                 >
                   <Text>Private</Text>
                 </Button>
@@ -397,3 +414,4 @@ export const EventToolbar: React.FC = () => {
     </Menu.Root>
   );
 };
+

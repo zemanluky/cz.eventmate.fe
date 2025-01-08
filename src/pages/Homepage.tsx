@@ -13,10 +13,21 @@ export const Homepage: React.FC = () => {
   const [hasMore, setHasMore] = React.useState(true); // Flag for more data
   const [pageNumber, setPageNumber] = React.useState(1); // Current page number
   const pageSize = 10; // Number of events per page
+  const [appliedFilter, setAppliedFilter] = React.useState("public-only"); // Active filter logic
+
 
   const lastEventRef = React.useRef<HTMLDivElement | null>(null); // Reference to last element
   const observer = React.useRef<IntersectionObserver | null>(null); // Intersection Observer reference
 
+    // Update filter logic dynamically
+    const handleFilterChange = React.useCallback((newFilter: string) => {
+      setAppliedFilter(newFilter);
+      setEvents([]); // Clear events
+      setPageNumber(1); // Reset pagination
+      setHasMore(true); // Enable fetching more
+    }, []);
+
+    console.log(appliedFilter)
   // Fetch events from the backend
   const fetchEvents = React.useCallback(async () => {
     if (isLoading) return; // Don't fetch if already loading or no more events
@@ -33,7 +44,7 @@ export const Homepage: React.FC = () => {
         dateEnd: filters.dateEnd === "" ? null : filters.dateEnd,
         rating: null,
         category: filters.category,
-        filter: "public-only",
+        filter: appliedFilter,
       };
 
       // fetching events by parameters
@@ -112,7 +123,7 @@ export const Homepage: React.FC = () => {
 
   return (
     <>
-      <EventToolbar />
+      <EventToolbar onFilterChange={handleFilterChange}/>
       <Flex gap="16px" mt={"20px"} flexWrap={"wrap"} justifyContent="center">
         {events.map((event, index) => {
           const isLast = index === events.length - 1;
