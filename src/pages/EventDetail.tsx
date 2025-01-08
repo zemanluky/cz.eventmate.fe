@@ -32,7 +32,7 @@ import defaultImage from "@Components/assets/images/default.jpg";
 import { Dialog } from "@ParkComponents/dialog";
 import { Button } from "@ParkComponents/button";
 
-const baseURL = import.meta.env.VITE_BASE_API_URL
+const baseURL = import.meta.env.VITE_BASE_API_URL;
 
 export const EventDetail: React.FC = () => {
   const params = useParams();
@@ -259,7 +259,7 @@ export const EventDetail: React.FC = () => {
               <HStack>
                 <Lock />
                 <Text fontWeight={700}>Type: </Text>
-                <Text>{eventData?.private ? "Private" : "Public"}</Text>
+                <Text>{eventData?.private ? "Public" : "Private"}</Text>
               </HStack>
             </Stack>
 
