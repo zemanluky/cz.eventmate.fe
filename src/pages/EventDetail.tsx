@@ -236,9 +236,7 @@ export const EventDetail: React.FC = () => {
               <HStack>
                 <Calendar />
                 <Text fontWeight={700}>Date: </Text>
-                <Text>
-                  {format(new Date(eventData?.date), "	eee dd.MM.yyyy")}
-                </Text>
+                <Text>{eventData?.date?.split("T")[0]}</Text>
               </HStack>
 
               {/* Place */}
