@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { Button } from "@ParkComponents/button.tsx";
-import { Box, Flex, HStack, Stack } from "@Panda/jsx";
+import { Flex, Stack } from "@Panda/jsx";
 import { css } from "@Panda/css";
 import { Text } from "@ParkComponents/text";
 import { Input } from "@ParkComponents/input";
@@ -12,6 +12,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { IconButton } from "@ParkComponents/icon-button";
 import axios from "axios";
 import { useShowToast } from "src/hooks";
+import "../layout/Logo.css";
 
 export const RegisterForm: React.FC = () => {
   const showToast = useShowToast();
@@ -180,7 +181,9 @@ export const RegisterForm: React.FC = () => {
   });
   return (
     <Flex className={formStyles}>
-      <Text size="5xl">EventM8</Text>
+      <Text fontSize={"7xl"} className="coolLogo">
+        EventM8
+      </Text>
       <Stack gap="8px" width="2xs" w="100%">
         <FormLabel fontWeight="bold" htmlFor="name">
           First Name

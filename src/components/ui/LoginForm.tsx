@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Stack, VStack } from "@Panda/jsx";
+import { Flex, Stack, VStack } from "@Panda/jsx";
 import { Button } from "@ParkComponents/button";
 import { FormLabel } from "@ParkComponents/form-label";
 import { Input } from "@ParkComponents/input";
@@ -13,6 +13,7 @@ import { useShowToast } from "src/hooks";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "src/store/authStore";
 import useAuthState from "src/hooks/useAuthState";
+import "../layout/Logo.css";
 
 export const LoginForm: React.FC = () => {
   const { fetchUserProfile, user } = useAuthState();
@@ -80,7 +81,7 @@ export const LoginForm: React.FC = () => {
       w={{ base: "350px", sm: "450px" }}
       mt={{ base: "15px", sm: "15px" }}
     >
-      <Text size="6xl" mb="10px">
+      <Text fontSize={"7xl"} className="coolLogo">
         EventM8
       </Text>
       <Stack mb="0.69rem" w="100%">

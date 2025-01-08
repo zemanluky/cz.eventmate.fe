@@ -23,7 +23,7 @@ import useAuthState from "src/hooks/useAuthState";
 import useAuthStore from "src/store/authStore";
 import useGetFriendRequests from "src/hooks/useGetFriendRequests";
 import { Spinner } from "@ParkComponents/spinner";
-import "./Navbar.css";
+import "../layout/Logo.css";
 
 export const Navbar: React.FC = () => {
   interface FriendRequest {
