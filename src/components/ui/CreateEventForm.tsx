@@ -17,6 +17,7 @@ import axiosClient from "axiosClient";
 import { useShowToast } from "src/hooks";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Textarea } from "@ParkComponents/textarea";
 
 export const CreateEventForm: React.FC = () => {
   const eventTypes = [
@@ -240,14 +241,11 @@ export const CreateEventForm: React.FC = () => {
             {/* Description input */}
             <Stack h="20%" w="100%" gap="1.5" mt={{ base: "16px", sm: "0px" }}>
               <FormLabel htmlFor="description">Description</FormLabel>
-              <Input
+              <Textarea
                 {...register("description")}
-                h="80%"
                 id="description"
                 placeholder="About event"
-                padding={"32px"}
-                px={"8px"}
-              />
+                />
               {errors.description && (
                 <Text color="red">{errors.description.message}</Text>
               )}
