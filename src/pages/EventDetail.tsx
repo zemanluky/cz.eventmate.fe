@@ -67,6 +67,7 @@ export const EventDetail: React.FC = () => {
     date: event?.date,
     location: event?.location,
     author: event?.author,
+    private: event?.private,
     attendees: event?.attendees, // The attendees will be automatically updated via global state
     images:
       Array.isArray(event?.image_paths) && event?.image_paths.length !== 0
