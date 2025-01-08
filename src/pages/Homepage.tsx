@@ -26,7 +26,6 @@ export const Homepage: React.FC = () => {
 
     try {
       const parameters = {
-        userId: userObject._id,
         pageSize,
         pageNumber,
         location: filters.location,
