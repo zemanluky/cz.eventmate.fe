@@ -4,7 +4,7 @@ import { css } from "@Panda/css";
 import { Input } from "@ParkComponents/input";
 import { Text } from "@ParkComponents/text";
 import { Avatar } from "@ParkComponents/avatar";
-import { Box, Divider, Flex, HStack, Stack, VStack } from "@Panda/jsx";
+import { Box, Divider, Flex, HStack, Spacer, Stack, VStack } from "@Panda/jsx";
 import { FriendRequestList } from "./FriendRequestList";
 import { Popover } from "@ParkComponents/popover";
 import { Menu } from "@ParkComponents/menu";
@@ -14,6 +14,7 @@ import {
   PartyPopper,
   UserIcon,
   UserRoundPlus,
+  XIcon,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useShowToast } from "src/hooks";
@@ -24,6 +25,8 @@ import useAuthStore from "src/store/authStore";
 import useGetFriendRequests from "src/hooks/useGetFriendRequests";
 import { Spinner } from "@ParkComponents/spinner";
 import "../layout/Logo.css";
+import { Dialog } from "@ParkComponents/dialog";
+import { IconButton } from "@ParkComponents/icon-button";
 
 export const Navbar: React.FC = () => {
   interface FriendRequest {
@@ -110,6 +113,35 @@ export const Navbar: React.FC = () => {
     }
   };
 
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [users, setUsers] = React.useState([]);
+  const [searchInput, setSearchInput] = React.useState("");
+
+  const handleGetUsers = async (searchParameters: string) => {
+    if (isLoading) return; // Don't fetch if already loading
+
+    setIsLoading(true); // Set loading state
+    setUsers([]);
+
+    try {
+      const response = await axiosClient.get(`/user/`, {
+        params: { search: searchParameters },
+      });
+
+      const fetchedUsers = response.data?.data;
+
+      setUsers(fetchedUsers);
+
+      console.log(users);
+      console.log(isOpen);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   React.useEffect(() => {
     setFriendRequestList(friendRequests);
   }, [friendRequests]);
@@ -128,12 +160,74 @@ export const Navbar: React.FC = () => {
                 EventM8
               </Text>
             </Link>
+
             <Input
               size="sm"
               id="name"
-              placeholder="Search"
+              placeholder="Search user"
               className={inputStyles}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleGetUsers(searchInput);
+                  setIsOpen(true);
+                }
+              }}
             />
+
+            <Dialog.Root open={isOpen}>
+              <Dialog.Positioner>
+                <Dialog.Content
+                  style={{
+                    maxHeight: "500px",
+                    overflowY: "auto",
+                  }}
+                >
+                  <Stack gap="8" p="6">
+                    <Stack gap="1">
+                      <HStack>
+                        <Dialog.Title>Search:</Dialog.Title>
+                        <Spacer />
+                        <IconButton
+                          aria-label="Close Dialog"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          <XIcon />
+                        </IconButton>
+                      </HStack>
+                      {isLoading ? (
+                        <Spinner />
+                      ) : (
+                        <VStack gap="16px" mt="16px">
+                          {/* Displaying attendees List */}
+                          {users?.map((user) => (
+                            <Flex
+                              key={user._id}
+                              alignItems={"center"}
+                              justifyContent={"space-between"}
+                              gap="8px"
+                              width="100%"
+                            >
+                              <Link to={`/profile/${user._id}`}>
+                                <Flex alignItems={"center"} gap={4}>
+                                  <Avatar
+                                    name={`${user.name} ${user.surname}`}
+                                    size="sm"
+                                  />
+                                  <Text>{`${user.name} ${user.surname}`}</Text>
+                                </Flex>
+                              </Link>
+                            </Flex>
+                          ))}
+                        </VStack>
+                      )}
+                    </Stack>
+                  </Stack>
+                </Dialog.Content>
+              </Dialog.Positioner>
+            </Dialog.Root>
 
             <Box
               className={flexStyles}
@@ -262,7 +356,7 @@ export const Navbar: React.FC = () => {
               <Menu.Item value="logout" onClick={handleLogout}>
                 <HStack gap="2">
                   <LogOutIcon />
-                  Logout
+                  Log out
                 </HStack>
               </Menu.Item>
             </Menu.ItemGroup>
