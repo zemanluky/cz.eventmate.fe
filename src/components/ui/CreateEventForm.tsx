@@ -1,4 +1,4 @@
-import { Flex, HStack, Stack } from "@Panda/jsx";
+import { Box, Flex, HStack, Stack } from "@Panda/jsx";
 import { Button } from "@ParkComponents/button";
 import { FormLabel } from "@ParkComponents/form-label";
 import { IconButton } from "@ParkComponents/icon-button";
@@ -276,7 +276,6 @@ export const CreateEventForm: React.FC = () => {
                   const acceptedFiles = details.acceptedFiles;
                   setFiles(acceptedFiles);
                 }}
-                maxHeight={"256px"}
               >
                 {/* Image dropzone */}
                 <FileUpload.Dropzone>
@@ -311,12 +310,7 @@ export const CreateEventForm: React.FC = () => {
             </Stack>
 
             {/* Buttons */}
-            <HStack
-              h="10%"
-              alignItems="center"
-              justifyContent="space-between"
-              mt="80px"
-            >
+            <HStack h="10%" alignItems="center" justifyContent="space-between">
               <Button
                 size="xl"
                 bg="bg.cancel"
