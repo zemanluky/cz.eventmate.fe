@@ -119,7 +119,7 @@ export const EventToolbarEventDetail: React.FC<
         {event?.name}
       </Text>
       <Spacer />
-      {!(authUser?._id === event?.author?._id) && (
+      {(authUser?._id !== event?.author?._id && new Date(event.date) > new Date()) && (
         <Button
           onClick={() =>
             isAlreadyJoined
