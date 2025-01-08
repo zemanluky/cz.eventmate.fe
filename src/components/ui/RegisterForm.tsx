@@ -94,7 +94,7 @@ export const RegisterForm: React.FC = () => {
     return true;
   };
 
-  const nameRegex = /^[A-Z][a-zA-Z]*$/;
+  const nameRegex = /^[\p{Lu}][\p{L}]*$/u;
   const validateName = (name: string) => {
     return nameRegex.test(name);
   };
