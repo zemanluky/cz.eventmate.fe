@@ -9,18 +9,19 @@ import { Link } from "react-router-dom";
 
 interface EventCardSmallDesktopProps {
   event: {
-    id: string;
+    _id: string;
     name: string;
     image: string;
     date: string;
-    place: string;
+    location: string;
+    image_paths: string[];
     memberList: {
       member: Member;
     }[];
   };
 }
 interface Member {
-  id: string;
+  _id: string;
   name: string;
   surname: string;
   imageUrl: string;
@@ -31,17 +32,20 @@ export const EventCardSmallDesktop: React.FC<EventCardSmallDesktopProps> = ({
 }) => {
   return (
     <>
-      <Link to={`/eventDetail/${event.id}`}>
-        <Card.Root w="350px" h="100px">
+      <Link to={`/eventDetail/${event?._id}`}>
+        <Card.Root w="350px" h="120px">
           <Card.Body p={0} w="100%" h="100%">
             <Grid
-              gridTemplateColumns="repeat(7, 1fr)"
+              gridTemplateColumns="repeat(8, 1fr)"
               gap={0}
               w="100%"
               h="100%"
             >
-              <GridItem colSpan={2} bg="bg.emphasized">
-                <img src={event.image} alt={event.name} />
+              <GridItem colSpan={3} bg="bg.emphasized">
+                <img
+                  src={`https://127.0.0.1${event?.image_paths[0]}`}
+                  alt={event?.name}
+                ></img>
               </GridItem>
               <GridItem
                 colSpan={5}
@@ -57,21 +61,21 @@ export const EventCardSmallDesktop: React.FC<EventCardSmallDesktopProps> = ({
                   gap={0}
                 >
                   <Text size="md" fontWeight="semibold">
-                    {event.name}
+                    {event?.name}
                   </Text>
                   <HStack>
                     <Icon>
                       <Calendar />
                     </Icon>
                     <Text size="sm">
-                      {format(new Date(event.date), "	eee dd.MM.yyyy")}
+                      {format(new Date(event?.date), "	eee dd.MM.yyyy")}
                     </Text>
                   </HStack>
                   <HStack>
                     <Icon>
                       <MapPin />
                     </Icon>
-                    <Text size="sm"> {event.place}</Text>
+                    <Text size="sm"> {event?.location}</Text>
                   </HStack>
                 </Stack>
               </GridItem>

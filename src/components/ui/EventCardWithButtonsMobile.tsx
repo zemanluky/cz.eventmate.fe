@@ -57,6 +57,7 @@ interface Event {
   date: string;
   private: boolean;
   location: string;
+  image_paths: string[];
   attendees: Member[];
   __v: number;
   author: User;
@@ -85,7 +86,10 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
     <>
       <Card.Root w="350px">
         <Card.Header w="100%" h="170px" bg="bg.emphasized">
-          {event?.image}
+          <img
+            src={`https://127.0.0.1${event?.image_paths[0]}`}
+            alt={event.name}
+          ></img>
         </Card.Header>
         <Card.Body p="20px" w="100%">
           <Grid

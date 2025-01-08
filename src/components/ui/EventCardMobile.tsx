@@ -1,24 +1,33 @@
-import { Grid, GridItem, HStack } from "@Panda/jsx";
+import { HStack, Spacer, Stack } from "@Panda/jsx";
 import { Card } from "@ParkComponents/card";
 import { Icon } from "@ParkComponents/icon";
 import { Text } from "@ParkComponents/text";
-import { MapPin } from "lucide-react";
+import { LayoutList, MapPin } from "lucide-react";
 import * as React from "react";
-import { AvatarGroup } from "./AvatarGroup";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 
 interface EventCardMobileProps {
-  event: {
-    _id: string;
-    name: string;
-    image: string;
-    date: string;
-    location: string;
-    memberList: {
-      member: Member;
-    }[];
-  };
+  event: Event;
+}
+interface Event {
+  category: Category;
+  _id: string;
+  name: string;
+  description: string;
+  date: string;
+  private: boolean;
+  location: string;
+  image_paths: string[];
+  attendees: Member[];
+  __v: number;
+}
+
+interface Category {
+  _id: string;
+  name: string;
+  description: string;
+  __v: number;
 }
 interface Member {
   _id: string;
@@ -30,66 +39,46 @@ interface Member {
 export const EventCardMobile: React.FC<EventCardMobileProps> = ({ event }) => {
   return (
     <>
-      <Link to={`/event-detail/${event._id}`}>
+      <Link to={`/event-detail/${event?._id}`}>
         <Card.Root w="350px" h="270px">
           <Card.Header w="100%" h="170px" bg="bg.emphasized">
-            {event.image}
+            <img
+              src={`https://127.0.0.1${event?.image_paths[0]}`}
+              alt={event?.name}
+            ></img>
           </Card.Header>
           <Card.Body p="20px" w="100%">
-            <Grid
-              gridTemplateColumns="repeat(5, 1fr)"
-              gridTemplateRows="repeat(2, 1fr)"
-              gap={0}
-              h="100px"
-              w="100%"
-            >
-              <GridItem
-                colSpan={3}
-                rowSpan={1}
-                display="flex"
-                alignItems="center"
-              >
+            <Stack>
+              <HStack>
+                {/* Event name */}
                 <Text size="lg" fontWeight="semibold">
-                  {event.name}
+                  {event?.name}
                 </Text>
-              </GridItem>
-
-              <GridItem
-                colSpan={2}
-                rowSpan={1}
-                display="flex"
-                alignItems="center"
-                justifyContent="end"
-              >
+                <Spacer />
+                {/* Event date */}
                 <Text size="sm">
-                  {format(new Date(event.date), "	eee dd.MM.yyyy")}
+                  {format(new Date(event?.date), "	eee dd.MM.yyyy")}
                 </Text>
-              </GridItem>
+              </HStack>
 
-              <GridItem
-                colSpan={3}
-                rowSpan={1}
-                display="flex"
-                alignItems="center"
-              >
+              <HStack>
+                {/* Event category */}
+                <HStack>
+                  <Icon>
+                    <LayoutList />
+                  </Icon>
+                  <Text>{event?.category.name}</Text>
+                </HStack>
+                <Spacer />
+                {/* Event location */}
                 <HStack>
                   <Icon>
                     <MapPin />
                   </Icon>
-                  <Text size="sm">{event.location}</Text>
+                  <Text size="sm">{event?.location}</Text>
                 </HStack>
-              </GridItem>
-
-              <GridItem
-                colSpan={2}
-                rowSpan={1}
-                display="flex"
-                alignItems="center"
-                justifyContent="end"
-              >
-                <AvatarGroup members={event.memberList} />
-              </GridItem>
-            </Grid>
+              </HStack>
+            </Stack>
           </Card.Body>
         </Card.Root>
       </Link>

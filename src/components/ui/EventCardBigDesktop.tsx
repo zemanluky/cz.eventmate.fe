@@ -7,29 +7,55 @@ import * as React from "react";
 import { AvatarGroup } from "./AvatarGroup";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
-
+import defaultImage from "@Components/assets/images/default.jpg";
 interface EventCardBigDesktopProps {
-  event: {
-    _id: string;
-    name: string;
-    image: string;
-    date: string;
-    location: string;
-    category: Category;
-    memebrList: {
-      member: Member;
-    }[];
-  };
+  event: Event;
 }
+
+interface Rating {
+  author: string;
+  starRating: number;
+  comment: string;
+  _id: string;
+  createdAt: string; // ISO date string
+}
+
+interface User {
+  _id: string;
+  name: string;
+  surname: string;
+  username: string;
+  __v: number;
+  ratings?: Rating[]; // Optional because only the author has ratings
+  average_rating?: number; // Optional because only the author has it
+}
+
 interface Member {
-  id: string;
+  _id: string;
   name: string;
   surname: string;
   imageUrl: string;
 }
 
-interface Category {
+interface Event {
+  category: Category;
+  _id: string;
   name: string;
+  description: string;
+  date: string;
+  private: boolean;
+  location: string;
+  image_paths: string[];
+  attendees: Member[];
+  __v: number;
+  author: User;
+}
+
+interface Category {
+  _id: string;
+  name: string;
+  description: string;
+  __v: number;
 }
 
 export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
@@ -40,7 +66,10 @@ export const EventCardBigDesktop: React.FC<EventCardBigDesktopProps> = ({
       <Link to={`/event-detail/${event?._id}`}>
         <Card.Root w="350px" h="430px" bg="bg.card" color="fg.card">
           <Card.Header w="100%" h="250px" bg="bg.emphasized">
-            {/* {event.image} */}
+            <img
+              src={`https://127.0.0.1${event?.image_paths[0]}`}
+              alt={event?.name}
+            ></img>
           </Card.Header>
           <Card.Body p="25px" w="100%">
             <Grid gridTemplateColumns="repeat(7, 1fr)" h="100%" gap={0}>

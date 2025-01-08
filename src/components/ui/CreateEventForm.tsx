@@ -72,17 +72,21 @@ export const CreateEventForm: React.FC = () => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000)); //simulated call for isSubmitting state
 
-      const formData = {
-        name: data.name,
-        description: data.description,
-        location: data.place,
-        date: isoParser(data.date),
-        private: data.type,
-        category: data.category,
-      };
+      const formData = new FormData();
+      files.forEach((img) => {
+        formData.append("image", img);
+      });
+      formData.append("name", data.name);
+      formData.append("description", data.description);
+      formData.append("location", data.place);
+      formData.append("date", isoParser(data.date));
+      formData.append("private", data.type);
+      formData.append("category", data.category);
 
       try {
-        const response = await axiosClient.post(`/event`, formData);
+        const response = await axiosClient.post(`/event/`, formData, {
+          headers: { "content-type": "multipart/form-data" },
+        });
 
         // Success message
         if (response.status === 201 || response.status === 200) {
@@ -266,7 +270,8 @@ export const CreateEventForm: React.FC = () => {
               {/* Label */}
               <FormLabel htmlFor="eventPhotos">Event photos</FormLabel>
               <FileUpload.Root
-                maxFiles={3}
+                disabled={files.length > 9 ? true : false}
+                maxFiles={10}
                 onFileChange={(details) => {
                   const acceptedFiles = details.acceptedFiles;
                   setFiles(acceptedFiles);
