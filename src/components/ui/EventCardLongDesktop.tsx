@@ -29,6 +29,8 @@ import { useShowToast } from "src/hooks";
 import useDeleteEventById from "src/hooks/useDeleteEventById";
 import { Spinner } from "@ParkComponents/spinner";
 import { format } from "date-fns";
+import defaultImage from "@Components/assets/images/default.jpg";
+
 
 interface EventCardLongDesktopProps {
   event: Event;
@@ -95,7 +97,7 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
         showToast("Success", "Event deleted successfully", "success");
       }
     } catch (error) {
-      showToast("Error", error, "error");
+      showToast("Error", error as string, "error");
     }
   };
 
@@ -103,9 +105,10 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
     <>
       <Card.Root w="100%" h="300px" bg="bg.card" color="fg.card">
         <HStack>
-          <Card.Header w="300px" h="300px" bg="bg.emphasized" p="0px">
+          <Card.Header w="300px" h="300px" bg="bg.emphasized" p={0}>
             <img
-              src={`https://127.0.0.1${event?.image_paths[0]}`}
+            style={{objectFit: "cover", width: "100%", height: "100%"}}
+              src={`https://127.0.0.1${event?.image_paths[0]}` == 'https://127.0.0.1undefined' ? defaultImage : `https://127.0.0.1${event?.image_paths[0]}`}
               alt={event.name}
             ></img>
           </Card.Header>

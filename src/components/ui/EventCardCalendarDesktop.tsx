@@ -6,6 +6,8 @@ import { Calendar, LayoutList, MapPin } from "lucide-react";
 import * as React from "react";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
+import defaultImage from "@Components/assets/images/default.jpg";
+
 
 interface EventCardCalendarDesktopProps {
   event: {
@@ -47,8 +49,10 @@ export const EventCardCalendarDesktop: React.FC<
               <img
                 style={{
                   objectFit: "cover",
+                  width: "100%",
+                  height: "100%",
                 }}
-                src={`https://127.0.0.1${event?.image_paths[0]}`}
+                src={`https://127.0.0.1${event?.image_paths[0]}` == 'https://127.0.0.1undefined' ? defaultImage : `https://127.0.0.1${event?.image_paths[0]}`}
                 alt={event?.name}
               ></img>
             </Card.Header>

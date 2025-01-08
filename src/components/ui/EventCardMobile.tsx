@@ -6,6 +6,8 @@ import { LayoutList, MapPin } from "lucide-react";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
+import defaultImage from "@Components/assets/images/default.jpg";
+
 
 interface EventCardMobileProps {
   event: Event;
@@ -41,9 +43,14 @@ export const EventCardMobile: React.FC<EventCardMobileProps> = ({ event }) => {
     <>
       <Link to={`/event-detail/${event?._id}`}>
         <Card.Root w="350px" h="270px">
-          <Card.Header w="100%" h="170px" bg="bg.emphasized" p="0px">
+          <Card.Header w="100%" h="170px" bg="bg.emphasized" p={0}>
             <img
-              src={`https://127.0.0.1${event?.image_paths[0]}`}
+              style={{
+                objectFit: "cover",
+                width: "100%",
+                height: "100%",
+              }}
+              src={`https://127.0.0.1${event?.image_paths[0]}` == 'https://127.0.0.1undefined' ? defaultImage : `https://127.0.0.1${event?.image_paths[0]}`}
               alt={event?.name}
             ></img>
           </Card.Header>

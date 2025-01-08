@@ -6,6 +6,8 @@ import { format } from "date-fns";
 import { Calendar, MapPin } from "lucide-react";
 import * as React from "react";
 import { Link } from "react-router-dom";
+import defaultImage from "@Components/assets/images/default.jpg";
+
 
 interface EventCardSmallDesktopProps {
   event: {
@@ -43,7 +45,12 @@ export const EventCardSmallDesktop: React.FC<EventCardSmallDesktopProps> = ({
             >
               <GridItem colSpan={3} bg="bg.emphasized">
                 <img
-                  src={`https://127.0.0.1${event?.image_paths[0]}`}
+                  style={{
+                    objectFit: "cover",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  src={`https://127.0.0.1${event?.image_paths[0]}` == 'https://127.0.0.1undefined' ? defaultImage : `https://127.0.0.1${event?.image_paths[0]}`}
                   alt={event?.name}
                 ></img>
               </GridItem>
