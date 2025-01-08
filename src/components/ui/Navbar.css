@@ -1,0 +1,8 @@
+@font-face {
+  font-family: coolLogo;
+  src: url(../assets/fonts/SedgwickAveDisplay-Regular.ttf);
+}
+
+.coolLogo {
+    font-family: coolLogo;
+}

@@ -23,6 +23,7 @@ import useAuthState from "src/hooks/useAuthState";
 import useAuthStore from "src/store/authStore";
 import useGetFriendRequests from "src/hooks/useGetFriendRequests";
 import { Spinner } from "@ParkComponents/spinner";
+import "./Navbar.css";
 
 export const Navbar: React.FC = () => {
   interface FriendRequest {
@@ -109,9 +110,9 @@ export const Navbar: React.FC = () => {
     }
   };
 
-  React.useEffect(()=>{
-    setFriendRequestList(friendRequests)
-  },[friendRequests])
+  React.useEffect(() => {
+    setFriendRequestList(friendRequests);
+  }, [friendRequests]);
 
   return (
     <>
@@ -123,7 +124,9 @@ export const Navbar: React.FC = () => {
         >
           <Box className={navBarStyles}>
             <Link to="/">
-              <Text fontSize={"xl"}>EventMate</Text>
+              <Text fontSize={"5xl"} className="coolLogo">
+                EventM8
+              </Text>
             </Link>
             <Input
               size="sm"
