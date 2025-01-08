@@ -70,8 +70,6 @@ export const CreateEventForm: React.FC = () => {
 
   const onSubmit: SubmitHandler<EventFormValues> = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //simulated call for isSubmitting state
-
       const formData = new FormData();
       files.forEach((img) => {
         formData.append("image", img);
