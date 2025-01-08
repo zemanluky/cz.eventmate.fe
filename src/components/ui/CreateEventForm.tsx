@@ -29,7 +29,7 @@ export const CreateEventForm: React.FC = () => {
   const eventFormSchema = z.object({
     name: z.string().nonempty("Name is required"),
     place: z.string().nonempty("Place is required"),
-    description: z.string().nonempty("Description is required"),
+    description: z.string(),
     category: z.string().nonempty("Category is required"),
     type: z.boolean(),
     date: z.date(),
@@ -177,8 +177,6 @@ export const CreateEventForm: React.FC = () => {
               {errors.place && <Text color="red">{errors.place.message}</Text>}
             </Stack>
 
-
-
             {/* Date input */}
             <Controller
               control={control}
@@ -245,7 +243,7 @@ export const CreateEventForm: React.FC = () => {
                 {...register("description")}
                 id="description"
                 placeholder="About event"
-                />
+              />
               {errors.description && (
                 <Text color="red">{errors.description.message}</Text>
               )}
