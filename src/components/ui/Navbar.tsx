@@ -210,7 +210,10 @@ export const Navbar: React.FC = () => {
                               gap="8px"
                               width="100%"
                             >
-                              <Link to={`/profile/${user._id}`}>
+                              <Link
+                                to={`/profile/${user._id}`}
+                                onClick={() => setIsOpen(false)}
+                              >
                                 <Flex alignItems={"center"} gap={4}>
                                   <Avatar
                                     name={`${user.name} ${user.surname}`}
