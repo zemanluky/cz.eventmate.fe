@@ -34,7 +34,7 @@ export const Homepage: React.FC = () => {
         dateEnd: filters.dateEnd === "" ? null : filters.dateEnd,
         rating: null,
         category: filters.category,
-        filter: "all",
+        filter: "public-only",
       };
 
       // fetching events by parameters
