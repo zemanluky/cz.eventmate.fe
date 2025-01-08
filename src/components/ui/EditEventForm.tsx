@@ -1,13 +1,10 @@
 import { Box, Flex, HStack, Stack, VStack } from "@Panda/jsx";
 import { Button } from "@ParkComponents/button";
 import { FormLabel } from "@ParkComponents/form-label";
-import { IconButton } from "@ParkComponents/icon-button";
 import { Input } from "@ParkComponents/input";
 import { Text } from "@ParkComponents/text";
 import * as React from "react";
-import { FileUpload } from "@ParkComponents/file-upload";
 import { DatePickerComponent } from "./DatePickerComponent";
-import { Trash2Icon } from "lucide-react";
 import { ComboBoxComponent } from "./ComboBoxComponent";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
@@ -119,6 +116,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
         private: data.type ? true : false,
         date: isoParser(data.date),
         category: data.category,
+        image_paths: event?.image_paths,
       };
 
       try {
