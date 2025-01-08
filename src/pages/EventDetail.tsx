@@ -25,16 +25,10 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import { Link, useParams } from "react-router-dom";
-
-// Mock images
-import party1 from "@Components/assets/images/party_1.jpg";
-import party2 from "@Components/assets/images/party_2.jpg";
-import party3 from "@Components/assets/images/party_3.jpg";
-import party4 from "@Components/assets/images/party_4.jpg";
-import party5 from "@Components/assets/images/party_5.jpg";
 import useGetEventById from "src/hooks/useGetEventById";
 import { useEventStore } from "src/store/eventStore";
 import { format } from "date-fns";
+import defaultImage from "@Components/assets/images/default.jpg";
 import { Dialog } from "@ParkComponents/dialog";
 import { Button } from "@ParkComponents/button";
 
@@ -72,7 +66,10 @@ export const EventDetail: React.FC = () => {
     location: event?.location,
     author: event?.author,
     attendees: event?.attendees, // The attendees will be automatically updated via global state
-    images: [party1, party2, party3, party4, party5],
+    images:
+      Array.isArray(event?.image_paths) && event?.image_paths.length !== 0
+        ? [...event?.image_paths]
+        : [defaultImage],
   };
 
   const handleOpenAttendeesDialog = () => {};
@@ -92,8 +89,13 @@ export const EventDetail: React.FC = () => {
                 {eventData?.images.map((image, index) => (
                   <Carousel.Item key={index} index={index}>
                     <img
-                      src={image}
-                      alt={`Slide ${index}`}
+                      src={
+                        Array.isArray(event?.image_paths) &&
+                        event?.image_paths.length !== 0
+                          ? `https://127.0.0.1${image}`
+                          : `${image}`
+                      }
+                      alt={event?.name}
                       style={{
                         height: "400px",
                         width: "100%",
@@ -234,7 +236,9 @@ export const EventDetail: React.FC = () => {
               <HStack>
                 <Calendar />
                 <Text fontWeight={700}>Date: </Text>
-                <Text>{eventData?.date?.split("T")[0]}</Text>
+                <Text>
+                  {format(new Date(eventData?.date), "	eee dd.MM.yyyy")}
+                </Text>
               </HStack>
 
               {/* Place */}
