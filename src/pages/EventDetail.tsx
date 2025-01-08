@@ -260,7 +260,7 @@ export const EventDetail: React.FC = () => {
               <HStack>
                 <Lock />
                 <Text fontWeight={700}>Type: </Text>
-                <Text>{eventData?.private ? "Public" : "Private"}</Text>
+                <Text>{eventData?.private ? "Private" : "Public"}</Text>
               </HStack>
             </Stack>
 
