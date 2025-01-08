@@ -22,7 +22,7 @@ import {
 import * as React from "react";
 import { AvatarGroup } from "./AvatarGroup";
 import { IconButton } from "@ParkComponents/icon-button";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Dialog } from "@ParkComponents/dialog";
 import { Button } from "@ParkComponents/button";
 import { useShowToast } from "src/hooks";
@@ -107,13 +107,15 @@ export const EventCardLongDesktop: React.FC<EventCardLongDesktopProps> = ({
     <>
       <Card.Root w="100%" h="300px" bg="bg.card" color="fg.card">
         <HStack>
-          <Card.Header w="300px" h="300px" bg="bg.emphasized" p={0}>
-            <img
-            style={{objectFit: "cover", width: "100%", height: "100%"}}
-            src={`${baseURL+event?.image_paths[0]}` === `${baseURL}undefined` ?  defaultImage : `${baseURL+event?.image_paths[0]}`}
-            alt={event.name}
-            ></img>
-          </Card.Header>
+          <Link to={`/event-detail/${event._id}`}>
+            <Card.Header w="300px" h="300px" bg="bg.emphasized" p={0}>
+              <img
+              style={{objectFit: "cover", width: "100%", height: "100%"}}
+              src={`${baseURL+event?.image_paths[0]}` === `${baseURL}undefined` ?  defaultImage : `${baseURL+event?.image_paths[0]}`}
+              alt={event.name}
+              />
+            </Card.Header>
+          </Link>
           <Card.Body p="25px" w="700px">
             <Grid gridTemplateColumns="repeat(7, 1fr)" h="100%" gap={0}>
               {/* Content */}

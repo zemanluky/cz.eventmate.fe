@@ -8,13 +8,12 @@ import { AvatarGroup } from "./AvatarGroup";
 import { Dialog } from "@ParkComponents/dialog";
 import { IconButton } from "@ParkComponents/icon-button";
 import { Button } from "@ParkComponents/button";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useDeleteEventById from "src/hooks/useDeleteEventById";
 import { useShowToast } from "src/hooks";
 import { Spinner } from "@ParkComponents/spinner";
 import { format } from "date-fns";
 import defaultImage from "@Components/assets/images/default.jpg";
-
 
 interface EventCardMobileProps {
   event: Event;
@@ -65,7 +64,7 @@ interface Event {
   author: User;
 }
 
-const baseURL = import.meta.env.VITE_BASE_API_URL
+const baseURL = import.meta.env.VITE_BASE_API_URL;
 
 export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
   event,
@@ -89,17 +88,23 @@ export const EventCardWithButtonsMobile: React.FC<EventCardMobileProps> = ({
   return (
     <>
       <Card.Root w="350px">
-        <Card.Header w="100%" h="170px" bg="bg.emphasized" p={0}>
-          <img
-          style={{
-            objectFit: "cover",
-            width: "100%",
-            height: "100%",
-          }}
-          src={`${baseURL+event?.image_paths[0]}` === `${baseURL}undefined` ?  defaultImage : `${baseURL+event?.image_paths[0]}`}
-          alt={event.name}
-          ></img>
-        </Card.Header>
+        <Link to={`/event-detail/${event._id}`}>
+          <Card.Header w="100%" h="170px" bg="bg.emphasized" p={0}>
+            <img
+              style={{
+                objectFit: "cover",
+                width: "100%",
+                height: "100%",
+              }}
+              src={
+                `${baseURL + event?.image_paths[0]}` === `${baseURL}undefined`
+                  ? defaultImage
+                  : `${baseURL + event?.image_paths[0]}`
+              }
+              alt={event.name}
+            ></img>
+          </Card.Header>
+        </Link>
         <Card.Body p="20px" w="100%">
           <Grid
             gridTemplateColumns="repeat(5, 1fr)"
