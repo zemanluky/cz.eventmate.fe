@@ -37,7 +37,6 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
   const eventFormSchema = z.object({
     name: z.string().nonempty("Name is required"),
     place: z.string().nonempty("Place is required"),
-    address: z.string().nonempty("Address is required"),
     description: z.string().nonempty("Description is required"),
     category: z.string().nonempty("Category is required"),
     type: z.boolean(),
@@ -47,7 +46,6 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
 
   //const eventData = handleLoad(eventToEditId);
   const mockEvent = {
-    address: "Holešovice",
     category: event?.category,
     date: new Date(event?.date), // new Date if important for ISO 8601 format
     description: event?.description,
@@ -78,7 +76,6 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     defaultValues: {
       name: "",
       place: "",
-      address: "",
       description: "",
       category: "",
       type: false,
@@ -90,7 +87,6 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
   React.useEffect(() => {
     if (event) {
       const eventData = {
-        address: "Holešovice",
         category: event?.category?._id,
         date: new Date(event?.date), // new Date if important for ISO 8601 format
         description: event?.description,
@@ -254,19 +250,6 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                   />
                   {errors.place && (
                     <Text color="red">{errors.place.message}</Text>
-                  )}
-                </Stack>
-
-                {/* Address input */}
-                <Stack w="100%" gap="1.5">
-                  <FormLabel htmlFor="address">Address</FormLabel>
-                  <Input
-                    {...register("address")}
-                    id="address"
-                    placeholder="Address of event"
-                  />
-                  {errors.address && (
-                    <Text color="red">{errors.address.message}</Text>
                   )}
                 </Stack>
 
