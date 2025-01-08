@@ -19,8 +19,10 @@ import React, { useState } from "react";
 import { useFilterContext } from "src/contexts/FilterContext";
 import { ComboBoxComponent } from "./ComboBoxComponent";
 import axiosClient from "axiosClient";
+import useAuthStore from "src/store/authStore";
 
 export const EventToolbar: React.FC = () => {
+  const authUser = useAuthStore((state) => state.user);
   const [showEvents, setShowEvents] = useState(true);
   const { setFilters } = useFilterContext();
   const [eventCategories, setEventCategories] = React.useState([]);
@@ -124,28 +126,30 @@ export const EventToolbar: React.FC = () => {
           Events
         </Text>
         <Flex gap={{ sm: "40px", base: "16px" }} alignItems={"center"}>
-          <Box w="150px" p="5px" h="36px" rounded="full" bg="bg.muted">
-            <Flex justifyItems="center">
-              <Button
-                w="70px"
-                h="26px"
-                rounded="full"
-                bg={showEvents ? "bg.buttonSmall" : "transparent"}
-                onClick={() => setShowEvents(true)}
-              >
-                <Text>Public</Text>
-              </Button>
-              <Button
-                w="70px"
-                h="26px"
-                rounded="full"
-                bg={showEvents ? "transparent" : "bg.buttonSmall"}
-                onClick={() => setShowEvents(false)}
-              >
-                <Text>Private</Text>
-              </Button>
-            </Flex>
-          </Box>
+          {authUser && (
+            <Box w="150px" p="5px" h="36px" rounded="full" bg="bg.muted">
+              <Flex justifyItems="center">
+                <Button
+                  w="70px"
+                  h="26px"
+                  rounded="full"
+                  bg={showEvents ? "bg.buttonSmall" : "transparent"}
+                  onClick={() => setShowEvents(true)}
+                >
+                  <Text>Public</Text>
+                </Button>
+                <Button
+                  w="70px"
+                  h="26px"
+                  rounded="full"
+                  bg={showEvents ? "transparent" : "bg.buttonSmall"}
+                  onClick={() => setShowEvents(false)}
+                >
+                  <Text>Private</Text>
+                </Button>
+              </Flex>
+            </Box>
+          )}
 
           <Menu.Trigger asChild>
             <Button p={"0px"}>
