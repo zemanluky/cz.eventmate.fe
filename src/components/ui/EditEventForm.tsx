@@ -49,7 +49,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
   //const eventData = handleLoad(eventToEditId);
   const mockEvent = {
     address: "Holešovice",
-    category: "meetups",
+    category: event?.category,
     date: new Date(event?.date), // new Date if important for ISO 8601 format
     description: event?.description,
     name: event?.name,
@@ -91,7 +91,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     if (event) {
       const eventData = {
         address: "Holešovice",
-        category: "meetups",
+        category: event?.category?._id,
         date: new Date(event?.date), // new Date if important for ISO 8601 format
         description: event?.description,
         name: event?.name,
@@ -123,6 +123,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
         location: data.place,
         private: data.type ? true : false,
         date: isoParser(data.date),
+        category: data.category,
       };
 
       try {
@@ -164,9 +165,10 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
 
   const getEventCategories = async () => {
     const categories = await getCategories();
-    const transformedCategories = categories?.map(
-      ({ _id: value, name: label }) => ({ value, label })
-    );
+    const transformedCategories = categories?.map(({ _id: value, name: label }) => ({
+      value,
+      label,
+    }));
     return transformedCategories;
   };
 
@@ -178,6 +180,21 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
     fetchCategories();
   }, []);
 
+  const defaultCategory =(category)=>{
+    const defaultCategoryObject = {
+      value:category._id,
+      label:category.name
+    }
+    return defaultCategoryObject.label
+  } 
+
+  const defaultType = (type)=>{
+    const defaultCategoryObject = {
+      value: type ? true : false,
+      label: type ? "Private" : "Public"
+    }
+    return defaultCategoryObject.label
+  }
   return (
     <>
       {loading ? (
@@ -254,7 +271,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                   name="date"
                   render={({ field }) => (
                     <DatePickerComponent
-                      defaultDate={eventData.date}
+                      defaultDate={eventData?.date}
                       value={field.value}
                       onChange={(date) => field.onChange(date)}
                     />
@@ -273,8 +290,11 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                       label="Category:"
                       placeholder="Event categories"
                       inputCollection={eventCategories}
-                      defaultValue={eventData?.category}
-                      onChange={(value) => field.onChange(value)}
+                      defaultValue={defaultCategory(event?.category)} 
+                      onChange={(value) => {
+                        console.log("Selected category ID:", value); // This should log the selected _id as a string
+                        field.onChange(value);
+                      }}
                     />
                   )}
                 />
@@ -291,6 +311,7 @@ export const EditEventForm: React.FC<EditEventFormProps> = ({
                       {...field}
                       label="Type:"
                       placeholder="Event types"
+                      defaultValue={defaultType(event?.private)}
                       inputCollection={eventTypes}
                       onChange={(value) => field.onChange(value)}
                     />
