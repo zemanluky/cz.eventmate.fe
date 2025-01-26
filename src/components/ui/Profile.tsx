@@ -62,20 +62,17 @@ export const Profile: React.FC<User> = ({ user }) => {
 
   const onSubmit: SubmitHandler<RatingFormValues> = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //simulated call for isSubmitting state
-      console.log(data);
 
       const formData = {
-        author: userProfile?._id,
-        starRating: data.ratingValue,
-        comment: data.comment,
+        starRating: Number(data?.ratingValue),
+        comment: data?.comment,
       };
       try {
-        // TODO might need updating after merging be !!
         const response = await axiosClient.post(
           `${import.meta.env.VITE_API_KEY}/user/${user._id}/rating`,
           formData
         );
+        console.log(formData)
         // success messages
         showToast("Success" , "Rating submitted successfully", "success")
       } catch (error) {
